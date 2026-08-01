@@ -32,16 +32,17 @@ Goal contract
 
 ### Completed included results
 
-_None._
+- Stable project foundation and contracts.
+- Truthful Git history extraction.
 
 ### Current in-scope result
 
-Truthful Git history extraction.
+Deterministic commit graph layout.
 
 ### Next in-scope action
 
-Implement the direct Git process adapter and temporary-repository harness, then
-complete repository discovery, history parsing, refs, and boundary semantics.
+Implement deterministic logical lane assignment and transition invariants over
+the extracted commit DAG, including merge, disconnected, and boundary cases.
 
 ### Evidence and blockers
 
@@ -49,3 +50,6 @@ complete repository discovery, history parsing, refs, and boundary semantics.
 - Before every push, scan both Git history and the working tree with gitleaks using redacted output.
 - Foundation validation: `gofmt`, `go test ./...`, and `go vet ./...` pass;
   shared-contract review findings were resolved before advancing the roadmap.
+- Git extraction validation: repeated real-Git tests, the race detector, the
+  full Go suite, `go vet ./...`, and diff checks pass. Required review findings
+  for corrupt refs, parse context, and bounded output were resolved.

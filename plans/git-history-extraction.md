@@ -8,14 +8,16 @@ Git as the semantic authority and exposing explicit, testable failures.
 
 ## Current state
 
-The extraction design is specified in docs/git-history.md and the CLI behavior
-in docs/cli-contract.md. No Git adapter or repository fixture code exists. This
-plan assumes the foundation plan has established domain types.
+Complete. The Go core invokes the installed Git executable directly through a
+context-aware, environment-hardened runner; discovers branch, detached, unborn,
+empty, and invalid repository states; and extracts bounded topological history,
+refs, metadata, raw messages, and explicit parent boundaries. Real temporary
+repositories cover the required history forms, alternate object formats when
+supported, and corrupt loose and packed refs.
 
 ## Next action
 
-Create the Git process interface and a temporary-repository test harness, then
-implement repository discovery before history parsing.
+None. The next roadmap result is deterministic commit graph layout.
 
 ## Scope
 
@@ -84,10 +86,15 @@ Inspect structured fixture output for a branch-and-merge repository and compare
 its selected object IDs directly with Git. Run the required code-review
 workflow before completing this plan.
 
+Current evidence: repeated package tests, the race detector, the full Go test
+suite, `go vet ./...`, and diff checks pass. The required review confirmed that
+repository-state failures are not rendered as empty history, parse errors name
+their Git source, and process plus metadata output is bounded; all material
+findings were resolved.
+
 ## Out of scope
 
 - Graph lanes and SVG.
 - Explanation generation.
 - Report HTML.
 - Diffs or changed-file content in the report.
-
