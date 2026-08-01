@@ -9,15 +9,17 @@ shared interfaces.
 
 ## Current state
 
-The workspace is not a Git repository and contains documentation only. Product,
-architecture, CLI, Git, graph, report, UI, security, verification, and skill
-decisions are recorded. No module path, source tree, lock file, build command,
-schema types, or CI configuration exists.
+Complete. The canonical Go module, compiling command path, domain package
+boundaries, report-owned schema v1 DTOs and conversion seam, deterministic
+clock and CSP nonce seams, CI baseline, and language-neutral merge fixture are
+implemented. The fixture includes refs, an explanation, raw hostile-looking
+Unicode text, and a maximum-count parent boundary. Go formatting, tests, vet,
+and the required shared-contract review pass.
 
 ## Next action
 
-Initialize the repository and Go module, then add the smallest compiling command
-and versioned report-domain packages without implementing Git extraction or UI.
+None — outcome complete. Git extraction can implement directly against the
+stable history types without changing the report wire contract implicitly.
 
 ## Scope
 

@@ -24,7 +24,9 @@ Goal contract
 
 ## Authorized amendments
 
-_None._
+- Stable project foundation and contracts — schema v1, package boundaries,
+  deterministic seams, the representative fixture, and baseline Go validation
+  are implemented and reviewed.
 
 ## Execution status
 
@@ -34,13 +36,16 @@ _None._
 
 ### Current in-scope result
 
-Stable project foundation and contracts.
+Truthful Git history extraction.
 
 ### Next in-scope action
 
-Complete the integration-branch push preflight, then reconcile and implement `plans/foundation-and-contracts.md` on the first work branch.
+Implement the direct Git process adapter and temporary-repository harness, then
+complete repository discovery, history parsing, refs, and boundary semantics.
 
 ### Evidence and blockers
 
 - `codex/first-local-release` is the temporary non-production integration branch for the sequential PR lifecycle.
 - Before every push, scan both Git history and the working tree with gitleaks using redacted output.
+- Foundation validation: `gofmt`, `go test ./...`, and `go vet ./...` pass;
+  shared-contract review findings were resolved before advancing the roadmap.

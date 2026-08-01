@@ -1,0 +1,5 @@
+/gitlog-html
+*.test
+coverage.out
+web/node_modules/
+web/dist/
