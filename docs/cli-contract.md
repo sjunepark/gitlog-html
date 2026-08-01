@@ -51,8 +51,10 @@ whose values are plain-text explanations:
       "abcdef...": "Merged the independent retry work into the main flow."
     }
 
-Keys are case-sensitive opaque IDs. The reader does not assume an object-ID
-length. Values must be strings. Whitespace-only values behave as absent.
+Keys use lowercase hexadecimal syntax and are compared exactly as opaque IDs.
+The reader does not assume an object-ID length, and “full” is enforced by exact
+equality with the full IDs emitted by Git; a prefix never attaches.
+Values must be strings. Whitespace-only values behave as absent.
 
 Descriptions for commits outside the selected slice are ignored with a concise
 warning so an agent can reuse a superset file. An unknown key never attaches by
@@ -67,12 +69,16 @@ Default: git-history.html in the current directory.
 
 The CLI refuses to replace an existing path unless --force is present. Even
 with --force it refuses symlinks, directories, and other non-regular targets.
-It writes a temporary sibling, flushes and closes it, then atomically renames
-it so failure does not leave a partial report.
+It writes a temporary sibling, flushes and closes it, then renames it so
+failure before installation does not leave a partial report. The
+same-directory rename is atomic on Unix-like systems. Go does not expose that
+guarantee portably on every platform, so non-Unix installation uses the host
+rename semantics after the same complete-write and target-safety checks.
 
     --force
 
-Allows atomic replacement of an existing regular output file.
+Allows replacement of an existing regular output file, atomically on
+Unix-like systems.
 
 ## Examples
 
@@ -120,4 +126,3 @@ Tests assert these categories; internal error types remain free to evolve.
 - Missing explanation file: fail with the resolved path.
 - Output parent missing or unwritable: fail before changing an existing file.
 - Git unavailable: identify Git as the missing runtime dependency.
-

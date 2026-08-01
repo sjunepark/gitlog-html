@@ -39,18 +39,22 @@ Goal contract
 
 ### Current in-scope result
 
-Responsive report interface delivery closure.
+Safe standalone report CLI.
 
 ### Next in-scope action
 
-Finish PR #2 checks, feedback replies, and merge. Then deliver the retained
-project-scoped Claude tooling in one review-limited supporting PR before
-starting strict command-line parsing.
+Deliver the implemented and reviewed CLI slice through its PR lifecycle, merge
+it into `codex/first-local-release`, then start hardening and validation.
 
 ### Evidence and blockers
 
 - `codex/first-local-release` is the temporary non-production integration branch for the sequential PR lifecycle.
 - Before every push, scan both Git history and the working tree with gitleaks using redacted output.
+- PR #2 merged the responsive report interface into the integration branch at
+  `30811316deb2f888377283af709042f9c653a8fe`.
+- PR #3 was closed without merge. Its third-party Claude tooling payload is
+  not part of the product or integration branch; the required project-scoped
+  copy remains local and ignored for UI delegation only.
 - Foundation validation: `gofmt`, `go test ./...`, and `go vet ./...` pass;
   shared-contract review findings were resolved before advancing the roadmap.
 - Git extraction validation: repeated real-Git tests, the race detector, the
@@ -66,7 +70,12 @@ starting strict command-line parsing.
   All material UI and integration review findings were resolved, including PR
   feedback for breakpoint selection, lossless explanation text, parent-edge
   boundary meaning, and stable touch targets.
-- CodeRabbit skipped the initial PR #2 head because its net diff exceeded the
-  service's file limit. The local Claude-only Impeccable installation remains
-  intact and is deferred to one necessary supporting PR, leaving the report UI
-  PR below the review limit without bypassing required review.
+- CLI implementation and independent review are complete on
+  `codex/report-generation-cli`; PR delivery is pending. Full Go, race, vet,
+  build, cross-build, workflow, frontend, deterministic-asset, component, and
+  desktop/mobile browser validation pass. Real generated artifacts prove
+  default all-ref selection against an unmerged ref, current ancestry,
+  explanation fallback, empty, detached, shallow, truncated, relocated-offline,
+  and complete hostile-content behavior. All material review findings are
+  resolved, and production UI source, compiled assets, and screenshots remain
+  unchanged by the final artifact-test work.

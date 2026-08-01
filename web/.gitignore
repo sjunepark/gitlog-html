@@ -4,4 +4,5 @@ harness/
 .assets-check-a/
 .assets-check-b/
 test-results/
+test-output/
 playwright-report/

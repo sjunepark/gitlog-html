@@ -3,20 +3,24 @@
 ## Outcome
 
 The Go command combines real repository history, optional explanations,
-deterministic graph layout, and Claude-built assets into one safe, atomic,
-offline HTML report through the approved CLI.
+deterministic graph layout, and Claude-built assets into one safe, offline HTML
+report through the approved CLI, with atomic installation on Unix-like systems.
 
 ## Current state
 
-The public contract is defined in docs/cli-contract.md, the document in
-docs/report-format.md, and security controls in docs/security.md. No executable
-generation path exists. This plan assumes Git, graph, schema, and compiled UI
-assets are complete.
+The outcome is implemented, validated, and independently reviewed on
+`codex/report-generation-cli`; PR delivery is pending. The strict CLI,
+description reader, generation coordinator, standalone renderer, and
+sibling-file writer consume the completed Git, graph, schema, and committed UI
+assets. All material review findings are resolved, including portable rename
+claims, all-ref selection proof, required-tool failures, shallow-skip scope,
+and complete hostile-content evidence through the real generated artifact.
 
 ## Next action
 
-Implement strict command-line parsing and map validated options into a single
-application generation request before adding file output.
+Deliver the reviewed slice through its PR lifecycle, merge it into
+`codex/first-local-release`, then advance ROADMAP.md to hardening and
+validation.
 
 ## Scope
 
@@ -30,8 +34,8 @@ application generation request before adding file output.
 - Assemble metadata, nonced CSP, CSS, report JSON, application root, fallback
   content, and JavaScript into one UTF-8 document.
 - Keep report startup failure readable.
-- Refuse unsafe output targets and write atomically through a sibling temporary
-  file.
+- Refuse unsafe output targets and write through a sibling temporary file,
+  installing atomically where the host provides same-directory atomic rename.
 - Emit concise success output, warnings, privacy reminder, and typed exit
   categories.
 - Add build-version information when it can be supplied without making local
@@ -76,10 +80,17 @@ docs/verification.md. Generate representative real reports for visual
 integration review. UI defects are routed back to the Claude session; Go
 integration defects remain Codex-owned. Run code review before completion.
 
+Current evidence: formatting, the full Go suite, race detection, vet, normal
+and cross-platform builds, workflow syntax, frontend checks, component tests,
+deterministic asset generation, and the complete desktop/mobile file-URL suite
+pass. Real CLI reports prove default all-ref selection, current ancestry,
+explanation fallback, empty, detached, shallow, truncated, relocated-offline,
+and malicious-content behavior. Production UI source, compiled assets, and
+screenshots remain unchanged by the artifact-test additions.
+
 ## Out of scope
 
 - Public release publication.
 - Embedded patches or diffs.
 - Automatic browser opening.
 - Hosted viewing.
-

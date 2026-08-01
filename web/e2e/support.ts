@@ -66,6 +66,15 @@ export class ReportPage {
     await this.load(`${reportUrl(name)}#${fragment}`)
   }
 
+  /**
+   * Opens any standalone report by path — used for the documents the real Go
+   * CLI writes, which live outside the harness directory. Console, page-error
+   * and network monitoring apply exactly as they do to the harness documents.
+   */
+  async openFile(path: string): Promise<void> {
+    await this.load(pathToFileURL(path).href)
+  }
+
   /** One definition of "the report has started". */
   private async load(url: string): Promise<void> {
     await this.page.goto(url)

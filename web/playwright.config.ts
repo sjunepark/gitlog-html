@@ -8,6 +8,17 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './e2e',
   outputDir: './test-results',
+  // Builds the real CLI and generates reports from real repositories once,
+  // before any worker starts. See e2e/generate-reports.ts.
+  //
+  // A setup project would be the alternative, but it buys nothing here: the
+  // generator needs no fixtures and no trace, and generated-reports.spec.ts
+  // imports its constants and types from that same module — converting it into
+  // a spec would register a test as an import side effect. Discovery is the one
+  // case global setup does not cover, because `--list` and IDE explorers
+  // collect without running it; that spec reads its manifest lazily for exactly
+  // that reason.
+  globalSetup: './e2e/generate-reports.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
