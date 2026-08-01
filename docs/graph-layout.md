@@ -35,6 +35,12 @@ The engine receives:
 
 The same input must always yield byte-equivalent layout data.
 
+Schema v1 treats this deterministic placement as canonical. Report validation
+rebuilds the layout from commit topology and rejects structurally truthful but
+differently placed lanes, so a future placement change must coordinate the
+versioned report contract and fixture rather than silently changing browser
+input.
+
 ## Lane-state algorithm
 
 Maintain an ordered active-lane list of expected commit IDs.
@@ -44,7 +50,9 @@ For every visible commit:
 1. Locate its ID in the active lanes.
 2. If it is not present, place it in the first reusable empty lane or append a
    lane. This starts a ref tip or disconnected component.
-3. Record that index as the node lane and snapshot incoming continuations.
+3. Snapshot incoming continuations before inserting a disconnected tip, then
+   record the current commit's node lane. This keeps a new tip from appearing
+   to have entered from a prior row.
 4. Remove the current expected ID from its lane.
 5. Prefer to place the first parent in the node lane, preserving visual
    continuity when that parent is not already active elsewhere.
@@ -57,9 +65,10 @@ For every visible commit:
 9. Emit logical segments from incoming lanes through the node to outgoing
    lanes, including parent index and boundary status.
 
-At the final visible row, continue active parents to a boundary marker. A true
-root terminates at its node. A shallow or maximum-count boundary terminates
-with a distinct continuation treatment.
+At the final visible row, a true root terminates at its node and an explicitly
+classified shallow or maximum-count parent terminates at its distinct boundary
+marker. The graph engine never invents a boundary: any visible parent left
+active after the final row is invalid ordered input.
 
 ## Output contract
 
@@ -68,7 +77,8 @@ The report graph contains:
 - total lane count required by the visible slice;
 - one graph row per commit;
 - commit object ID and node lane;
-- incoming and outgoing lane states;
+- dense incoming and outgoing lane states, retaining interior empty slots so
+  lane indexes remain stable while omitting trailing empty slots;
 - transition segments with from-lane, to-lane, relationship kind, optional
   parent object ID, and boundary reason.
 
@@ -109,4 +119,3 @@ with the parent set emitted by Git.
 Required examples include linear, branch-and-merge, criss-cross-like ancestry,
 octopus merge, disconnected roots, an already-active merge parent, and
 truncated parents.
-

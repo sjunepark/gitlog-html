@@ -8,14 +8,15 @@ the Svelte UI can draw responsively without knowing Git traversal rules.
 
 ## Current state
 
-The lane vocabulary, algorithm, output expectations, and invariants are defined
-in docs/graph-layout.md. No layout implementation exists. This plan assumes the
-history extractor can provide ordered commits and parent visibility.
+Complete. `graph.Build` validates ordered topology and emits deterministic,
+pixel-independent dense lane states, shifted continuations, indexed parent
+relationships, and explicit boundary endpoints. The schema-v1 validator
+rebuilds this canonical layout from commit topology, keeping lane semantics in
+the graph package and rejecting inconsistent serialized graphs.
 
 ## Next action
 
-Define the minimal immutable input and output types in the graph package and
-write failing example tests for linear and branch-and-merge histories.
+None. The next roadmap result is the responsive Svelte report interface.
 
 ## Scope
 
@@ -70,9 +71,17 @@ Review failing property-test output for diagnosability and keep example
 snapshots small enough to understand manually. Run the required code-review
 workflow before completing this plan.
 
+Current evidence: human-readable examples cover linear, merge, convergence,
+simultaneous tips, disconnected roots, octopus, duplicate ancestry, duplicate
+parents, shifted continuations, true roots, and both boundary reasons. Fixed-seed
+generated DAGs assert structural invariants and byte-equivalent serialization;
+a wide-parent scale test and benchmark exercise dense topology; a real Git
+fixture verifies the relationship set. Repeated tests, the full race suite,
+`go vet ./...`, and diff checks pass. Required cross-module review findings for
+parent origins and transition-resolution growth were resolved.
+
 ## Out of scope
 
 - SVG paths, lane color, pixels, animation, or breakpoints.
 - Selecting or ordering commits.
 - Changing the report schema without coordinating the contract fixture.
-

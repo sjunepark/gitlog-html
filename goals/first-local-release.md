@@ -34,15 +34,17 @@ Goal contract
 
 - Stable project foundation and contracts.
 - Truthful Git history extraction.
+- Deterministic commit graph layout.
 
 ### Current in-scope result
 
-Deterministic commit graph layout.
+Responsive accessible report interface.
 
 ### Next in-scope action
 
-Implement deterministic logical lane assignment and transition invariants over
-the extracted commit DAG, including merge, disconnected, and boundary cases.
+Stabilize the UI handoff against schema v1, provision the repository-scoped
+Claude workflow, and delegate the responsive accessible report implementation
+with required browser iteration.
 
 ### Evidence and blockers
 
@@ -53,3 +55,6 @@ the extracted commit DAG, including merge, disconnected, and boundary cases.
 - Git extraction validation: repeated real-Git tests, the race detector, the
   full Go suite, `go vet ./...`, and diff checks pass. Required review findings
   for corrupt refs, parse context, and bounded output were resolved.
+- Graph validation: example snapshots, generated-DAG invariants, a dense scale
+  case and benchmark, a real-Git relation comparison, the full race suite, and
+  `go vet ./...` pass. Required cross-module review findings were resolved.

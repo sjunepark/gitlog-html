@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"reflect"
 	"strings"
 	"time"
 
@@ -233,6 +234,13 @@ func (d Document) Validate() error {
 			return fmt.Errorf("graph row %d: %w", index, err)
 		}
 	}
+	expectedLayout, err := graph.Build(graphInput(d.Commits))
+	if err != nil {
+		return fmt.Errorf("graph input: %w", err)
+	}
+	if !reflect.DeepEqual(d.Graph, graphFromDomain(expectedLayout)) {
+		return errors.New("graph does not match the canonical layout for its commits")
+	}
 	for index, warning := range d.Warnings {
 		switch warning.Code {
 		case string(history.WarningDescriptionOutsideSlice), string(history.WarningIncompleteHistory):
@@ -318,15 +326,26 @@ func validateGraphRow(row GraphRow, commit Commit, laneCount int) error {
 		states []LaneState
 	}{{"incoming", row.Incoming}, {"outgoing", row.Outgoing}}
 	for _, group := range laneGroups {
+		seenOIDs := make(map[string]struct{}, len(group.states))
 		for index, state := range group.states {
 			if err := validateLane(state.Lane, laneCount); err != nil {
 				return fmt.Errorf("%s lane %d: %w", group.label, index, err)
+			}
+			if state.Lane != index {
+				return fmt.Errorf("%s lane %d is non-canonical: got index %d", group.label, state.Lane, index)
 			}
 			if state.ExpectedOID != nil {
 				if _, err := history.ParseObjectID(*state.ExpectedOID); err != nil {
 					return fmt.Errorf("%s lane %d object ID: %w", group.label, index, err)
 				}
+				if _, duplicate := seenOIDs[*state.ExpectedOID]; duplicate {
+					return fmt.Errorf("%s lanes duplicate object ID %q", group.label, *state.ExpectedOID)
+				}
+				seenOIDs[*state.ExpectedOID] = struct{}{}
 			}
+		}
+		if len(group.states) > 0 && group.states[len(group.states)-1].ExpectedOID == nil {
+			return fmt.Errorf("%s lanes have a trailing empty slot", group.label)
 		}
 	}
 	parentTransitions := make([]int, len(commit.Parents))
@@ -339,6 +358,9 @@ func validateGraphRow(row GraphRow, commit Commit, laneCount int) error {
 		}
 		switch transition.Kind {
 		case string(graph.RelationshipFirstParent), string(graph.RelationshipMerge):
+			if transition.FromLane != row.NodeLane {
+				return fmt.Errorf("transition %d parent relationship does not originate at the node", index)
+			}
 			if transition.ParentOID == nil || transition.ParentIndex == nil {
 				return fmt.Errorf("transition %d parent relationship is incomplete", index)
 			}
@@ -376,6 +398,17 @@ func validateGraphRow(row GraphRow, commit Commit, laneCount int) error {
 		}
 	}
 	return nil
+}
+
+func graphInput(commits []Commit) []history.Commit {
+	topology := make([]history.Commit, len(commits))
+	for rowIndex, commit := range commits {
+		topology[rowIndex] = history.Commit{OID: history.ObjectID(commit.OID), Parents: make([]history.Parent, len(commit.Parents))}
+		for parentIndex, parent := range commit.Parents {
+			topology[rowIndex].Parents[parentIndex] = history.Parent{OID: history.ObjectID(parent.OID), Visibility: history.ParentVisibility(parent.Visibility)}
+		}
+	}
+	return topology
 }
 
 func validateLane(lane, laneCount int) error {

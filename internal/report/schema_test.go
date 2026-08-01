@@ -85,6 +85,80 @@ func TestValidateRejectsFalseParentVisibilityAndLimit(t *testing.T) {
 	}
 }
 
+func TestValidateRejectsNoncanonicalGraphFlow(t *testing.T) {
+	boundaryOID := strings.Repeat("c", 40)
+	tests := []struct {
+		name   string
+		mutate func(*Document)
+	}{
+		{
+			name: "sparse lane states",
+			mutate: func(document *Document) {
+				document.Graph.Rows[0].Outgoing[0].Lane = 1
+			},
+		},
+		{
+			name: "duplicate active object ID",
+			mutate: func(document *Document) {
+				oid := document.Commits[1].OID
+				document.Graph.Rows[0].Outgoing = append(document.Graph.Rows[0].Outgoing, LaneState{Lane: 1, ExpectedOID: &oid})
+			},
+		},
+		{
+			name: "trailing empty lane",
+			mutate: func(document *Document) {
+				document.Graph.Rows[0].Outgoing = append(document.Graph.Rows[0].Outgoing, LaneState{Lane: 1})
+			},
+		},
+		{
+			name: "row state discontinuity",
+			mutate: func(document *Document) {
+				document.Graph.Rows[1].Incoming[0].ExpectedOID = &boundaryOID
+			},
+		},
+		{
+			name: "extra continuation",
+			mutate: func(document *Document) {
+				row := &document.Graph.Rows[0]
+				row.Transitions = append([]Transition{{FromLane: 0, ToLane: 0, Kind: string(graph.RelationshipContinuation)}}, row.Transitions...)
+			},
+		},
+		{
+			name: "parent starts outside node lane",
+			mutate: func(document *Document) {
+				document.Graph.Rows[0].Transitions[0].FromLane = 1
+			},
+		},
+		{
+			name: "boundary activated",
+			mutate: func(document *Document) {
+				document.Graph.Rows[0].Outgoing = append(document.Graph.Rows[0].Outgoing, LaneState{Lane: 1, ExpectedOID: &boundaryOID})
+			},
+		},
+		{
+			name: "inflated lane count",
+			mutate: func(document *Document) {
+				document.Graph.LaneCount++
+			},
+		},
+		{
+			name: "final outgoing lane",
+			mutate: func(document *Document) {
+				document.Graph.Rows[1].Outgoing = []LaneState{{Lane: 0, ExpectedOID: &boundaryOID}}
+			},
+		},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			document := fixtureDocument(t)
+			test.mutate(&document)
+			if err := document.Validate(); err == nil {
+				t.Fatal("Validate() unexpectedly succeeded")
+			}
+		})
+	}
+}
+
 func TestNewDocumentConvertsDomainTypes(t *testing.T) {
 	full := history.ObjectID(strings.Repeat("d", 40))
 	abbreviated := history.ObjectID(strings.Repeat("d", 12))
