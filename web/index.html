@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <title>gitlog-html development harness</title>
+  </head>
+  <body>
+    <!--
+      Development-only shell. It mirrors the startup contract that Go assembly
+      will emit: one mount element, one inert JSON data element, one classic
+      script. The fixture is injected by src/dev.ts.
+    -->
+    <div id="gitlog-html-app"></div>
+    <script type="module" src="/src/dev.ts"></script>
+  </body>
+</html>

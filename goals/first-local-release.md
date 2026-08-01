@@ -35,16 +35,17 @@ Goal contract
 - Stable project foundation and contracts.
 - Truthful Git history extraction.
 - Deterministic commit graph layout.
+- Responsive accessible report interface.
 
 ### Current in-scope result
 
-Responsive accessible report interface.
+Responsive report interface delivery closure.
 
 ### Next in-scope action
 
-Stabilize the UI handoff against schema v1, provision the repository-scoped
-Claude workflow, and delegate the responsive accessible report implementation
-with required browser iteration.
+Finish PR #2 checks, feedback replies, and merge. Then deliver the retained
+project-scoped Claude tooling in one review-limited supporting PR before
+starting strict command-line parsing.
 
 ### Evidence and blockers
 
@@ -58,3 +59,14 @@ with required browser iteration.
 - Graph validation: example snapshots, generated-DAG invariants, a dense scale
   case and benchmark, a real-Git relation comparison, the full race suite, and
   `go vet ./...` pass. Required cross-module review findings were resolved.
+- Report UI validation: a clean npm install, Svelte and TypeScript checks,
+  component tests, Chromium desktop/mobile file-URL tests, automated
+  accessibility checks, deterministic asset comparison, representative visual
+  review, the full Go race suite, vet, workflow syntax, and diff checks pass.
+  All material UI and integration review findings were resolved, including PR
+  feedback for breakpoint selection, lossless explanation text, parent-edge
+  boundary meaning, and stable touch targets.
+- CodeRabbit skipped the initial PR #2 head because its net diff exceeded the
+  service's file limit. The local Claude-only Impeccable installation remains
+  intact and is deferred to one necessary supporting PR, leaving the report UI
+  PR below the review limit without bypassing required review.

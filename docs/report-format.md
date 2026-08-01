@@ -75,6 +75,21 @@ inside the report rather than attempting a best-effort rendering. Additive
 fields within a schema version may be ignored; semantic or required-field
 changes increment the version.
 
+## Browser startup contract
+
+Go assembly provides one mount element with the ID `gitlog-html-app` and one
+non-executable JSON script element with the ID `gitlog-html-data` and type
+`application/json`. The classic frontend IIFE runs after both elements, reads
+the data element through `textContent`, validates schema version 1, and mounts
+the Svelte application into the mount element. Startup failures replace the
+mount contents with an intentional readable error state.
+
+The deterministic frontend build writes exactly
+`internal/report/assets/app.js` and `internal/report/assets/app.css`. These
+files contain no source map reference, import, dynamic chunk, or external
+resource and are committed so the later Go assembly layer can embed them
+without Node.
+
 ## Safe embedding
 
 Serialize dynamic content with Go's JSON encoder and preserve its HTML escaping
@@ -144,4 +159,3 @@ need because it complicates graph alignment and accessibility.
 
 Diffs are excluded from the first schema. Adding them later requires an
 explicit size, privacy, and rendering design rather than an unused placeholder.
-

@@ -1,0 +1,31 @@
+{
+  "name": "gitlog-html-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Svelte report interface for gitlog-html. Presentation only: it consumes the Go-owned report contract and performs no Git or network work.",
+  "scripts": {
+    "dev": "vite",
+    "check": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings && node scripts/check-assets.mjs",
+    "check:assets": "node scripts/check-assets.mjs",
+    "test": "vitest run",
+    "build": "vite build && node scripts/emit-assets.mjs",
+    "harness": "node scripts/build-harness.mjs",
+    "test:e2e": "npm run build && npm run harness && playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.62.1",
+    "@sveltejs/vite-plugin-svelte": "7.2.0",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/svelte": "5.2.8",
+    "@testing-library/user-event": "14.6.1",
+    "@types/node": "24.13.3",
+    "jsdom": "30.0.1",
+    "svelte": "5.56.8",
+    "svelte-check": "4.7.4",
+    "typescript": "5.9.3",
+    "vite": "8.2.0",
+    "vitest": "4.1.10"
+  }
+}

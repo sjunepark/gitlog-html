@@ -1,0 +1,4 @@
+# Vite may embed literal whitespace characters, including newlines, inside the
+# minified JavaScript. The source and reproducibility checks validate this output.
+internal/report/assets/app.js -whitespace linguist-generated
+internal/report/assets/app.css -whitespace linguist-generated

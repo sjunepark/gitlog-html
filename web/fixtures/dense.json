@@ -1,0 +1,1440 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "gitlog-html",
+    "version": "fixture"
+  },
+  "generatedAt": "2026-07-28T15:42:00Z",
+  "repository": {
+    "name": "atlas-platform",
+    "head": {
+      "kind": "branch",
+      "branch": "main",
+      "oid": "07ebc9cc1a4e3dd7835f6cdd7a09dfabeb4f5f55"
+    }
+  },
+  "selection": {
+    "scope": "all",
+    "maximumCount": 13,
+    "includedCount": 13,
+    "truncated": true
+  },
+  "commits": [
+    {
+      "oid": "ea99fef7ded7dcf9ec0a73f598dce16cd542f1ac",
+      "abbreviatedOid": "ea99fef7ded7",
+      "parents": [
+        {
+          "oid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-28T09:00:00Z"
+      },
+      "committer": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-28T09:00:00Z"
+      },
+      "subject": "Pin the 2.0 release candidate",
+      "rawMessage": "Pin the 2.0 release candidate\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/release/2.0",
+          "displayName": "release/2.0",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Froze the 2.0 candidate so testing has a fixed target."
+    },
+    {
+      "oid": "b18e1f2cac12e596e67a09ece0f021d7c6d7214b",
+      "abbreviatedOid": "b18e1f2cac12",
+      "parents": [
+        {
+          "oid": "2f3475a9375bf5c9e491642a7d4c656c435343f8",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-28T08:30:00Z"
+      },
+      "committer": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-28T08:30:00Z"
+      },
+      "subject": "Stop the login redirect loop",
+      "rawMessage": "Stop the login redirect loop\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/hotfix/login-loop",
+          "displayName": "hotfix/login-loop",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Fixed a bug that could bounce people between the login page and the app."
+    },
+    {
+      "oid": "63b6677250f5981861d5366b8936854b90c7538d",
+      "abbreviatedOid": "63b6677250f5",
+      "parents": [
+        {
+          "oid": "48d208cb6ddbd9633cf3f67df519587d2f23d380",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-28T08:00:00Z"
+      },
+      "committer": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-28T08:00:00Z"
+      },
+      "subject": "Try a new search ranking",
+      "rawMessage": "Try a new search ranking\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/experiment/search-rank",
+          "displayName": "experiment/search-rank",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "An experiment with a different way of ordering search results."
+    },
+    {
+      "oid": "07ebc9cc1a4e3dd7835f6cdd7a09dfabeb4f5f55",
+      "abbreviatedOid": "07ebc9cc1a4e",
+      "parents": [
+        {
+          "oid": "9d5f2c269bccccf582ac36b5d27b7fae073b48c4",
+          "visibility": "visible"
+        },
+        {
+          "oid": "b399320aeb25002c78048f8ea803551127ded789",
+          "visibility": "visible"
+        },
+        {
+          "oid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a",
+          "visibility": "visible"
+        },
+        {
+          "oid": "42a268b141809d77871d468b6357a8c93ec3c79a",
+          "visibility": "visible"
+        },
+        {
+          "oid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d",
+          "visibility": "visible"
+        },
+        {
+          "oid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-27T20:15:00Z"
+      },
+      "committer": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-27T20:15:00Z"
+      },
+      "subject": "Merge six translation branches",
+      "rawMessage": "Merge six translation branches\n\nBrings every language branch onto main in one merge.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/main",
+          "displayName": "main",
+          "kind": "local-branch",
+          "isHead": true
+        },
+        {
+          "fullName": "refs/remotes/origin/main",
+          "displayName": "origin/main",
+          "kind": "remote-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Brought six separate translation branches together in one step. Each language was translated independently, and this is where they all become part of the same product."
+    },
+    {
+      "oid": "9d5f2c269bccccf582ac36b5d27b7fae073b48c4",
+      "abbreviatedOid": "9d5f2c269bcc",
+      "parents": [
+        {
+          "oid": "de003a9ce518fb4e2359bbca357bc2f3710a0e52",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-27T12:00:00Z"
+      },
+      "committer": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-27T12:00:00Z"
+      },
+      "subject": "Translate the checkout flow into Dutch",
+      "rawMessage": "Translate the checkout flow into Dutch\n\nAdds Dutch copy for every checkout screen.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/i18n/nl",
+          "displayName": "i18n/nl",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Translated the checkout screens into Dutch."
+    },
+    {
+      "oid": "b399320aeb25002c78048f8ea803551127ded789",
+      "abbreviatedOid": "b399320aeb25",
+      "parents": [
+        {
+          "oid": "8a94aa00eeaa56051ab88cb7a9c727ed7a811376",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-26T12:00:00Z"
+      },
+      "committer": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-26T12:00:00Z"
+      },
+      "subject": "Translate the checkout flow into Greek",
+      "rawMessage": "Translate the checkout flow into Greek\n\nAdds Greek copy for every checkout screen.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/i18n/el",
+          "displayName": "i18n/el",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Translated the checkout screens into Greek."
+    },
+    {
+      "oid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a",
+      "abbreviatedOid": "68afb2c81eeb",
+      "parents": [
+        {
+          "oid": "ee21c804222eecd19abce5047ba1a64490d523de",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-25T12:00:00Z"
+      },
+      "committer": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-25T12:00:00Z"
+      },
+      "subject": "Translate the checkout flow into Hindi",
+      "rawMessage": "Translate the checkout flow into Hindi\n\nAdds Hindi copy for every checkout screen.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/i18n/hi",
+          "displayName": "i18n/hi",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ]
+    },
+    {
+      "oid": "42a268b141809d77871d468b6357a8c93ec3c79a",
+      "abbreviatedOid": "42a268b14180",
+      "parents": [
+        {
+          "oid": "ad15c0d28e8bd98c272dc2312aa98c495513b05b",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-24T12:00:00Z"
+      },
+      "committer": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-24T12:00:00Z"
+      },
+      "subject": "Translate the checkout flow into Polish",
+      "rawMessage": "Translate the checkout flow into Polish\n\nAdds Polish copy for every checkout screen.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/i18n/pl",
+          "displayName": "i18n/pl",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Translated the checkout screens into Polish."
+    },
+    {
+      "oid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d",
+      "abbreviatedOid": "991cc2ed9547",
+      "parents": [
+        {
+          "oid": "738b34c9fbacfc1a69a1ae8bf1329c5325f72203",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-23T12:00:00Z"
+      },
+      "committer": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-23T12:00:00Z"
+      },
+      "subject": "Translate the checkout flow into Swahili",
+      "rawMessage": "Translate the checkout flow into Swahili\n\nAdds Swahili copy for every checkout screen.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/i18n/sw",
+          "displayName": "i18n/sw",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Translated the checkout screens into Swahili."
+    },
+    {
+      "oid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f",
+      "abbreviatedOid": "28e4d3ba9278",
+      "parents": [
+        {
+          "oid": "1bdb9738579abca8728f6975ff6ef4a73fbdd6a8",
+          "visibility": "shallow-boundary"
+        },
+        {
+          "oid": "dcc7ee7f4d4302ed64576d9a18a6d4143429c81f",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-22T12:00:00Z"
+      },
+      "committer": {
+        "name": "Ines Vargas",
+        "email": "ines@example.test",
+        "when": "2026-07-22T12:00:00Z"
+      },
+      "subject": "Translate the checkout flow into Korean",
+      "rawMessage": "Translate the checkout flow into Korean\n\nAdds Korean copy for every checkout screen.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/i18n/ko",
+          "displayName": "i18n/ko",
+          "kind": "local-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Translated the checkout screens into Korean."
+    },
+    {
+      "oid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88",
+      "abbreviatedOid": "0cc8a14dc3e0",
+      "parents": [
+        {
+          "oid": "bfbc6cdd82a1d721b8624c3ef4a90045049838b7",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-19T07:00:00Z"
+      },
+      "committer": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-19T07:00:00Z"
+      },
+      "subject": "Branch release/2.0 from main",
+      "rawMessage": "Branch release/2.0 from main\n",
+      "refs": []
+    },
+    {
+      "oid": "2f3475a9375bf5c9e491642a7d4c656c435343f8",
+      "abbreviatedOid": "2f3475a9375b",
+      "parents": [
+        {
+          "oid": "b770eb856284de49f6dc39c622d8eb8a6a713ee8",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-19T07:00:00Z"
+      },
+      "committer": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-19T07:00:00Z"
+      },
+      "subject": "Branch hotfix/login-loop from main",
+      "rawMessage": "Branch hotfix/login-loop from main\n",
+      "refs": []
+    },
+    {
+      "oid": "48d208cb6ddbd9633cf3f67df519587d2f23d380",
+      "abbreviatedOid": "48d208cb6ddb",
+      "parents": [
+        {
+          "oid": "4f581378b5769e8872f8e82473a73d0f6a348997",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-19T07:00:00Z"
+      },
+      "committer": {
+        "name": "Release Bot",
+        "email": "bot@example.test",
+        "when": "2026-07-19T07:00:00Z"
+      },
+      "subject": "Branch experiment/search-rank from main",
+      "rawMessage": "Branch experiment/search-rank from main\n",
+      "refs": []
+    }
+  ],
+  "graph": {
+    "laneCount": 10,
+    "rows": [
+      {
+        "commitOid": "ea99fef7ded7dcf9ec0a73f598dce16cd542f1ac",
+        "nodeLane": 0,
+        "incoming": [],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "b18e1f2cac12e596e67a09ece0f021d7c6d7214b",
+        "nodeLane": 1,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "first-parent",
+            "parentOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "63b6677250f5981861d5366b8936854b90c7538d",
+        "nodeLane": 2,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "first-parent",
+            "parentOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "07ebc9cc1a4e3dd7835f6cdd7a09dfabeb4f5f55",
+        "nodeLane": 3,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3,
+            "expectedOid": "9d5f2c269bccccf582ac36b5d27b7fae073b48c4"
+          },
+          {
+            "lane": 4,
+            "expectedOid": "b399320aeb25002c78048f8ea803551127ded789"
+          },
+          {
+            "lane": 5,
+            "expectedOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a"
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 3,
+            "toLane": 3,
+            "kind": "first-parent",
+            "parentOid": "9d5f2c269bccccf582ac36b5d27b7fae073b48c4",
+            "parentIndex": 0
+          },
+          {
+            "fromLane": 3,
+            "toLane": 4,
+            "kind": "merge",
+            "parentOid": "b399320aeb25002c78048f8ea803551127ded789",
+            "parentIndex": 1
+          },
+          {
+            "fromLane": 3,
+            "toLane": 5,
+            "kind": "merge",
+            "parentOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a",
+            "parentIndex": 2
+          },
+          {
+            "fromLane": 3,
+            "toLane": 6,
+            "kind": "merge",
+            "parentOid": "42a268b141809d77871d468b6357a8c93ec3c79a",
+            "parentIndex": 3
+          },
+          {
+            "fromLane": 3,
+            "toLane": 7,
+            "kind": "merge",
+            "parentOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d",
+            "parentIndex": 4
+          },
+          {
+            "fromLane": 3,
+            "toLane": 8,
+            "kind": "merge",
+            "parentOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f",
+            "parentIndex": 5
+          }
+        ]
+      },
+      {
+        "commitOid": "9d5f2c269bccccf582ac36b5d27b7fae073b48c4",
+        "nodeLane": 3,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3,
+            "expectedOid": "9d5f2c269bccccf582ac36b5d27b7fae073b48c4"
+          },
+          {
+            "lane": 4,
+            "expectedOid": "b399320aeb25002c78048f8ea803551127ded789"
+          },
+          {
+            "lane": 5,
+            "expectedOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a"
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4,
+            "expectedOid": "b399320aeb25002c78048f8ea803551127ded789"
+          },
+          {
+            "lane": 5,
+            "expectedOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a"
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 4,
+            "toLane": 4,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 5,
+            "toLane": 5,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 6,
+            "toLane": 6,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 7,
+            "toLane": 7,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 8,
+            "toLane": 8,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 3,
+            "toLane": 3,
+            "kind": "first-parent",
+            "parentOid": "de003a9ce518fb4e2359bbca357bc2f3710a0e52",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "b399320aeb25002c78048f8ea803551127ded789",
+        "nodeLane": 4,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4,
+            "expectedOid": "b399320aeb25002c78048f8ea803551127ded789"
+          },
+          {
+            "lane": 5,
+            "expectedOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a"
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5,
+            "expectedOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a"
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 5,
+            "toLane": 5,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 6,
+            "toLane": 6,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 7,
+            "toLane": 7,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 8,
+            "toLane": 8,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 4,
+            "toLane": 4,
+            "kind": "first-parent",
+            "parentOid": "8a94aa00eeaa56051ab88cb7a9c727ed7a811376",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a",
+        "nodeLane": 5,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5,
+            "expectedOid": "68afb2c81eeb26e05d685f0afb761d10bd3ddd2a"
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 6,
+            "toLane": 6,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 7,
+            "toLane": 7,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 8,
+            "toLane": 8,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 5,
+            "toLane": 5,
+            "kind": "first-parent",
+            "parentOid": "ee21c804222eecd19abce5047ba1a64490d523de",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "42a268b141809d77871d468b6357a8c93ec3c79a",
+        "nodeLane": 6,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5
+          },
+          {
+            "lane": 6,
+            "expectedOid": "42a268b141809d77871d468b6357a8c93ec3c79a"
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5
+          },
+          {
+            "lane": 6
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 7,
+            "toLane": 7,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 8,
+            "toLane": 8,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 6,
+            "toLane": 6,
+            "kind": "first-parent",
+            "parentOid": "ad15c0d28e8bd98c272dc2312aa98c495513b05b",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d",
+        "nodeLane": 7,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5
+          },
+          {
+            "lane": 6
+          },
+          {
+            "lane": 7,
+            "expectedOid": "991cc2ed95470f525b29e2c8ca6c7a74cf92e61d"
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5
+          },
+          {
+            "lane": 6
+          },
+          {
+            "lane": 7
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 8,
+            "toLane": 8,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 7,
+            "toLane": 7,
+            "kind": "first-parent",
+            "parentOid": "738b34c9fbacfc1a69a1ae8bf1329c5325f72203",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f",
+        "nodeLane": 8,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          },
+          {
+            "lane": 3
+          },
+          {
+            "lane": 4
+          },
+          {
+            "lane": 5
+          },
+          {
+            "lane": 6
+          },
+          {
+            "lane": 7
+          },
+          {
+            "lane": 8,
+            "expectedOid": "28e4d3ba9278fa792e84c3137d1d6cf745758a4f"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 8,
+            "toLane": 8,
+            "kind": "first-parent",
+            "parentOid": "1bdb9738579abca8728f6975ff6ef4a73fbdd6a8",
+            "parentIndex": 0,
+            "boundary": "shallow-boundary"
+          },
+          {
+            "fromLane": 8,
+            "toLane": 9,
+            "kind": "merge",
+            "parentOid": "dcc7ee7f4d4302ed64576d9a18a6d4143429c81f",
+            "parentIndex": 1,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "0cc8a14dc3e0616c5852c704a8ca08d06970fa88"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "bfbc6cdd82a1d721b8624c3ef4a90045049838b7",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8",
+        "nodeLane": 1,
+        "incoming": [
+          {
+            "lane": 0
+          },
+          {
+            "lane": 1,
+            "expectedOid": "2f3475a9375bf5c9e491642a7d4c656c435343f8"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0
+          },
+          {
+            "lane": 1
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "first-parent",
+            "parentOid": "b770eb856284de49f6dc39c622d8eb8a6a713ee8",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380",
+        "nodeLane": 2,
+        "incoming": [
+          {
+            "lane": 0
+          },
+          {
+            "lane": 1
+          },
+          {
+            "lane": 2,
+            "expectedOid": "48d208cb6ddbd9633cf3f67df519587d2f23d380"
+          }
+        ],
+        "outgoing": [],
+        "transitions": [
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "first-parent",
+            "parentOid": "4f581378b5769e8872f8e82473a73d0f6a348997",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "incomplete-history",
+      "message": "Several lines of work continue before the oldest commit shown here, and one is missing from this copy of the repository."
+    }
+  ]
+}
