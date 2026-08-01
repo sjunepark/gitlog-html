@@ -118,7 +118,8 @@ The foundation plan should establish these starting points:
 - internal/history: domain types and explanation attachment.
 - internal/graph: logical lane assignment.
 - internal/report: schema conversion, asset embedding, security policy, and
-  atomic Unix-like output with complete-write-before-install behavior elsewhere.
+  complete-write-before-install output on every platform, with atomic
+  same-directory rename on Unix-like systems.
 - web: Svelte source, TypeScript report contract, UI tests, and visual fixtures.
 - internal/report/assets: committed deterministic frontend build output.
 - skill/gitlog-html: thin skill instructions and references.

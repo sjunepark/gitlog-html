@@ -94,7 +94,30 @@ func (renderer Renderer) Render(writer io.Writer, document Document) error {
 }
 
 func containsClosingElement(contents, element string) bool {
-	return strings.Contains(strings.ToLower(contents), "</"+element)
+	lowered := strings.ToLower(contents)
+	if strings.Contains(lowered, "</"+element) {
+		return true
+	}
+	if element != "script" {
+		return false
+	}
+
+	for {
+		comment := strings.Index(lowered, "<!--")
+		if comment < 0 {
+			return false
+		}
+		lowered = lowered[comment+len("<!--"):]
+		commentEnd := strings.Index(lowered, "-->")
+		script := strings.Index(lowered, "<script")
+		if script >= 0 && (commentEnd < 0 || script < commentEnd) {
+			return true
+		}
+		if commentEnd < 0 {
+			return false
+		}
+		lowered = lowered[commentEnd+len("-->"):]
+	}
 }
 
 func validNonce(nonce string) bool {

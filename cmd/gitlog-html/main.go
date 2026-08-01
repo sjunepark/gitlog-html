@@ -60,7 +60,7 @@ func execute(ctx context.Context, arguments []string, stdout, stderr io.Writer, 
 		return 0
 	}
 	if err != nil {
-		fmt.Fprintf(stderr, "error: %v\n\n", err)
+		fprintf(stderr, "error: %v\n\n", err)
 		writeUsage(stderr)
 		return 2
 	}
@@ -74,11 +74,11 @@ func execute(ctx context.Context, arguments []string, stdout, stderr io.Writer, 
 		Force:            parsed.force,
 	})
 	if err != nil {
-		fmt.Fprintf(stderr, "error: %v\n", err)
+		fprintf(stderr, "error: %v\n", err)
 		return 1
 	}
 	for _, warning := range result.Warnings {
-		fmt.Fprintf(stderr, "warning: %s\n", warning.Message)
+		fprintf(stderr, "warning: %s\n", warning.Message)
 	}
 	word := "commits"
 	if result.IncludedCount == 1 {
@@ -88,7 +88,7 @@ func execute(ctx context.Context, arguments []string, stdout, stderr io.Writer, 
 	if len(result.Warnings) == 1 {
 		warningWord = "warning"
 	}
-	fmt.Fprintf(stdout, "Wrote %q with %d %s and %d %s.\n", result.OutputPath, result.IncludedCount, word, len(result.Warnings), warningWord)
+	fprintf(stdout, "Wrote %q with %d %s and %d %s.\n", result.OutputPath, result.IncludedCount, word, len(result.Warnings), warningWord)
 	fprintln(stderr, "note: This report is a portable snapshot; review it before sharing.")
 	return 0
 }
@@ -254,4 +254,8 @@ func writeUsage(writer io.Writer) {
 
 func fprintln(writer io.Writer, value string) {
 	_, _ = fmt.Fprintln(writer, value)
+}
+
+func fprintf(writer io.Writer, format string, arguments ...any) {
+	_, _ = fmt.Fprintf(writer, format, arguments...)
 }

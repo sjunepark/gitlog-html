@@ -51,9 +51,9 @@ whose values are plain-text explanations:
       "abcdef...": "Merged the independent retry work into the main flow."
     }
 
-Keys are case-sensitive opaque IDs. The reader does not assume an object-ID
-length. It validates lowercase hexadecimal syntax, and “full” is enforced by
-exact equality with the full IDs emitted by Git; a prefix never attaches.
+Keys use lowercase hexadecimal syntax and are compared exactly as opaque IDs.
+The reader does not assume an object-ID length, and “full” is enforced by exact
+equality with the full IDs emitted by Git; a prefix never attaches.
 Values must be strings. Whitespace-only values behave as absent.
 
 Descriptions for commits outside the selected slice are ignored with a concise

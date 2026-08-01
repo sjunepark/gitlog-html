@@ -109,7 +109,7 @@ func readDescriptions(path string) (history.Descriptions, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open descriptions %q: %w", resolved, err)
 	}
-	defer file.Close()
+	defer func() { _ = file.Close() }()
 	descriptions, err := history.DecodeDescriptions(file)
 	if err != nil {
 		return nil, fmt.Errorf("read descriptions %q: %w", resolved, err)

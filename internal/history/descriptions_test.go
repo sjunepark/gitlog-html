@@ -69,11 +69,13 @@ func TestDecodeDescriptionsDoesNotEchoTrailingControlText(t *testing.T) {
 func TestAttachDescriptionsUsesExactIDsAndWarnsOnce(t *testing.T) {
 	selected := ObjectID(strings.Repeat("a", 40))
 	outside := ObjectID(strings.Repeat("b", 40))
+	blankSelected := ObjectID(strings.Repeat("d", 40))
 	prefix := ObjectID(strings.Repeat("a", 12))
-	snapshot := Snapshot{Commits: []Commit{{OID: selected}}}
+	snapshot := Snapshot{Commits: []Commit{{OID: selected}, {OID: blankSelected}}}
 
 	got := AttachDescriptions(snapshot, Descriptions{
 		selected:                          "exact explanation",
+		blankSelected:                     " \t",
 		outside:                           "outside",
 		prefix:                            "prefix must not attach",
 		ObjectID(strings.Repeat("c", 40)): "  ",
@@ -81,6 +83,9 @@ func TestAttachDescriptionsUsesExactIDsAndWarnsOnce(t *testing.T) {
 
 	if got.Commits[0].Explanation == nil || *got.Commits[0].Explanation != "exact explanation" {
 		t.Fatalf("attached explanation = %#v", got.Commits[0].Explanation)
+	}
+	if got.Commits[1].Explanation != nil {
+		t.Fatalf("blank explanation = %#v, want nil", got.Commits[1].Explanation)
 	}
 	if snapshot.Commits[0].Explanation != nil {
 		t.Fatal("AttachDescriptions mutated the input snapshot")

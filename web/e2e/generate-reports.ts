@@ -21,7 +21,7 @@
 import { execFileSync } from 'node:child_process'
 import { copyFileSync, mkdirSync, rmSync, writeFileSync } from 'node:fs'
 import { basename, dirname, join, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { fileURLToPath, pathToFileURL } from 'node:url'
 
 const here = dirname(fileURLToPath(import.meta.url))
 export const webRoot = resolve(here, '..')
@@ -38,6 +38,12 @@ export interface GeneratedReport {
   html: string
   /** Repository display name the report should show as its heading. */
   repository: string
+  /**
+   * Absolute path of the repository the CLI read. A report must never contain
+   * it: docs/report-format.md forbids paths back to the source repository, and
+   * the relocated case asserts on exactly this string.
+   */
+  sourceRepository: string
   /** Commits the CLI reported including. */
   commits: number
 }
@@ -341,7 +347,12 @@ export default function prepareGeneratedReports(): void {
   const record = (name: string, repository: string, args: string[]): void => {
     const file = join(html, `${name}.html`)
     const commits = generate(binary, ['--repo', repository, '--output', file, ...args])
-    manifest.reports[name] = { html: file, repository: basename(repository), commits }
+    manifest.reports[name] = {
+      html: file,
+      repository: basename(repository),
+      sourceRepository: repository,
+      commits
+    }
   }
 
   // Default: every ref, ten commits, and therefore truncation.
@@ -368,7 +379,10 @@ export default function prepareGeneratedReports(): void {
   const shallow = join(repositories, 'shallow')
   let cloned = false
   try {
-    execFileSync('git', ['clone', '--quiet', '--depth', '1', `file://${ordinary}`, shallow], {
+    // pathToFileURL rather than string concatenation: a checkout under a path
+    // with a space, or any Windows path, is not a valid URL without escaping.
+    const source = pathToFileURL(ordinary).href
+    execFileSync('git', ['clone', '--quiet', '--depth', '1', source, shallow], {
       stdio: 'pipe',
       env: isolatedEnvironment()
     })

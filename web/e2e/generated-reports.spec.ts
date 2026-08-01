@@ -30,20 +30,36 @@ import {
  * generated report shows up here.
  */
 
-if (!existsSync(manifestPath)) {
-  // Go and Git are required dependencies of this project, so an absent
-  // manifest is a broken run rather than an unavailable capability.
-  throw new Error(
-    `no generated-report manifest at ${manifestPath}. Playwright global setup ` +
-      '(e2e/generate-reports.ts) builds the real CLI and generates the reports these ' +
-      'tests open; it must run before this spec.'
-  )
+let cachedManifest: GeneratedManifest | null = null
+
+/**
+ * The manifest, read on first use rather than at import.
+ *
+ * `globalSetup` writes it once before any worker starts, so a normal run always
+ * finds it. Discovery does not: `--list` and an IDE's test explorer load this
+ * file to collect its tests without running global setup, and a clean checkout
+ * has no manifest yet. Reading eagerly would turn that harmless collection into
+ * a failure, so nothing touches the filesystem until a test body asks.
+ *
+ * It stays a hard error rather than a skip. Go and Git are required
+ * dependencies of this project, so a run that reaches a test body without a
+ * manifest is broken, not merely unequipped.
+ */
+function manifest(): GeneratedManifest {
+  if (cachedManifest !== null) return cachedManifest
+  if (!existsSync(manifestPath)) {
+    throw new Error(
+      `no generated-report manifest at ${manifestPath}. Playwright global setup ` +
+        '(e2e/generate-reports.ts) builds the real CLI and generates the reports these ' +
+        'tests open; it must run before this spec.'
+    )
+  }
+  cachedManifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as GeneratedManifest
+  return cachedManifest
 }
 
-const manifest = JSON.parse(readFileSync(manifestPath, 'utf8')) as GeneratedManifest
-
 function reportFor(name: string): GeneratedReport {
-  const found = manifest.reports[name]
+  const found = manifest().reports[name]
   if (found === undefined) throw new Error(`the setup produced no "${name}" report`)
   return found
 }
@@ -170,10 +186,20 @@ test.describe('reports written by the Go CLI', () => {
   test('a report carried away from its repository still opens and reads the same', async ({
     report
   }) => {
-    // The copy lives outside every repository the setup created. If anything
-    // in the document referred back to its source, this is where it would fail.
+    // The copy lives outside every repository the setup created.
     const relocated = reportFor('relocated')
     expect(relocated.html).not.toContain('repositories')
+
+    // And it carries no way back: docs/report-format.md forbids a path to the
+    // source repository, so the exact absolute path the CLI read must appear
+    // nowhere in the document. Checking the file's own bytes catches an
+    // embedded path that the rendered page would never show.
+    const document = readFileSync(relocated.html, 'utf8')
+    expect(relocated.sourceRepository).toMatch(/[/\\]ordinary$/)
+    expect(document, 'the report names the repository it was generated from').not.toContain(
+      relocated.sourceRepository
+    )
+
     await report.openFile(relocated.html)
 
     await expect(report.page.getByRole('heading', { level: 1 })).toHaveText('ordinary')
@@ -385,7 +411,8 @@ test.describe('reports written by the Go CLI', () => {
   }
 
   test('a shallow clone marks its boundary and never implies a root', async ({ report }) => {
-    test.skip(manifest.shallowSkip !== null, manifest.shallowSkip ?? '')
+    const skip = manifest().shallowSkip
+    test.skip(skip !== null, skip ?? '')
     await report.openFile(reportFor('shallow').html)
     const { page } = report
 
@@ -399,7 +426,7 @@ test.describe('reports written by the Go CLI', () => {
   test('every generated report is a single self-contained offline document', async ({ report }) => {
     // One structural pass over all of them: the file-URL invariants the Go
     // assembler is responsible for.
-    for (const [name, generated] of Object.entries(manifest.reports)) {
+    for (const [name, generated] of Object.entries(manifest().reports)) {
       const source = readFileSync(generated.html, 'utf8')
       expect(source, `${name} must carry a restrictive policy`).toContain(`default-src 'none'`)
       expect(source, `${name} must not reference an external resource`).not.toMatch(

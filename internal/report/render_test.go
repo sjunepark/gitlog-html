@@ -46,6 +46,30 @@ func TestRenderProducesSafeStandaloneDocument(t *testing.T) {
 	}
 }
 
+func TestContainsClosingElementRejectsUnsafeInlineSequences(t *testing.T) {
+	tests := []struct {
+		name     string
+		contents string
+		element  string
+		want     bool
+	}{
+		{name: "closing script", contents: "const marker = '</ScRiPt>';", element: "script", want: true},
+		{name: "closing style", contents: "/* </STYLE> */", element: "style", want: true},
+		{name: "closed empty comment", contents: "const marker = '<!---->';", element: "script", want: false},
+		{name: "script after closed comment", contents: "<!-- harmless --><script", element: "script", want: false},
+		{name: "double escaped script", contents: "<!-- const marker = '<ScRiPt>';", element: "script", want: true},
+		{name: "script marker irrelevant to style", contents: "<!-- <script", element: "style", want: false},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			if got := containsClosingElement(test.contents, test.element); got != test.want {
+				t.Fatalf("containsClosingElement(%q, %q) = %t, want %t", test.contents, test.element, got, test.want)
+			}
+		})
+	}
+}
+
 func TestRenderRejectsInvalidNonce(t *testing.T) {
 	document := fixtureDocument(t)
 	err := (Renderer{NonceSource: NonceFunc(func() (string, error) { return `bad" nonce`, nil })}).Render(&bytes.Buffer{}, document)
@@ -57,6 +81,7 @@ func TestRenderRejectsInvalidNonce(t *testing.T) {
 func TestWriteFileProtectsTargetsAndCleansTemporary(t *testing.T) {
 	directory := t.TempDir()
 	output := filepath.Join(directory, "report.html")
+	//nolint:gosec // The permissive fixture proves replacement takes the restrictive temporary-file mode.
 	if err := os.WriteFile(output, []byte("original"), 0o644); err != nil {
 		t.Fatal(err)
 	}
@@ -103,7 +128,7 @@ func TestWriteFileProtectsTargetsAndCleansTemporary(t *testing.T) {
 		t.Fatalf("failed output exists: %v", err)
 	}
 
-	if err := os.WriteFile(output, []byte("protected original"), 0o644); err != nil {
+	if err := os.WriteFile(output, []byte("protected original"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := WriteFile(output, true, func(writer io.Writer) error {
@@ -131,7 +156,7 @@ func TestWriteFileProtectsTargetsAndCleansTemporary(t *testing.T) {
 func TestWriteFileRefusesSymlinkDirectoryAndMissingParent(t *testing.T) {
 	directory := t.TempDir()
 	target := filepath.Join(directory, "target.html")
-	if err := os.WriteFile(target, []byte("target"), 0o644); err != nil {
+	if err := os.WriteFile(target, []byte("target"), 0o600); err != nil {
 		t.Fatal(err)
 	}
 	symlink := filepath.Join(directory, "link.html")
