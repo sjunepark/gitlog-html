@@ -62,6 +62,42 @@ test.describe('desktop split layout', () => {
     await expect(outside.locator('button')).toHaveCount(0)
   })
 
+  test('tells a dense merge apart from the history it continues', async ({ report }) => {
+    // The graph is hidden from assistive technology, so the details have to
+    // carry the ordering on their own: which parent is the main line, and which
+    // were merged into it. Read from the accessibility tree, not the markup.
+    await report.open('dense')
+    const { page } = report
+    await report.rows().nth(3).click()
+    const details = page.locator('.details-pane')
+
+    const terms = details.locator('.meta__term')
+    await expect(terms.nth(-2)).toHaveText('Continues from')
+    await expect(terms.last()).toHaveText('Also merges')
+
+    const continues = details.getByRole('button', { name: /^Continues from/ })
+    const merged = details.getByRole('button', { name: /^Also merges/ })
+    await expect(continues).toHaveCount(1)
+    await expect(merged).toHaveCount(5)
+    await expect(continues).toContainText('Translated the checkout screens into Dutch.')
+
+    // Recorded order survives the split, across both groups.
+    const listed = await details.locator('.parents__item .oid').allTextContents()
+    const parents = await page.evaluate(() => {
+      const raw = document.querySelector('#gitlog-html-data')?.textContent ?? '{}'
+      const report = JSON.parse(raw) as { commits: { parents: { oid: string }[] }[] }
+      return report.commits[3]!.parents.map((parent) => parent.oid)
+    })
+    expect(listed).toEqual(parents)
+
+    // The controls still go where they say they go.
+    await merged.first().click()
+    await expect(report.rows().nth(5)).toHaveAttribute('aria-current', 'true')
+    await expect(page.locator('.details-pane__subject')).toHaveText(
+      'Translate the checkout flow into Greek'
+    )
+  })
+
   test('aligns each graph node with the commit row it describes', async ({ report }) => {
     await report.open('ordinary')
     const { page } = report

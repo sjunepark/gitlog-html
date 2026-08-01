@@ -87,9 +87,10 @@ func (err *ProcessError) Error() string {
 
 func (err *ProcessError) Unwrap() error { return err.Err }
 
-// OutputLimitError reports a successful Git operation whose stdout exceeded
-// Runner's safety ceiling. The retained Result contains only the bounded
-// prefix and must not be parsed as complete output.
+// OutputLimitError reports a Git operation whose stdout exceeded Runner's
+// safety ceiling. The runner stops the process once the ceiling is crossed.
+// The retained Result contains only the bounded prefix and must not be parsed
+// as complete output.
 type OutputLimitError struct {
 	Operation string
 	Limit     int

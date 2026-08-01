@@ -6,10 +6,10 @@
   },
   "generatedAt": "2026-07-28T15:42:00Z",
   "repository": {
-    "name": "<script>alert('repo')</script> & \"quoted\" repository",
+    "name": "<script>alert('repo')</script> & \"quoted\" repository A‮BC‬ Z",
     "head": {
       "kind": "branch",
-      "branch": "main<img src=x onerror=alert(1)>",
+      "branch": "main<img src=x onerror=alert(1)> A‮BC‬ Z",
       "oid": "e17c8f8e8462959329a3391cabe4185142bb875d"
     }
   },
@@ -83,18 +83,31 @@
         }
       ],
       "author": {
-        "name": "Sam Iyer",
-        "email": "sam@example.test",
+        "name": "Sam A‮BC‬ Z Iyer",
+        "email": "sam‮bc‬@example.test",
         "when": "2026-07-17T14:00:00Z"
       },
       "committer": {
-        "name": "Sam Iyer",
-        "email": "sam@example.test",
+        "name": "Bot A‮BC‬ Z Runner",
+        "email": "sam‮bc‬@example.test",
         "when": "2026-07-17T14:00:00Z"
       },
-      "subject": "Record a very long message with no explanation at all",
-      "rawMessage": "Record a very long message with no explanation at all\n\nThis body is long on purpose.\n\nIt contains a closing script sequence </script><script>alert('raw')</script>,\nquotes \" ' ` and backslashes \\ \\\\, an ampersand & and angle brackets <>.\n\nLine 01 of a deliberately long commit message that keeps going.\nLine 02 of a deliberately long commit message that keeps going.\nLine 03 of a deliberately long commit message that keeps going.\nLine 04 of a deliberately long commit message that keeps going.\nLine 05 of a deliberately long commit message that keeps going.\nLine 06 of a deliberately long commit message that keeps going.\nLine 07 of a deliberately long commit message that keeps going.\nLine 08 of a deliberately long commit message that keeps going.\nLine 09 of a deliberately long commit message that keeps going.\nLine 10 of a deliberately long commit message that keeps going.\nLine 11 of a deliberately long commit message that keeps going.\nLine 12 of a deliberately long commit message that keeps going.\nLine 13 of a deliberately long commit message that keeps going.\nLine 14 of a deliberately long commit message that keeps going.\nLine 15 of a deliberately long commit message that keeps going.\nLine 16 of a deliberately long commit message that keeps going.\nLine 17 of a deliberately long commit message that keeps going.\nLine 18 of a deliberately long commit message that keeps going.\nLine 19 of a deliberately long commit message that keeps going.\nLine 20 of a deliberately long commit message that keeps going.\nLine 21 of a deliberately long commit message that keeps going.\nLine 22 of a deliberately long commit message that keeps going.\nLine 23 of a deliberately long commit message that keeps going.\nLine 24 of a deliberately long commit message that keeps going.\nLine 25 of a deliberately long commit message that keeps going.\nLine 26 of a deliberately long commit message that keeps going.\nLine 27 of a deliberately long commit message that keeps going.\nLine 28 of a deliberately long commit message that keeps going.\nLine 29 of a deliberately long commit message that keeps going.\nLine 30 of a deliberately long commit message that keeps going.\n\nTrailing token: supercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilistic\n",
-      "refs": []
+      "subject": "Record a very long message with no explanation at all A‮BC‬ Z",
+      "rawMessage": "Record a very long message with no explanation at all A‮BC‬ Z\n\nThis body is long on purpose.\n\nIt contains a closing script sequence </script><script>alert('raw')</script>,\nquotes \" ' ` and backslashes \\ \\\\, an ampersand & and angle brackets <>.\n\nLine 01 of a deliberately long commit message that keeps going.\nLine 02 of a deliberately long commit message that keeps going.\nLine 03 of a deliberately long commit message that keeps going.\nLine 04 of a deliberately long commit message that keeps going.\nLine 05 of a deliberately long commit message that keeps going.\nLine 06 of a deliberately long commit message that keeps going.\nLine 07 of a deliberately long commit message that keeps going.\nLine 08 of a deliberately long commit message that keeps going.\nLine 09 of a deliberately long commit message that keeps going.\nLine 10 of a deliberately long commit message that keeps going.\nLine 11 of a deliberately long commit message that keeps going.\nLine 12 of a deliberately long commit message that keeps going.\nLine 13 of a deliberately long commit message that keeps going.\nLine 14 of a deliberately long commit message that keeps going.\nLine 15 of a deliberately long commit message that keeps going.\nLine 16 of a deliberately long commit message that keeps going.\nLine 17 of a deliberately long commit message that keeps going.\nLine 18 of a deliberately long commit message that keeps going.\nLine 19 of a deliberately long commit message that keeps going.\nLine 20 of a deliberately long commit message that keeps going.\nLine 21 of a deliberately long commit message that keeps going.\nLine 22 of a deliberately long commit message that keeps going.\nLine 23 of a deliberately long commit message that keeps going.\nLine 24 of a deliberately long commit message that keeps going.\nLine 25 of a deliberately long commit message that keeps going.\nLine 26 of a deliberately long commit message that keeps going.\nLine 27 of a deliberately long commit message that keeps going.\nLine 28 of a deliberately long commit message that keeps going.\nLine 29 of a deliberately long commit message that keeps going.\nLine 30 of a deliberately long commit message that keeps going.\n\nTrailing token: supercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilistic\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/feature/A‮BC‬ Z",
+          "displayName": "feature/A‮BC‬ Z",
+          "kind": "local-branch",
+          "isHead": false
+        },
+        {
+          "fullName": "refs/tags/v9-A‮BC‬ Z",
+          "displayName": "v9-A‮BC‬ Z",
+          "kind": "tag",
+          "isHead": false
+        }
+      ]
     },
     {
       "oid": "c0f446425e3fdebd7266e61b328affc242de0612",

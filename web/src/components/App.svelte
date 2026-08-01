@@ -1,11 +1,12 @@
 <script lang="ts">
+  import BidiText from './BidiText.svelte'
   import CommitDetails from './CommitDetails.svelte'
   import DetailsDialog from './DetailsDialog.svelte'
   import EmptyHistory from './EmptyHistory.svelte'
   import HistoryView from './HistoryView.svelte'
   import ReportHeader from './ReportHeader.svelte'
   import { tick } from 'svelte'
-  import { commitTitle, summaryText } from '../lib/format'
+  import { commitTitle, neutralizeBidiControls, summaryText } from '../lib/format'
   import { MediaQuery, SPLIT_LAYOUT_QUERY } from '../lib/media.svelte'
   import { CommitSelection } from '../lib/selection.svelte'
   import type { Report } from '../lib/schema'
@@ -81,7 +82,7 @@
         <aside class="details-pane" aria-label="Commit details">
           {#if selected !== null}
             {#key selected.oid}
-              <p class="details-pane__subject">{commitTitle(selected)}</p>
+              <p class="details-pane__subject"><BidiText text={commitTitle(selected)} /></p>
               <CommitDetails
                 commit={selected}
                 commits={report.commits}
@@ -99,7 +100,9 @@
           not a live region, which would narrate every metadata line again.
         -->
         <p class="visually-hidden" role="status">
-          {selected === null ? '' : `Showing details for ${summaryText(selected)}`}
+          {selected === null
+            ? ''
+            : `Showing details for ${neutralizeBidiControls(summaryText(selected))}`}
         </p>
       {/if}
     </div>

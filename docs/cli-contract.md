@@ -68,9 +68,10 @@ fail generation.
 Default: git-history.html in the current directory.
 
 The CLI refuses to replace an existing path unless --force is present. Even
-with --force it refuses symlinks, directories, and other non-regular targets.
-It writes a temporary sibling, flushes and closes it, then renames it so
-failure before installation does not leave a partial report. The
+with --force it refuses symlinks, directories, other non-regular targets, and
+the inspected repository's Git directory, common directory, or worktree
+control path. It writes a temporary sibling, flushes and closes it, then
+renames it so failure before installation does not leave a partial report. The
 same-directory rename is atomic on Unix-like systems. Go does not expose that
 guarantee portably on every platform, so non-Unix installation uses the host
 rename semantics after the same complete-write and target-safety checks.

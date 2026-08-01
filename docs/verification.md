@@ -26,11 +26,14 @@ Tests cover:
 - graph example snapshots and invariants;
 - schema serialization and unsupported-version behavior;
 - HTML escaping and content-policy generation;
-- output collision, force, symlink, failed-write preservation, and the
-  Unix-like same-directory atomic-install boundary.
+- output collision, force, symlink, Git-administrative-path refusal,
+  failed-write preservation, and the Unix-like same-directory atomic-install
+  boundary;
+- prompt child termination at the Git output ceiling and graph-complexity
+  rejection without output replacement.
 
-Race testing is required for packages that introduce concurrency. Do not add
-concurrency merely to justify it.
+The release-candidate matrix runs `go test -race ./...`. Do not add concurrency
+merely to justify race testing.
 
 ## Frontend validation
 

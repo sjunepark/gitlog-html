@@ -10,9 +10,9 @@ The generator does not host a site, mutate a repository, call an LLM, or fetch
 runtime assets. Explanation generation belongs to the calling agent and the
 eventual skill.
 
-This document describes the intended architecture before implementation.
-Concrete package names may move during the foundation plan, but the ownership
-boundaries and invariants below are decisions.
+This document describes the implemented local CLI and report architecture.
+The final roadmap slice adds only the thin installed-agent orchestration layer;
+it does not move the ownership boundaries below.
 
 ## System shape
 
@@ -97,8 +97,9 @@ HTML generation. See
 5. The renderer serializes a versioned report model and inlines compiled UI
    assets.
 6. The writer creates a temporary sibling file and installs the final output
-   without following a symlink. The same-directory rename is atomic on
-   Unix-like systems; other platforms use their host rename semantics.
+   without following a symlink or entering the repository's Git administrative
+   storage. The same-directory rename is atomic on Unix-like systems; other
+   platforms use their host rename semantics.
 
 ## Viewing flow
 
@@ -109,9 +110,7 @@ HTML generation. See
 4. Selection is reflected in the URL fragment so browser back and forward work.
 5. The details view defaults to the explanation and can reveal the raw message.
 
-## Planned code map
-
-The foundation plan should establish these starting points:
+## Code map
 
 - cmd/gitlog-html: executable entry point and CLI exit behavior.
 - internal/gitexec: Git process boundary and parsers.
@@ -122,7 +121,8 @@ The foundation plan should establish these starting points:
   same-directory rename on Unix-like systems.
 - web: Svelte source, TypeScript report contract, UI tests, and visual fixtures.
 - internal/report/assets: committed deterministic frontend build output.
-- skill/gitlog-html: thin skill instructions and references.
+- skill/gitlog-html: reserved for the final roadmap slice's thin installed
+  orchestration instructions and references.
 
 Nested architecture documents are not justified before these subsystems exist.
 Add one only when a subtree develops an independent lifecycle or contributor
@@ -137,6 +137,8 @@ entry point that cannot be explained here concisely.
 - ASCII graph output is never parsed.
 - A commit object ID is opaque and variable-length; code does not assume SHA-1.
 - The graph model is deterministic for the same ordered commit DAG.
+- A cumulative graph-complexity budget rejects adversarially wide layouts
+  before they can amplify bounded Git output into unbounded allocations.
 - Explanations are optional plain text and never replace raw Git evidence.
 - The report schema is versioned before it crosses from Go to TypeScript.
 - Dynamic repository content is serialized as data and rendered as text.
@@ -144,6 +146,8 @@ entry point that cannot be explained here concisely.
 - Go owns data and integration; Claude Code owns frontend/UI source and design
   under the delegation rules in [AGENTS.md](AGENTS.md).
 - Generated frontend assets are reproducible and never hand-edited.
+- Output installation never replaces Git administrative or common storage,
+  including linked-worktree control files.
 
 ## Critical dependencies
 

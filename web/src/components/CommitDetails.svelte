@@ -69,6 +69,21 @@
     })
   )
 
+  type ParentEntry = (typeof parents)[number]
+
+  /**
+   * Parent order carries meaning that the list alone cannot show.
+   *
+   * The first parent is the history this commit continues; the rest are the
+   * histories it merged in. The graph draws that distinction, but the graph is
+   * hidden from assistive technology and can be off-screen entirely, so the
+   * details have to say it in words. They are separate metadata terms rather
+   * than badges on the rows: the term is already how every other fact in this
+   * list is named, and it survives with no colour, no icon and no SVG.
+   */
+  const continuesFrom = $derived(parents.slice(0, 1))
+  const mergedIn = $derived(parents.slice(1))
+
   function choose(next: Mode): void {
     requested = { oid: commit.oid, mode: next }
   }
@@ -165,6 +180,59 @@
     {/if}
   </div>
 
+  <!--
+    One parent group: its term names the relationship, and every control inside
+    it borrows that term for its accessible name, so a reader who lands on the
+    control alone still hears which history it is.
+  -->
+  {#snippet parentGroup(term: string, id: string, entries: ParentEntry[])}
+    <div class="meta__entry">
+      <dt class="meta__term" {id}>{term}</dt>
+      <dd class="meta__value">
+        <ul class="parents">
+          {#each entries as parent, index (parent.oid + index)}
+            <li class="parents__item">
+              {#if parent.commit !== null}
+                <!--
+                  The object is in this report, so it is reachable. When the
+                  edge itself is a boundary, that reason travels with the
+                  control and is part of its accessible name.
+                -->
+                <button
+                  type="button"
+                  class="parents__link"
+                  id="{id}-{index}"
+                  aria-labelledby="{id} {id}-{index}"
+                  onclick={() => onselectparent(parent.oid)}
+                >
+                  <span class="parents__text">
+                    <span class="parents__summary"><BidiText text={summaryText(parent.commit)} /></span>
+                    {#if parent.boundary !== null}
+                      <span class="parents__boundary">{parent.boundary}</span>
+                    {/if}
+                    <span class="oid">{parent.oid}</span>
+                  </span>
+                  <Icon name="arrow" class="parents__arrow" />
+                </button>
+              {:else}
+                <!--
+                  A parent that is not in this report is stated as such instead
+                  of being offered as a control that cannot go anywhere.
+                -->
+                <div class="parents__outside">
+                  <span class="parents__text">
+                    <span class="parents__summary">{parent.boundary}</span>
+                    <span class="oid">{parent.oid}</span>
+                  </span>
+                </div>
+              {/if}
+            </li>
+          {/each}
+        </ul>
+      </dd>
+    </div>
+  {/snippet}
+
   <dl class="meta">
     <div class="meta__entry">
       <dt class="meta__term">Recorded</dt>
@@ -172,7 +240,7 @@
         <time datetime={machineDateTime(commit.committer.when)}>
           {formatDateTime(commit.committer.when)}
         </time>
-        <span class="meta__person">{personText(commit.committer.name, commit.committer.email)}</span>
+        <span class="meta__person"><BidiText text={personText(commit.committer.name, commit.committer.email)} /></span>
       </dd>
     </div>
 
@@ -183,7 +251,7 @@
           <time datetime={machineDateTime(commit.author.when)}>
             {formatDateTime(commit.author.when)}
           </time>
-          <span class="meta__person">{personText(commit.author.name, commit.author.email)}</span>
+          <span class="meta__person"><BidiText text={personText(commit.author.name, commit.author.email)} /></span>
         </dd>
       </div>
     {/if}
@@ -206,51 +274,18 @@
       <dd class="meta__value"><span class="oid">{commit.oid}</span></dd>
     </div>
 
-    {#if parents.length > 0}
-      <div class="meta__entry">
-        <dt class="meta__term">{parents.length > 1 ? 'Builds on' : 'Comes after'}</dt>
-        <dd class="meta__value">
-          <ul class="parents">
-            {#each parents as parent, index (parent.oid + index)}
-              <li class="parents__item">
-                {#if parent.commit !== null}
-                  <!--
-                    The object is in this report, so it is reachable. When the
-                    edge itself is a boundary, that reason travels with the
-                    control and is part of its accessible name.
-                  -->
-                  <button
-                    type="button"
-                    class="parents__link"
-                    onclick={() => onselectparent(parent.oid)}
-                  >
-                    <span class="parents__text">
-                      <span class="parents__summary">{summaryText(parent.commit)}</span>
-                      {#if parent.boundary !== null}
-                        <span class="parents__boundary">{parent.boundary}</span>
-                      {/if}
-                      <span class="oid">{parent.oid}</span>
-                    </span>
-                    <Icon name="arrow" class="parents__arrow" />
-                  </button>
-                {:else}
-                  <!--
-                    A parent that is not in this report is stated as such
-                    instead of being offered as a control that cannot go
-                    anywhere.
-                  -->
-                  <div class="parents__outside">
-                    <span class="parents__text">
-                      <span class="parents__summary">{parent.boundary}</span>
-                      <span class="oid">{parent.oid}</span>
-                    </span>
-                  </div>
-                {/if}
-              </li>
-            {/each}
-          </ul>
-        </dd>
-      </div>
+    <!--
+      A single parent is plain ancestry and is named as such. A merge is named
+      in two parts, in recorded order, so "which one is the main line" is
+      answered without knowing the term "first parent".
+    -->
+    {#if mergedIn.length === 0}
+      {#if continuesFrom.length > 0}
+        {@render parentGroup('Comes after', `${uid}-parent-after`, continuesFrom)}
+      {/if}
+    {:else}
+      {@render parentGroup('Continues from', `${uid}-parent-continues`, continuesFrom)}
+      {@render parentGroup('Also merges', `${uid}-parent-merges`, mergedIn)}
     {/if}
   </dl>
 </div>

@@ -3,12 +3,15 @@ package generate
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
 
+	"github.com/sjunepark/gitlog-html/internal/graph"
 	"github.com/sjunepark/gitlog-html/internal/history"
 	"github.com/sjunepark/gitlog-html/internal/report"
 )
@@ -17,6 +20,44 @@ type loaderFunc func(context.Context, string, history.Scope, int) (history.Snaps
 
 func (function loaderFunc) Snapshot(ctx context.Context, path string, scope history.Scope, maximum int) (history.Snapshot, error) {
 	return function(ctx, path, scope, maximum)
+}
+
+func TestServicePreservesOutputWhenGraphExceedsComplexityBudget(t *testing.T) {
+	directory := t.TempDir()
+	outputPath := filepath.Join(directory, "report.html")
+	if err := os.WriteFile(outputPath, []byte("original"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	commits := make([]history.Commit, 513)
+	parents := make([]history.Parent, 512)
+	for index := range parents {
+		oid := history.ObjectID(fmt.Sprintf("%040x", index+2))
+		parents[index] = history.Parent{OID: oid, Visibility: history.ParentVisible}
+		commits[index+1] = history.Commit{OID: oid}
+	}
+	commits[0] = history.Commit{OID: history.ObjectID(fmt.Sprintf("%040x", 1)), Parents: parents}
+	loader := loaderFunc(func(context.Context, string, history.Scope, int) (history.Snapshot, error) {
+		return history.Snapshot{
+			Repository: history.Repository{Root: directory},
+			Selection:  history.Selection{Scope: history.ScopeAll, Maximum: len(commits)},
+			Commits:    commits,
+		}, nil
+	})
+
+	_, err := (Service{Loader: loader}).Run(context.Background(), Request{
+		Repository: directory, Scope: history.ScopeAll, Maximum: len(commits), OutputPath: outputPath, Force: true,
+	})
+	var complexityErr *graph.ComplexityError
+	if !errors.As(err, &complexityErr) {
+		t.Fatalf("Run() error = %T %v, want ComplexityError", err, err)
+	}
+	if contents, readErr := os.ReadFile(outputPath); readErr != nil || string(contents) != "original" {
+		t.Fatalf("preserved output = %q, %v", contents, readErr)
+	}
+}
+
+func (loaderFunc) AdministrativePaths(context.Context, string) ([]string, error) {
+	return nil, nil
 }
 
 func TestServiceBuildsExplainedReport(t *testing.T) {

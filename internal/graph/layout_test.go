@@ -195,8 +195,19 @@ func TestBuildWideOctopusDoesNotLoseEdges(t *testing.T) {
 	assertLayoutInvariants(t, commits, layout)
 }
 
+func TestBuildRejectsGraphBeyondComplexityBudget(t *testing.T) {
+	_, err := Build(wideOctopus(512))
+	var complexityErr *ComplexityError
+	if !errors.As(err, &complexityErr) {
+		t.Fatalf("Build() error = %T %v, want ComplexityError", err, err)
+	}
+	if complexityErr.Limit != MaximumLayoutComplexity || complexityErr.Row <= 0 {
+		t.Fatalf("ComplexityError = %#v", complexityErr)
+	}
+}
+
 func BenchmarkBuildWideOctopus(b *testing.B) {
-	commits := wideOctopus(512)
+	commits := wideOctopus(256)
 	b.ReportAllocs()
 	b.ResetTimer()
 	for range b.N {

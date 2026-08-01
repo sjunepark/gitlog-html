@@ -38,6 +38,41 @@ type Loader struct {
 	Runner Runner
 }
 
+// AdministrativePaths resolves every repository-owned path that report output
+// must never replace. Linked worktrees have both a per-worktree Git directory
+// and a shared common directory, while their .git entry is itself a control
+// file that also needs protection.
+func (loader Loader) AdministrativePaths(ctx context.Context, root string) ([]string, error) {
+	gitDir, err := loader.Runner.Run(ctx, root, "rev-parse", "--absolute-git-dir")
+	if err != nil {
+		return nil, &StateError{Operation: "Git administrative directory", Err: err}
+	}
+	commonDir, err := loader.Runner.Run(ctx, root, "rev-parse", "--git-common-dir")
+	if err != nil {
+		return nil, &StateError{Operation: "Git common directory", Err: err}
+	}
+
+	paths := []string{
+		filepath.Join(root, ".git"),
+		trimTransportLine(gitDir.Stdout),
+		trimTransportLine(commonDir.Stdout),
+	}
+	for index, path := range paths {
+		if path == "" {
+			return nil, &StateError{Operation: "Git administrative paths", Err: errors.New("git reported an empty path")}
+		}
+		if !filepath.IsAbs(path) {
+			path = filepath.Join(root, path)
+		}
+		resolved, resolveErr := filepath.EvalSymlinks(path)
+		if resolveErr != nil {
+			return nil, &StateError{Operation: "Git administrative paths", Err: fmt.Errorf("resolve %q: %w", path, resolveErr)}
+		}
+		paths[index] = filepath.Clean(resolved)
+	}
+	return paths, nil
+}
+
 func (loader Loader) Discover(ctx context.Context, path string) (history.Repository, error) {
 	result, err := loader.Runner.Run(ctx, path, "rev-parse", "--show-toplevel")
 	if err != nil {

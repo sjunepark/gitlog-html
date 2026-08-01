@@ -1,0 +1,238 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "gitlog-html",
+    "version": "fixture"
+  },
+  "generatedAt": "2026-07-28T15:42:00Z",
+  "repository": {
+    "name": "controls-\u061c\u200e\u200f\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069-probe",
+    "head": {
+      "kind": "detached",
+      "oid": "8369d9a9808d606bc0d24c6405faf7bd1ce336f0"
+    }
+  },
+  "selection": {
+    "scope": "current",
+    "maximumCount": 10,
+    "includedCount": 4,
+    "truncated": false
+  },
+  "commits": [
+    {
+      "oid": "8369d9a9808d606bc0d24c6405faf7bd1ce336f0",
+      "abbreviatedOid": "8369d9a9808d",
+      "parents": [
+        {
+          "oid": "40aa18ea96901d1bf30cba6e3eb2a83f6c58f777",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Priya Raman",
+        "email": "priya@example.test",
+        "when": "2026-06-30T11:00:00Z"
+      },
+      "committer": {
+        "name": "Priya Raman",
+        "email": "priya@example.test",
+        "when": "2026-06-30T11:00:00Z"
+      },
+      "subject": "Every control \u061c\u200e\u200f\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069 named",
+      "rawMessage": "Every control \u061c\u200e\u200f\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069 named\n",
+      "refs": []
+    },
+    {
+      "oid": "40aa18ea96901d1bf30cba6e3eb2a83f6c58f777",
+      "abbreviatedOid": "40aa18ea9690",
+      "parents": [
+        {
+          "oid": "ffe1851109af7fa332450ccdfecb3bd2c89785cb",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Priya Raman",
+        "email": "priya@example.test",
+        "when": "2026-06-29T16:20:00Z"
+      },
+      "committer": {
+        "name": "Priya Raman",
+        "email": "priya@example.test",
+        "when": "2026-06-29T16:20:00Z"
+      },
+      "subject": "Cut version 1.1.4",
+      "rawMessage": "Cut version 1.1.4\n",
+      "refs": [
+        {
+          "fullName": "refs/tags/v1.1.4",
+          "displayName": "v1.1.4",
+          "kind": "tag",
+          "isHead": false
+        }
+      ],
+      "explanation": "Released version 1.1.4."
+    },
+    {
+      "oid": "ffe1851109af7fa332450ccdfecb3bd2c89785cb",
+      "abbreviatedOid": "ffe1851109af",
+      "parents": [
+        {
+          "oid": "887be875fc467b35592e3d364bebbf9ad5c8590d",
+          "visibility": "visible"
+        },
+        {
+          "oid": "22939be3eb2b406782b82b5d76c66a11faed11c6",
+          "visibility": "shallow-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ade Bello",
+        "email": "ade@example.test",
+        "when": "2026-06-28T09:45:00Z"
+      },
+      "committer": {
+        "name": "Ade Bello",
+        "email": "ade@example.test",
+        "when": "2026-06-28T09:45:00Z"
+      },
+      "subject": "Merge the caching rewrite",
+      "rawMessage": "Merge the caching rewrite\n\nOne side of this merge is not present in this clone.\n",
+      "refs": [],
+      "explanation": "Joined the caching rewrite back into the main line. One of the two lines feeding this point is not stored in this copy of the repository, so it cannot be shown."
+    },
+    {
+      "oid": "887be875fc467b35592e3d364bebbf9ad5c8590d",
+      "abbreviatedOid": "887be875fc46",
+      "parents": [
+        {
+          "oid": "7fc93f5851a8abf5c339027a46739f80fa2745eb",
+          "visibility": "shallow-boundary"
+        }
+      ],
+      "author": {
+        "name": "Ade Bello",
+        "email": "ade@example.test",
+        "when": "2026-06-27T13:15:00Z"
+      },
+      "committer": {
+        "name": "Ade Bello",
+        "email": "ade@example.test",
+        "when": "2026-06-27T13:15:00Z"
+      },
+      "subject": "Cache rendered price tables",
+      "rawMessage": "Cache rendered price tables\n",
+      "refs": []
+    }
+  ],
+  "graph": {
+    "laneCount": 2,
+    "rows": [
+      {
+        "commitOid": "8369d9a9808d606bc0d24c6405faf7bd1ce336f0",
+        "nodeLane": 0,
+        "incoming": [],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "40aa18ea96901d1bf30cba6e3eb2a83f6c58f777"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "40aa18ea96901d1bf30cba6e3eb2a83f6c58f777",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "40aa18ea96901d1bf30cba6e3eb2a83f6c58f777",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "40aa18ea96901d1bf30cba6e3eb2a83f6c58f777"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "ffe1851109af7fa332450ccdfecb3bd2c89785cb"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "ffe1851109af7fa332450ccdfecb3bd2c89785cb",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "ffe1851109af7fa332450ccdfecb3bd2c89785cb",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "ffe1851109af7fa332450ccdfecb3bd2c89785cb"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "887be875fc467b35592e3d364bebbf9ad5c8590d"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "887be875fc467b35592e3d364bebbf9ad5c8590d",
+            "parentIndex": 0
+          },
+          {
+            "fromLane": 0,
+            "toLane": 1,
+            "kind": "merge",
+            "parentOid": "22939be3eb2b406782b82b5d76c66a11faed11c6",
+            "parentIndex": 1,
+            "boundary": "shallow-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "887be875fc467b35592e3d364bebbf9ad5c8590d",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "887be875fc467b35592e3d364bebbf9ad5c8590d"
+          }
+        ],
+        "outgoing": [],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "7fc93f5851a8abf5c339027a46739f80fa2745eb",
+            "parentIndex": 0,
+            "boundary": "shallow-boundary"
+          }
+        ]
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "incomplete-history",
+      "message": "This is a shallow copy of the repository, so some earlier commits are not available."
+    }
+  ]
+}

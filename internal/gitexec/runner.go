@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"os"
 	"os/exec"
@@ -51,10 +52,12 @@ func (runner Runner) Run(ctx context.Context, dir string, args ...string) (Resul
 	if stdoutLimit <= 0 {
 		stdoutLimit = DefaultMaxStdoutBytes
 	}
-	stdout := &limitedBuffer{maximum: stdoutLimit}
+	commandContext, stopCommand := context.WithCancel(ctx)
+	defer stopCommand()
+	stdout := &limitedBuffer{maximum: stdoutLimit, stopOnOverflow: stopCommand}
 	stderr := &limitedBuffer{maximum: stderrLimit}
 
-	command := exec.CommandContext(ctx, executable, args...)
+	command := exec.CommandContext(commandContext, executable, args...)
 	command.Dir = dir
 	command.Env = gitEnvironment()
 	command.Stdout = stdout
@@ -69,10 +72,10 @@ func (runner Runner) Run(ctx context.Context, dir string, args ...string) (Resul
 		Stdout: bytes.Clone(stdout.Bytes()),
 		Stderr: bytes.Clone(stderr.Bytes()),
 	}
+	if stdout.Truncated() {
+		return result, &OutputLimitError{Operation: operation, Limit: stdoutLimit}
+	}
 	if runErr == nil {
-		if stdout.Truncated() {
-			return result, &OutputLimitError{Operation: operation, Limit: stdoutLimit}
-		}
 		return result, nil
 	}
 
@@ -107,22 +110,33 @@ func (runner Runner) Run(ctx context.Context, dir string, args ...string) (Resul
 }
 
 type limitedBuffer struct {
-	buffer    bytes.Buffer
-	maximum   int
-	truncated bool
+	buffer         bytes.Buffer
+	maximum        int
+	truncated      bool
+	stopOnOverflow context.CancelFunc
 }
+
+var errOutputLimit = errors.New("output limit exceeded")
 
 func (buffer *limitedBuffer) Write(value []byte) (int, error) {
 	originalLength := len(value)
 	remaining := buffer.maximum - buffer.buffer.Len()
+	written := 0
 	if remaining > 0 {
 		if len(value) > remaining {
 			value = value[:remaining]
 		}
-		_, _ = buffer.buffer.Write(value)
+		written, _ = buffer.buffer.Write(value)
 	}
 	if originalLength > remaining {
+		firstOverflow := !buffer.truncated
 		buffer.truncated = true
+		if firstOverflow && buffer.stopOnOverflow != nil {
+			buffer.stopOnOverflow()
+		}
+		if buffer.stopOnOverflow != nil {
+			return written, fmt.Errorf("%w after %d bytes", errOutputLimit, buffer.maximum)
+		}
 	}
 	return originalLength, nil
 }

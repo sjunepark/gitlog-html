@@ -1,28 +1,38 @@
 # gitlog-html
 
-gitlog-html will turn a bounded Git history into one interactive, offline HTML
+gitlog-html turns a bounded Git history into one interactive, offline HTML
 report. It is designed first for agents presenting repository history to
 non-developers and second for developers reading history on desktop or mobile
 without a terminal.
 
 ## Status
 
-The Go module and shared report contracts are under active implementation.
-[ROADMAP.md](ROADMAP.md) is the source of truth for the current slice and next
-planned result.
+The local CLI and report are implemented. Release-candidate hardening and the
+thin installed-agent workflow are tracked in [ROADMAP.md](ROADMAP.md), the
+source of truth for the current and next result.
 
 ## Development
 
-The backend uses the standard Go toolchain and intentionally has no runtime
-dependency on Node:
+Build and exercise the CLI with the standard Go toolchain. It intentionally has
+no runtime dependency on Node:
 
     gofmt -w ./cmd ./internal
     go test ./...
     go vet ./...
 
-Frontend source will live in `web/`. Its deterministic build will be committed
-under `internal/report/assets` only after the UI exists; generated bundles must
-always be rebuilt from `web/` and never edited directly.
+    go build ./cmd/gitlog-html
+    ./gitlog-html --repo . --output git-history.html
+
+Frontend source lives in `web/`. Its deterministic build is committed under
+`internal/report/assets` so Go-only consumers do not need Node. Rebuild bundles
+from `web/`; never edit generated assets directly:
+
+    cd web
+    npm ci
+    npm run check
+    npm test
+    npm run build
+    npm run test:e2e
 
 ## Confirmed product shape
 

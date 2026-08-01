@@ -6,12 +6,11 @@ defined in [PRODUCT.md](PRODUCT.md); system boundaries are in
 
 ## Current
 
-[Assemble the standalone report and CLI](plans/report-generation-cli.md)
+[Harden and validate the complete product](plans/hardening-and-validation.md)
 
 ## Plans
 
-1. [Harden and validate the complete product](plans/hardening-and-validation.md)
-2. [Package the agent skill and delivery workflow](plans/agent-skill-packaging.md)
+1. [Package the agent skill and delivery workflow](plans/agent-skill-packaging.md)
 
 ## Tasks
 

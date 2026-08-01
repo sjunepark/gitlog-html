@@ -8,6 +8,7 @@ import { fixture } from './helpers'
 const ordinary = fixture('ordinary')
 const shallow = fixture('detached-shallow')
 const hostile = fixture('edge-content')
+const dense = fixture('dense')
 
 function open(commit = ordinary.commits[0]!, commits = ordinary.commits) {
   const onselectparent = vi.fn()
@@ -177,7 +178,7 @@ describe('commit details', () => {
   it('lists metadata explanation-first and in the documented order', () => {
     const { container } = open()
     const terms = [...container.querySelectorAll('.meta__term')].map((node) => node.textContent)
-    expect(terms).toEqual(['Recorded', 'Labels', 'Commit ID', 'Builds on'])
+    expect(terms).toEqual(['Recorded', 'Labels', 'Commit ID', 'Continues from', 'Also merges'])
     const position = container
       .querySelector('.details__panel')!
       .compareDocumentPosition(container.querySelector('.meta')!)
@@ -188,7 +189,69 @@ describe('commit details', () => {
     const { container } = open(ordinary.commits[1]!)
     const terms = [...container.querySelectorAll('.meta__term')].map((node) => node.textContent)
     expect(terms).toContain('Comes after')
-    expect(terms).not.toContain('Builds on')
+    // Ordinary ancestry is not dressed up as a merge, and the merge vocabulary
+    // never appears — not as a term, and not inside a control's name.
+    expect(terms).not.toContain('Continues from')
+    expect(terms).not.toContain('Also merges')
+    expect(container.textContent).not.toMatch(/merge/i)
+    const parent = screen.getByRole('button', { name: /Comes after/ })
+    expect(parent.getAttribute('aria-labelledby')).toMatch(/-parent-after /)
+  })
+
+  it('separates the history a merge continues from the histories it merged in', () => {
+    // Six parents, all in the report. Reading order is the recorded order, and
+    // the terms alone answer "which one is the main line" — no colour, no icon,
+    // no graph.
+    const merge = dense.commits[3]!
+    expect(merge.parents).toHaveLength(6)
+    const { container } = render(CommitDetails, {
+      props: { commit: merge, commits: dense.commits, onselectparent: vi.fn() }
+    })
+
+    const terms = [...container.querySelectorAll('.meta__term')].map((node) => node.textContent)
+    expect(terms.slice(-2)).toEqual(['Continues from', 'Also merges'])
+
+    const groups = [...container.querySelectorAll('.meta__entry')].slice(-2)
+    const listed = groups.map((group) =>
+      [...group.querySelectorAll('.parents__item .oid')].map((node) => node.textContent)
+    )
+    expect(listed[0]).toEqual([merge.parents[0]!.oid])
+    expect(listed[1]).toEqual(merge.parents.slice(1).map((parent) => parent.oid))
+
+    // The whole list is still one sequence in recorded order.
+    const order = [...container.querySelectorAll('.parents__item .oid')].map(
+      (node) => node.textContent
+    )
+    expect(order).toEqual(merge.parents.map((parent) => parent.oid))
+  })
+
+  it('gives every merge parent control a name that states its role', () => {
+    // The term is what a control borrows for its accessible name, so a reader
+    // who arrives on the control alone is told which history it is.
+    const merge = dense.commits[3]!
+    render(CommitDetails, {
+      props: { commit: merge, commits: dense.commits, onselectparent: vi.fn() }
+    })
+
+    expect(screen.getAllByRole('button', { name: /^Continues from/ })).toHaveLength(1)
+    expect(screen.getAllByRole('button', { name: /^Also merges/ })).toHaveLength(5)
+    expect(
+      screen.getByRole('button', { name: /^Continues from/ }).textContent
+    ).toContain(merge.parents[0]!.oid)
+  })
+
+  it('keeps a merge parent control working after the split', async () => {
+    const merge = dense.commits[3]!
+    const onselectparent = vi.fn()
+    render(CommitDetails, {
+      props: { commit: merge, commits: dense.commits, onselectparent }
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: /^Continues from/ }))
+    expect(onselectparent).toHaveBeenLastCalledWith(merge.parents[0]!.oid)
+
+    await userEvent.click(screen.getAllByRole('button', { name: /^Also merges/ })[2]!)
+    expect(onselectparent).toHaveBeenLastCalledWith(merge.parents[3]!.oid)
   })
 
   it('names the author separately only when that tells the reader something', () => {

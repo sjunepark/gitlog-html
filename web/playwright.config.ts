@@ -28,6 +28,11 @@ export default defineConfig({
     // reproducible across machines.
     locale: 'en-GB',
     timezoneId: 'UTC',
+    // Contexts start with the network cut, so a report is loaded under the
+    // condition it is actually read in: from a file, on a machine that may
+    // have no connection. Watching for outgoing requests proves the report
+    // does not try to reach the network; this proves it does not need to.
+    offline: true,
     trace: 'retain-on-failure'
   },
   projects: [
@@ -40,6 +45,27 @@ export default defineConfig({
       name: 'mobile',
       testIgnore: /desktop-details\.spec\.ts/,
       use: { ...devices['Pixel 7'] }
+    },
+    {
+      // A second engine for the release check, per docs/verification.md, on a
+      // phone — which is where WebKit actually reaches readers, and where the
+      // modal sheet, focus containment and touch targets carry the most risk.
+      // It runs the common suites plus the mobile-dialog spec; the
+      // desktop-only spec belongs to the desktop project, and the retained
+      // screenshot set belongs to the approved Chromium projects, so neither is
+      // rewritten or duplicated for engine coverage alone.
+      name: 'webkit-mobile',
+      testIgnore: [/desktop-details\.spec\.ts/, /screenshots\.spec\.ts/],
+      use: {
+        ...devices['iPhone 15'],
+        // WebKit cannot navigate to a file URL while offline emulation is
+        // active — `page.goto` fails with an internal error before the document
+        // loads. It therefore loads under request monitoring, which already
+        // proves nothing leaves the document, and the network is cut
+        // immediately afterwards in the fixture's own offline check, which is
+        // where every engine is proven to report navigator.onLine === false.
+        offline: false
+      }
     }
   ]
 })

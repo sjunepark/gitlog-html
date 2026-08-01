@@ -5,10 +5,46 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"slices"
 	"testing"
 
 	"github.com/sjunepark/gitlog-html/internal/history"
 )
+
+func TestLoaderResolvesStandardAndLinkedWorktreeAdministrativePaths(t *testing.T) {
+	repository := newFixtureRepository(t, "sha1")
+	oid := repository.commit(fixedCommit("root", 0))
+	repository.updateRef("refs/heads/main", oid)
+	linked := filepath.Join(t.TempDir(), "linked")
+	repository.git(nil, "worktree", "add", "-b", "linked", linked, "main")
+
+	loader := Loader{Runner: Runner{}}
+	for _, root := range []string{repository.path, linked} {
+		paths, err := loader.AdministrativePaths(context.Background(), root)
+		if err != nil {
+			t.Fatalf("AdministrativePaths(%q): %v", root, err)
+		}
+		controlPath, err := filepath.EvalSymlinks(filepath.Join(root, ".git"))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !slices.Contains(paths, filepath.Clean(controlPath)) {
+			t.Fatalf("paths for %q = %q, want control path %q", root, paths, controlPath)
+		}
+	}
+
+	linkedPaths, err := loader.AdministrativePaths(context.Background(), linked)
+	if err != nil {
+		t.Fatal(err)
+	}
+	common, err := filepath.EvalSymlinks(filepath.Join(repository.path, ".git"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !slices.Contains(linkedPaths, filepath.Clean(common)) {
+		t.Fatalf("linked paths = %q, want common directory %q", linkedPaths, common)
+	}
+}
 
 func TestLoaderReportsTypedRepositoryAndExecutableFailures(t *testing.T) {
 	t.Run("not a repository", func(t *testing.T) {
