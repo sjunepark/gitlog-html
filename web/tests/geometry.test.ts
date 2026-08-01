@@ -84,6 +84,22 @@ describe('graph geometry from the report layout', () => {
     expect(boundary!.y).toBeLessThan((rowBottom?.top ?? 0) + (rowBottom?.height ?? 0))
   })
 
+  it('keeps a boundary stub inside its own row even when the row is short', () => {
+    // A short row must not let the stub and its chevron cross into the next
+    // row, which would draw a relationship that does not exist.
+    const short: RowBox[] = report.commits.map((_, index) => ({
+      top: index * 20,
+      height: 20,
+      nodeY: index * 20 + 16
+    }))
+    const tight = buildGraphGeometry(report.graph, report.commits, short, DESKTOP_METRICS)
+    expect(tight.boundaries.length).toBeGreaterThan(0)
+    for (const boundary of tight.boundaries) {
+      const row = short[report.graph.rows.findIndex((r) => r.commitOid === boundary.commitOid)]!
+      expect(boundary.y).toBeLessThanOrEqual(row.top + row.height)
+    }
+  })
+
   it('caps a true root instead of fading it like a truncation', () => {
     const edge = fixture('edge-content')
     const rooted = buildGraphGeometry(

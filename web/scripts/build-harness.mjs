@@ -44,10 +44,13 @@ function escapeText(value) {
     .replaceAll('"', '&quot;')
 }
 
-function render(name, report) {
-  // Deterministic per-document nonce keeps harness output byte-stable.
-  const nonce = createHash('sha256').update(name).digest('base64').slice(0, 22)
-  const policy = [
+/** Deterministic per-document nonce keeps harness output byte-stable. */
+function nonceFor(name) {
+  return createHash('sha256').update(name).digest('base64').slice(0, 22)
+}
+
+function policyFor(nonce) {
+  return [
     "default-src 'none'",
     `script-src 'nonce-${nonce}'`,
     `style-src 'nonce-${nonce}'`,
@@ -59,6 +62,11 @@ function render(name, report) {
     "base-uri 'none'",
     "form-action 'none'"
   ].join('; ')
+}
+
+function render(name, report) {
+  const nonce = nonceFor(name)
+  const policy = policyFor(nonce)
 
   return `<!doctype html>
 <html lang="en">
@@ -90,25 +98,58 @@ for (const file of fixtures) {
   writeFileSync(join(outDir, `${name}.html`), render(name, report))
 }
 
-// The startup contract also has to fail well, so the harness ships the two
-// documents that exercise it.
-const brokenData = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Unsupported report</title>
-<style>${style}</style></head>
-<body><div id="gitlog-html-app"></div>
-<script id="gitlog-html-data" type="application/json">{"schemaVersion":99,"generator":{"name":"gitlog-html"},"generatedAt":"2026-08-01T12:00:00Z","repository":{"name":"future","head":{"kind":"unborn","branch":"main"}},"selection":{"scope":"all","maximumCount":10,"includedCount":0,"truncated":false},"commits":[],"graph":{"laneCount":0,"rows":[]},"warnings":[]}</script>
-<script>${script}</script>
-</body></html>
+/**
+ * The startup contract also has to fail well, and it has to fail well under the
+ * same policy the Go assembly layer will enforce. These two documents carry the
+ * identical CSP and nonce wiring, so a failure state that quietly needed
+ * unsafe-inline would be caught here rather than in a shipped report.
+ */
+function renderFailure(name, title, dataElement) {
+  const nonce = nonceFor(name)
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="${policyFor(nonce)}">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>${escapeText(title)}</title>
+<style nonce="${nonce}">${style}</style>
+</head>
+<body>
+<div id="gitlog-html-app"></div>
+<noscript>This report is interactive and needs JavaScript to display the commit history.</noscript>
+${dataElement === null ? '' : dataElement(nonce)}
+<script nonce="${nonce}">${script}</script>
+</body>
+</html>
 `
-writeFileSync(join(outDir, 'unsupported-schema.html'), brokenData)
+}
 
-const missingData = `<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><title>Damaged report</title>
-<style>${style}</style></head>
-<body><div id="gitlog-html-app"></div>
-<script>${script}</script>
-</body></html>
-`
-writeFileSync(join(outDir, 'missing-data.html'), missingData)
+const futureSchema = {
+  schemaVersion: 99,
+  generator: { name: 'gitlog-html' },
+  generatedAt: '2026-08-01T12:00:00Z',
+  repository: { name: 'future', head: { kind: 'unborn', branch: 'main' } },
+  selection: { scope: 'all', maximumCount: 10, includedCount: 0, truncated: false },
+  commits: [],
+  graph: { laneCount: 0, rows: [] },
+  warnings: []
+}
+
+writeFileSync(
+  join(outDir, 'unsupported-schema.html'),
+  renderFailure(
+    'unsupported-schema',
+    'Unsupported report',
+    (nonce) =>
+      `<script id="gitlog-html-data" type="application/json" nonce="${nonce}">${encodeReportData(futureSchema)}</script>`
+  )
+)
+
+writeFileSync(
+  join(outDir, 'missing-data.html'),
+  renderFailure('missing-data', 'Damaged report', null)
+)
 
 console.log(`wrote ${fixtures.length + 2} standalone report files to ${outDir}`)

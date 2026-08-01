@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { COMPACT_GUTTER, SPLIT_GUTTER } from '../src/lib/geometry'
 import { webRoot } from './helpers'
 
 /**
@@ -46,9 +47,33 @@ describe('safe-area protection', () => {
   })
 
   it('protects the sheet header, where the close control sits on the right edge', () => {
-    const rule = css.slice(css.indexOf('.sheet__head {'), css.indexOf('.sheet__title'))
+    // Sliced to the rule's own closing brace. Slicing to the next selector by
+    // name breaks the moment that selector also appears in a grouped rule.
+    const start = css.indexOf('.sheet__head {')
+    expect(start, '.sheet__head rule is missing').toBeGreaterThanOrEqual(0)
+    const end = css.indexOf('}', start)
+    expect(end, '.sheet__head rule is unterminated').toBeGreaterThan(start)
+    const rule = css.slice(start, end)
     expect(rule).toContain('env(safe-area-inset-right)')
     expect(rule).toContain('env(safe-area-inset-left)')
+  })
+})
+
+describe('graph gutter', () => {
+  /** Every `--graph-gutter-max` declaration, in source order. */
+  const gutters = [...css.matchAll(/--graph-gutter-max:\s*(\d+)px;/g)].map((match) =>
+    Number(match[1])
+  )
+
+  it('is pinned in pixels, matching the geometry budgets exactly', () => {
+    // The gutter holds a drawing whose lane pitch is in pixels. If the CSS ever
+    // drifted from the budget, the graph would pan when it did not need to, or
+    // overflow when it did.
+    expect(gutters).toEqual([COMPACT_GUTTER, SPLIT_GUTTER])
+  })
+
+  it('never expresses the gutter in a font-relative unit', () => {
+    expect(css).not.toMatch(/--graph-gutter-max:\s*[\d.]+(rem|em|ch)/)
   })
 })
 

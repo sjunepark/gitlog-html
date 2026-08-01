@@ -15,9 +15,14 @@ const SCRIPT_RULES = [
   { name: 'dynamic import', pattern: /\bimport\s*\(/ },
   { name: 'import.meta usage', pattern: /import\.meta/ },
   { name: 'fetch call', pattern: /\bfetch\s*\(/ },
+  { name: 'beacon request', pattern: /\.sendBeacon\s*\(/ },
   { name: 'XMLHttpRequest usage', pattern: /XMLHttpRequest/ },
   { name: 'WebSocket usage', pattern: /WebSocket/ },
   { name: 'EventSource usage', pattern: /EventSource/ },
+  // A worker is a second file and a second execution context; either would
+  // break the single-file promise even without a network call.
+  { name: 'worker creation', pattern: /\bnew\s+(?:Shared)?Worker\s*\(/ },
+  { name: 'worker script import', pattern: /\bimportScripts\s*\(/ },
   { name: 'service worker registration', pattern: /serviceWorker/ },
   { name: 'external resource URL', pattern: /(src|href)\s*[:=]\s*["'`]?(https?:)?\/\// },
   { name: 'document.write', pattern: /document\.write/ }

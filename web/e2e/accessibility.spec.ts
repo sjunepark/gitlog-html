@@ -11,11 +11,6 @@ const FIXTURES: ReportName[] = [
 ]
 
 async function scan(page: Page) {
-  // Contrast has to be measured on settled pixels, so every running animation
-  // is allowed to finish before the scan starts.
-  await page.evaluate(async () => {
-    await Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => {})))
-  })
   return new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze()
@@ -25,6 +20,7 @@ test.describe('automated accessibility checks', () => {
   for (const name of FIXTURES) {
     test(`${name} has no violations`, async ({ report }) => {
       await report.open(name)
+      await report.settle()
       const results = await scan(report.page)
       expect(
         results.violations.map((violation) => `${violation.id}: ${violation.help}`)
@@ -36,6 +32,7 @@ test.describe('automated accessibility checks', () => {
     await report.open('ordinary')
     await report.rows().first().click()
     await expect(report.details()).toBeVisible()
+    await report.settle()
     const results = await scan(report.page)
     expect(results.violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([])
   })
@@ -44,6 +41,7 @@ test.describe('automated accessibility checks', () => {
     await report.open('edge-content')
     await report.rows().first().click()
     await report.page.getByRole('tab', { name: 'Commit message' }).click()
+    await report.settle()
     const results = await scan(report.page)
     expect(results.violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([])
   })
@@ -52,12 +50,14 @@ test.describe('automated accessibility checks', () => {
     await report.page.emulateMedia({ colorScheme: 'dark' })
     await report.open('ordinary')
     await report.rows().first().click()
+    await report.settle()
     const results = await scan(report.page)
     expect(results.violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([])
   })
 
   test('the startup failure state has no violations', async ({ report }) => {
     await report.page.goto(reportUrl('unsupported-schema'))
+    await report.settle()
     const results = await scan(report.page)
     expect(results.violations.map((violation) => `${violation.id}: ${violation.help}`)).toEqual([])
   })
@@ -67,6 +67,8 @@ test.describe('automated accessibility checks', () => {
     const heights = await report.rows().evaluateAll((nodes) =>
       nodes.map((node) => node.getBoundingClientRect().height)
     )
+    // Math.min() of an empty array is Infinity, which would pass silently.
+    expect(heights.length).toBeGreaterThan(0)
     expect(Math.min(...heights)).toBeGreaterThanOrEqual(44)
   })
 })

@@ -31,11 +31,11 @@ test.describe('visual evidence', () => {
 
       await report.rows().first().click()
       await report.details().waitFor()
-      await report.page.waitForTimeout(320)
+      await report.settle()
       await shot('selected-merge')
 
       await report.page.getByRole('tab', { name: 'Commit message' }).first().click()
-      await report.page.waitForTimeout(120)
+      await report.settle()
       await shot('raw-message')
 
       await report.open('dense')
@@ -44,7 +44,7 @@ test.describe('visual evidence', () => {
       await report.open('edge-content')
       await report.rows().first().click()
       await report.details().waitFor()
-      await report.page.waitForTimeout(320)
+      await report.settle()
       await shot('hostile-and-long')
 
       await report.open('detached-shallow')

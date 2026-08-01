@@ -1,8 +1,11 @@
 <script lang="ts">
+  import BidiText from './BidiText.svelte'
   import Icon from './Icon.svelte'
   import RefLabel from './RefLabel.svelte'
   import {
+    BIDI_NOTICE,
     authorDiffersFromCommitter,
+    containsBidiControls,
     formatDateTime,
     machineDateTime,
     parentBoundaryNote,
@@ -42,6 +45,17 @@
    * would quietly rewrite evidence, and it is never parsed as markup.
    */
   const explanation = $derived(commit.explanation ?? '')
+
+  /**
+   * Bidirectional controls are left in the text exactly as recorded, because
+   * the text is evidence. Saying they are there is what stops a reordered line
+   * from being read as the whole truth.
+   */
+  const bidiWarned = $derived(
+    mode === 'explanation'
+      ? containsBidiControls(commit.explanation)
+      : containsBidiControls(commit.rawMessage)
+  )
 
   const parents = $derived(
     commit.parents.map((parent) => {
@@ -112,29 +126,42 @@
     </div>
   {/if}
 
+  {#if !hasExplanation}
+    <p class="details__panel-label" id="{uid}-panel-label">Commit message</p>
+  {/if}
+
+  {#if bidiWarned}
+    <!--
+      The text below is left exactly as recorded. This notice is how the reader
+      learns that what it shows and what it stores can differ.
+    -->
+    <p class="notice notice--inline">
+      <Icon name="notice" class="notice__icon" />
+      <span>{BIDI_NOTICE}</span>
+    </p>
+  {/if}
+
   <!--
-    The tab panel is focusable on purpose: a long explanation or raw message
-    scrolls, and a keyboard reader needs to be able to reach and scroll it.
+    The tab panel is focusable unconditionally: it scrolls in both modes, and a
+    keyboard reader has to be able to reach a long raw message even when there
+    is no explanation and therefore no tab strip above it.
   -->
   <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
   <div
     class="details__panel"
     id="{uid}-panel"
     role={hasExplanation ? 'tabpanel' : undefined}
-    aria-labelledby={hasExplanation ? `${uid}-tab-${mode}` : undefined}
-    tabindex={hasExplanation ? 0 : undefined}
+    aria-labelledby={hasExplanation ? `${uid}-tab-${mode}` : `${uid}-panel-label`}
+    tabindex={0}
   >
     {#if mode === 'explanation'}
-      <div class="prose">{explanation}</div>
+      <div class="prose"><BidiText text={explanation} /></div>
     {:else}
-      {#if !hasExplanation}
-        <p class="details__panel-label">Commit message</p>
-      {/if}
       <!--
         The exact bytes Git recorded, shown as selectable text. It is never
         highlighted or dressed up as executable code.
       -->
-      <pre class="raw-message">{commit.rawMessage}</pre>
+      <pre class="raw-message"><BidiText text={commit.rawMessage} /></pre>
     {/if}
   </div>
 
@@ -214,7 +241,7 @@
                   -->
                   <div class="parents__outside">
                     <span class="parents__text">
-                      <span class="parents__summary">{parent.boundary ?? 'Not shown in this report'}</span>
+                      <span class="parents__summary">{parent.boundary}</span>
                       <span class="oid">{parent.oid}</span>
                     </span>
                   </div>

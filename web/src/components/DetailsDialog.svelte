@@ -1,6 +1,7 @@
 <script lang="ts">
   import CommitDetails from './CommitDetails.svelte'
   import Icon from './Icon.svelte'
+  import { commitTitle } from '../lib/format'
   import type { Commit } from '../lib/schema'
 
   interface Props {
@@ -17,7 +18,7 @@
   let dialog: HTMLDialogElement | undefined = $state()
   let panel: HTMLDivElement | undefined = $state()
 
-  const title = $derived(commit.subject.trim() === '' ? '(no commit message)' : commit.subject)
+  const title = $derived(commitTitle(commit))
 
   /**
    * A native modal dialog gives focus containment, Escape handling, and the

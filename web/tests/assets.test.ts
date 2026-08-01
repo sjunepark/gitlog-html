@@ -37,6 +37,33 @@ describe('committed report assets', () => {
   })
 })
 
+describe('offline asset rules', () => {
+  const css = 'a{color:red}'
+
+  it.each([
+    ['fetch', 'fetch("/x")'],
+    ['sendBeacon', 'navigator.sendBeacon("https://example.test", data)'],
+    ['XMLHttpRequest', 'new XMLHttpRequest()'],
+    ['WebSocket', 'new WebSocket("wss://example.test")'],
+    ['EventSource', 'new EventSource("/stream")'],
+    ['a dedicated worker', 'new Worker("/worker.js")'],
+    ['a shared worker', 'new SharedWorker("/worker.js")'],
+    ['importScripts', 'importScripts("/worker.js")'],
+    ['a service worker', 'navigator.serviceWorker.register("/sw.js")'],
+    ['a source map', '//# sourceMappingURL=app.js.map'],
+    ['a dynamic import', 'import("./chunk.js")'],
+    ['an external script URL', 'el.src = "https://example.test/x.js"']
+  ])('rejects %s', (_label, snippet) => {
+    // Each of these would either fetch something or load a second file, and
+    // both break the single-file promise.
+    expect(inspectAssets(snippet, css).length).toBeGreaterThan(0)
+  })
+
+  it('accepts a bundle that does none of those things', () => {
+    expect(inspectAssets('var a=1;document.getElementById("x");\n', css)).toEqual([])
+  })
+})
+
 describe('asset normalisation', () => {
   it('adds a single terminating newline and collapses trailing whitespace', () => {
     expect(normalizeAsset('a;')).toBe('a;\n')

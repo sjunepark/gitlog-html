@@ -65,6 +65,11 @@ test.describe('report states', () => {
   test('an unsupported schema explains itself instead of rendering', async ({ report }) => {
     const { page } = report
     await page.goto(reportUrl('unsupported-schema'))
+    // The failure path runs under the same policy a real report enforces.
+    await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+      'content',
+      /default-src 'none'/
+    )
     await expect(page.getByRole('alert')).toContainText('This report could not be opened')
     await expect(page.getByRole('alert')).toContainText(
       'report format this viewer does not understand'
@@ -76,6 +81,10 @@ test.describe('report states', () => {
   test('missing report data fails readably rather than blankly', async ({ report }) => {
     const { page } = report
     await page.goto(reportUrl('missing-data'))
+    await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+      'content',
+      /default-src 'none'/
+    )
     await expect(page.getByRole('alert')).toContainText('This report could not be opened')
     await expect(page.locator('#gitlog-html-app')).not.toBeEmpty()
   })
@@ -119,11 +128,7 @@ test.describe('report states', () => {
     await expect(page.getByRole('dialog')).toBeVisible()
     // The sheet slides up; measuring mid-animation would aim the click at a
     // point the sheet is about to occupy.
-    await page.evaluate(async () => {
-      await Promise.all(
-        document.getAnimations().map((animation) => animation.finished.catch(() => {}))
-      )
-    })
+    await report.settle()
 
     // The backdrop is the area above the sheet; a click there targets the
     // dialog element itself rather than any of its content.
@@ -133,6 +138,104 @@ test.describe('report states', () => {
     await expect(page.getByRole('dialog')).toHaveCount(0)
     expect(new URL(page.url()).hash).toBe('')
     await expect(row).toBeFocused()
+  })
+
+  test('names bidirectional formatting instead of quietly reordering text', async ({ report }) => {
+    await report.open('edge-content')
+    await report.rows().first().click()
+    await expect(report.details()).toBeVisible()
+    await expect(report.page.locator('.notice--inline')).toContainText(
+      'bidirectional formatting characters'
+    )
+    // The text itself is untouched: the control characters are still in it.
+    const stored = await report.page.locator('.prose').evaluate((node) => node.textContent ?? '')
+    expect(stored).toContain(String.fromCharCode(0x202e))
+    await report.expectNoPageOverflow()
+  })
+
+  for (const [mode, selector] of [
+    ['explanation', '.prose'],
+    ['commit message', '.raw-message']
+  ] as const) {
+    test(`renders bidi controls inertly in the ${mode}`, async ({ report }) => {
+      await report.open('edge-content')
+      await report.rows().first().click()
+      if (mode === 'commit message') {
+        await report.page.getByRole('tab', { name: 'Commit message' }).click()
+      }
+      const field = report.page.locator(selector)
+      await expect(field).toBeVisible()
+
+      const marks = field.locator('.bidi-mark')
+      await expect(marks.first()).toBeVisible()
+
+      const measured = await field.evaluate((root) => {
+        // The badge is a pseudo-element, so it can be seen but never lands in
+        // textContent.
+        const marker = root.querySelector('.bidi-mark')
+        const badge = marker === null ? null : getComputedStyle(marker, '::before')
+
+        // "A<RLO>BC<PDF> Z" is in both fields. With the override neutralised,
+        // B must still paint to the left of C.
+        let order: { b: number; c: number } | null = null
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+        for (let node = walker.nextNode(); node !== null; node = walker.nextNode()) {
+          if (node.textContent !== 'BC') continue
+          const range = document.createRange()
+          range.setStart(node, 0)
+          range.setEnd(node, 1)
+          const b = range.getBoundingClientRect().left
+          range.setStart(node, 1)
+          range.setEnd(node, 2)
+          order = { b, c: range.getBoundingClientRect().left }
+          break
+        }
+
+        return {
+          text: root.textContent ?? '',
+          markerCount: root.querySelectorAll('.bidi-mark').length,
+          markerText: marker?.textContent ?? '',
+          badgeContent: badge?.content ?? '',
+          markerIsolation: marker === null ? '' : getComputedStyle(marker).unicodeBidi,
+          role: marker?.getAttribute('role') ?? '',
+          label: marker?.getAttribute('aria-label') ?? '',
+          order
+        }
+      })
+
+      // Asserted first because it is the requirement itself, not the mechanism:
+      // logical order survives, so the override cannot reorder what follows it.
+      expect(measured.order).not.toBeNull()
+      expect(measured.order!.b).toBeLessThan(measured.order!.c)
+
+      // A visible, understandable badge, drawn from CSS.
+      expect(measured.badgeContent).toMatch(/RLO|PDF|LRO|LRM|RLM/)
+      expect(measured.markerIsolation).toBe('isolate')
+      expect(measured.role).toBe('img')
+      expect(measured.label).toMatch(/^Bidirectional control: /)
+
+      // The control itself is still the only thing inside the marker, and the
+      // field still holds every original code point.
+      expect(measured.markerText).toHaveLength(1)
+      expect(measured.markerCount).toBeGreaterThan(1)
+      expect(measured.text).toContain(String.fromCharCode(0x202e))
+      expect(measured.text).toContain(String.fromCharCode(0x202c))
+
+      await report.expectNoPageOverflow()
+    })
+  }
+
+  test('keeps the rendered text byte-identical to the report data', async ({ report }) => {
+    await report.open('edge-content')
+    await report.rows().first().click()
+    // What the reader can select and copy is what Go embedded, unchanged.
+    const matches = await report.page.evaluate(() => {
+      const data = document.getElementById('gitlog-html-data')?.textContent ?? '{}'
+      const parsed = JSON.parse(data) as { commits: { explanation?: string }[] }
+      const shown = document.querySelector('.prose')?.textContent ?? ''
+      return shown === parsed.commits[0]?.explanation
+    })
+    expect(matches).toBe(true)
   })
 
   test('honours a dark colour scheme', async ({ report }) => {
@@ -164,7 +267,7 @@ test.describe('report states', () => {
     await page.evaluate(() => {
       document.documentElement.style.fontSize = '24px'
     })
-    await page.waitForTimeout(150)
+    await report.nextFrame()
     await report.expectNoPageOverflow()
     await report.rows().first().click()
     await expect(report.details()).toBeVisible()
@@ -177,7 +280,7 @@ test.describe('report states', () => {
     await page.evaluate(() => {
       document.documentElement.style.zoom = '2'
     })
-    await page.waitForTimeout(150)
+    await report.nextFrame()
     await report.expectNoPageOverflow()
   })
 })

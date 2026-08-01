@@ -12,6 +12,9 @@ const css = readFileSync(join(webRoot, 'src', 'styles', 'app.css'), 'utf8')
 
 function block(selector: string): Record<string, string> {
   const index = css.indexOf(selector)
+  // Without this, a renamed selector would silently return the first block in
+  // the file and the dark scheme would be measured against light tokens.
+  if (index < 0) throw new Error(`stylesheet has no ${selector} block`)
   const open = css.indexOf('{', index)
   const close = css.indexOf('}', open)
   const tokens: Record<string, string> = {}
@@ -51,8 +54,20 @@ const schemes: [string, Record<string, string>][] = [
 
 describe('colour scheme contrast', () => {
   it.each(schemes)('%s: every token is defined', (_name, tokens) => {
-    for (const token of ['--paper', '--surface', '--ink', '--muted', '--faint', '--chip-border']) {
-      expect(tokens[token]).toMatch(/^#[0-9a-f]{6}$/i)
+    const lanes = Array.from({ length: 6 }, (_, lane) => `--lane-${lane}`)
+    for (const token of [
+      '--paper',
+      '--surface',
+      '--selected',
+      '--sunken',
+      '--ink',
+      '--muted',
+      '--faint',
+      '--chip-border',
+      '--focus',
+      ...lanes
+    ]) {
+      expect(tokens[token], `${token} is missing`).toMatch(/^#[0-9a-f]{6}$/i)
     }
   })
 

@@ -59,13 +59,41 @@ export class ReportPage {
   ) {}
 
   async open(name: ReportName): Promise<void> {
-    await this.page.goto(reportUrl(name))
-    await this.page.waitForFunction(() => document.querySelector('#gitlog-html-app')?.children.length)
+    await this.load(reportUrl(name))
   }
 
   async openAt(name: ReportName, fragment: string): Promise<void> {
-    await this.page.goto(`${reportUrl(name)}#${fragment}`)
-    await this.page.waitForFunction(() => document.querySelector('#gitlog-html-app')?.children.length)
+    await this.load(`${reportUrl(name)}#${fragment}`)
+  }
+
+  /** One definition of "the report has started". */
+  private async load(url: string): Promise<void> {
+    await this.page.goto(url)
+    await this.page.waitForFunction(
+      () => document.querySelector('#gitlog-html-app')?.children.length
+    )
+  }
+
+  /**
+   * Waits for every running animation to finish.
+   *
+   * Measuring or scanning mid-transition reports the animation rather than the
+   * design: a sheet caught sliding up returns a position it is about to leave,
+   * and a contrast scan reads a colour that never settles there.
+   */
+  async settle(): Promise<void> {
+    await this.page.evaluate(async () => {
+      await Promise.all(
+        document.getAnimations().map((animation) => animation.finished.catch(() => {}))
+      )
+    })
+  }
+
+  /** Waits for a painted frame, for changes that reflow rather than animate. */
+  async nextFrame(): Promise<void> {
+    await this.page.evaluate(
+      () => new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())))
+    )
   }
 
   rows() {

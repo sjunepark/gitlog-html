@@ -8,7 +8,7 @@
  */
 
 import { mount } from 'svelte'
-import App from './components/App.svelte'
+import AppBoundary from './components/AppBoundary.svelte'
 import ReportFailure from './components/ReportFailure.svelte'
 import { ReportStartupError, parseReportJson, type Report, type StartupFailureReason } from './lib/schema'
 import './styles/app.css'
@@ -62,32 +62,47 @@ function renderPlainFailure(target: HTMLElement, detail: string): void {
   target.append(wrapper)
 }
 
+/** One ladder for every failure path, so the fallback cannot drift. */
+function showFailure(
+  target: HTMLElement,
+  failure: { reason: StartupFailureReason; detail: string }
+): void {
+  try {
+    target.textContent = ''
+    mount(ReportFailure, { target, props: failure })
+  } catch {
+    renderPlainFailure(target, failure.detail)
+  }
+}
+
 export function renderReport(target: HTMLElement, doc: Document = document): void {
   let report: Report
   try {
     report = readEmbeddedReport(doc)
   } catch (error) {
-    const failure = describe(error)
-    try {
-      target.textContent = ''
-      mount(ReportFailure, { target, props: failure })
-    } catch {
-      renderPlainFailure(target, failure.detail)
-    }
+    showFailure(target, describe(error))
     return
   }
 
+  // AppBoundary carries the two <svelte:boundary> tiers that catch a failure
+  // raised while the tree renders or while an effect runs. This catch covers
+  // only the synchronous part of mounting; `onfatal` covers the case where the
+  // failure view itself could not render, which no boundary above it can.
   try {
     target.textContent = ''
-    mount(App, { target, props: { report } })
+    mount(AppBoundary, {
+      target,
+      props: {
+        report,
+        onfatal: (error: unknown) => {
+          // Deferred by a microtask so Svelte finishes tearing its own tree
+          // down before the plain DOM replaces it.
+          queueMicrotask(() => renderPlainFailure(target, describe(error).detail))
+        }
+      }
+    })
   } catch (error) {
-    const failure = describe(error)
-    try {
-      target.textContent = ''
-      mount(ReportFailure, { target, props: failure })
-    } catch {
-      renderPlainFailure(target, failure.detail)
-    }
+    showFailure(target, describe(error))
   }
 }
 

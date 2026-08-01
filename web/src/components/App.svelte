@@ -4,7 +4,8 @@
   import EmptyHistory from './EmptyHistory.svelte'
   import HistoryView from './HistoryView.svelte'
   import ReportHeader from './ReportHeader.svelte'
-  import { summaryText } from '../lib/format'
+  import { tick } from 'svelte'
+  import { commitTitle, summaryText } from '../lib/format'
   import { MediaQuery, SPLIT_LAYOUT_QUERY } from '../lib/media.svelte'
   import { CommitSelection } from '../lib/selection.svelte'
   import type { Report } from '../lib/schema'
@@ -41,23 +42,23 @@
    * Following a parent keeps focus somewhere meaningful: inside the modal on
    * a phone, and on the newly selected commit on a wide screen.
    */
-  function onSelectParent(oid: string): void {
+  // `tick()` states the dependency outright: focus can only move once the
+  // selection change has been applied to the DOM.
+  async function onSelectParent(oid: string): Promise<void> {
     const modal = showDialog
     selection.select(oid)
-    queueMicrotask(() => {
-      const button = rowButton(oid)
-      if (button !== null) invoker = button
-      if (modal) dialog?.focusPanel()
-      else button?.focus()
-    })
+    await tick()
+    const button = rowButton(oid)
+    if (button !== null) invoker = button
+    if (modal) dialog?.focusPanel()
+    else button?.focus()
   }
 
-  function onCloseDetails(): void {
+  async function onCloseDetails(): Promise<void> {
     const target = invoker
     selection.clear()
-    queueMicrotask(() => {
-      if (target !== null && target.isConnected) target.focus()
-    })
+    await tick()
+    if (target !== null && target.isConnected) target.focus()
   }
 </script>
 
@@ -80,9 +81,7 @@
         <aside class="details-pane" aria-label="Commit details">
           {#if selected !== null}
             {#key selected.oid}
-              <p class="details-pane__subject">
-                {selected.subject.trim() === '' ? '(no commit message)' : selected.subject}
-              </p>
+              <p class="details-pane__subject">{commitTitle(selected)}</p>
               <CommitDetails
                 commit={selected}
                 commits={report.commits}

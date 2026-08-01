@@ -1,7 +1,13 @@
 <script lang="ts">
   import CommitGraph from './CommitGraph.svelte'
   import CommitRow from './CommitRow.svelte'
-  import { gutterWidth, metricsFor, type RowBox } from '../lib/geometry'
+  import {
+    COMPACT_GUTTER,
+    SPLIT_GUTTER,
+    gutterWidth,
+    metricsFor,
+    type RowBox
+  } from '../lib/geometry'
   import type { Commit, ReportGraph } from '../lib/schema'
 
   interface Props {
@@ -19,7 +25,7 @@
 
   const metrics = $derived(metricsFor(graph.laneCount, compact))
   const naturalWidth = $derived(gutterWidth(graph.laneCount, metrics))
-  const pannable = $derived(naturalWidth > (compact ? 104 : 240))
+  const pannable = $derived(naturalWidth > (compact ? COMPACT_GUTTER : SPLIT_GUTTER))
 
   /**
    * Row geometry is measured rather than assumed. Explanations wrap, refs
@@ -44,6 +50,21 @@
       }
       next.push({ top, height: rect.height, nodeY })
     }
+    // A ResizeObserver callback that always writes state would re-render the
+    // graph on every notification, and a graph re-render that changed the
+    // observed layout would loop.
+    const unchanged =
+      boxes.length === next.length &&
+      boxes.every((box, index) => {
+        const candidate = next[index]
+        return (
+          candidate !== undefined &&
+          box.top === candidate.top &&
+          box.height === candidate.height &&
+          box.nodeY === candidate.nodeY
+        )
+      })
+    if (unchanged) return
     boxes = next
   }
 

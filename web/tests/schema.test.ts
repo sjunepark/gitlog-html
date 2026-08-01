@@ -30,13 +30,14 @@ describe('report contract', () => {
     expect(report.commits[0]?.parents[1]?.visibility).toBe('maximum-count-boundary')
   })
 
-  it('accepts every web fixture', () => {
-    for (const name of ['ordinary', 'dense', 'edge-content', 'empty-unborn', 'detached-shallow']) {
+  it.each(['ordinary', 'dense', 'edge-content', 'empty-unborn', 'detached-shallow'])(
+    'accepts the %s fixture',
+    (name) => {
       const report = fixture(name)
       expect(report.selection.includedCount).toBe(report.commits.length)
       expect(report.graph.rows).toHaveLength(report.commits.length)
     }
-  })
+  )
 
   it('rejects an unsupported schema version with a distinct reason', () => {
     const future = { ...(goldenFixture() as object), schemaVersion: 99 }
@@ -94,5 +95,66 @@ describe('report contract', () => {
     const golden = goldenFixture() as { selection: object }
     const broken = { ...golden, selection: { ...golden.selection, includedCount: 7 } }
     expect(reason(() => parseReport(broken))).toBe('invalid-report')
+  })
+})
+
+describe('numeric and object-ID hardening', () => {
+  type Mutable = Record<string, unknown>
+
+  function mutate(change: (report: Mutable) => void): unknown {
+    const report = JSON.parse(JSON.stringify(goldenFixture())) as Mutable
+    change(report)
+    return report
+  }
+
+  const rowsOf = (report: Mutable) => (report.graph as Mutable).rows as Mutable[]
+
+  it.each([
+    ['selection.maximumCount', (r: Mutable) => ((r.selection as Mutable).maximumCount = -1)],
+    ['selection.includedCount', (r: Mutable) => ((r.selection as Mutable).includedCount = -2)],
+    ['graph.laneCount', (r: Mutable) => ((r.graph as Mutable).laneCount = -1)],
+    ['graph.rows[0].nodeLane', (r: Mutable) => (rowsOf(r)[0]!.nodeLane = -3)],
+    [
+      'transition.parentIndex',
+      (r: Mutable) => ((rowsOf(r)[0]!.transitions as Mutable[])[0]!.parentIndex = -1)
+    ]
+  ])('rejects a negative %s', (_label, change) => {
+    expect(reason(() => parseReport(mutate(change)))).toBe('invalid-report')
+  })
+
+  it.each([
+    ['nodeLane', (r: Mutable) => (rowsOf(r)[0]!.nodeLane = 9)],
+    [
+      'an outgoing lane state',
+      (r: Mutable) => ((rowsOf(r)[0]!.outgoing as Mutable[])[0]!.lane = 7)
+    ],
+    [
+      'a transition toLane',
+      (r: Mutable) => ((rowsOf(r)[0]!.transitions as Mutable[])[0]!.toLane = 12)
+    ]
+  ])('rejects %s outside laneCount', (_label, change) => {
+    // Lane numbers become x coordinates, so one past the end would be drawn
+    // where the graph has no lane at all.
+    expect(reason(() => parseReport(mutate(change)))).toBe('invalid-report')
+  })
+
+  it.each([
+    ['repository.head.oid', (r: Mutable) => (((r.repository as Mutable).head as Mutable).oid = '')],
+    [
+      'an expectedOid',
+      (r: Mutable) => ((rowsOf(r)[0]!.outgoing as Mutable[])[0]!.expectedOid = '')
+    ],
+    [
+      'a transition parentOid',
+      (r: Mutable) => ((rowsOf(r)[0]!.transitions as Mutable[])[0]!.parentOid = '')
+    ]
+  ])('rejects an empty %s rather than treating it as present', (_label, change) => {
+    expect(reason(() => parseReport(mutate(change)))).toBe('invalid-report')
+  })
+
+  it('still accepts the empty graph of a report with no commits', () => {
+    const empty = fixture('empty-unborn')
+    expect(empty.graph.laneCount).toBe(0)
+    expect(empty.graph.rows).toEqual([])
   })
 })

@@ -49,6 +49,15 @@
    * target that only meets the floor in theory does not meet it in the hand.
    */
   --touch-target: 2.875rem;
+
+  /*
+   * Widest the graph gutter may grow before it pans. Pinned in pixels, and
+   * pinned to COMPACT_GUTTER / SPLIT_GUTTER in lib/geometry.ts, because the
+   * gutter holds a drawing whose lane pitch is measured in pixels. Growing it
+   * with the reader's text size would take width from the commit text without
+   * showing one more lane. tests/stylesheet.test.ts keeps the two in step.
+   */
+  --graph-gutter-max: 104px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -137,6 +146,26 @@ body {
   letter-spacing: 0.01em;
   color: var(--faint);
   overflow-wrap: anywhere;
+}
+
+/*
+ * Repository text is untrusted, and it can carry bidirectional controls. The
+ * text itself is never rewritten, so each field is isolated instead: a
+ * reordering inside one string cannot reach the labels, IDs, or controls around
+ * it. CommitDetails additionally says out loud when such controls are present.
+ */
+.report-header__name,
+.report-header__head,
+.commit-row__summary,
+.details-pane__subject,
+.sheet__title,
+.prose,
+.raw-message,
+.parents__summary,
+.meta__person,
+.empty__branch,
+.ref__name {
+  unicode-bidi: isolate;
 }
 
 /* ---------------------------------------------------------------- shell -- */
@@ -241,6 +270,43 @@ body {
   translate: 0 0.22em;
 }
 
+/* The same notice, used inside the details region rather than the header. */
+.notice--inline {
+  margin: 0 0 0.9rem;
+  font-size: 0.8125rem;
+}
+
+/*
+ * A bidi formatting control, shown as itself.
+ *
+ * The span holds the original character and nothing else. `isolate` closes the
+ * control inside that span, so an override has no following text to reorder and
+ * cannot reach across the boundary either way. The badge is a pseudo-element,
+ * so the character stays the only thing in `textContent` — the evidence is
+ * intact, and the reader can still see that it is there.
+ */
+.bidi-mark {
+  unicode-bidi: isolate;
+}
+
+.bidi-mark::before {
+  content: attr(data-mark);
+  display: inline-block;
+  padding: 0 0.3em;
+  margin-inline: 0.15em;
+  border: 1px solid var(--notice);
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  font-weight: 650;
+  line-height: 1.6;
+  letter-spacing: 0.02em;
+  color: var(--notice);
+  white-space: nowrap;
+  vertical-align: baseline;
+  unicode-bidi: isolate;
+}
+
 /* -------------------------------------------------------------- layout --- */
 
 .report__body--split {
@@ -261,7 +327,7 @@ body {
 .history__graph {
   overflow-x: auto;
   overflow-y: hidden;
-  max-width: 6.5rem;
+  max-width: var(--graph-gutter-max);
   scrollbar-width: thin;
   overscroll-behavior-x: contain;
 }
@@ -442,8 +508,8 @@ body {
 }
 
 @media (min-width: 62rem) {
-  .history__graph {
-    max-width: 15rem;
+  :root {
+    --graph-gutter-max: 240px;
   }
 
   .commit-row {

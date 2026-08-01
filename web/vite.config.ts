@@ -17,9 +17,8 @@ export default defineConfig({
     sourcemap: false,
     minify: true,
     reportCompressedSize: false,
-    // Any emitted asset would become a second file the Go embed layer cannot
-    // inline, so nothing may be treated as an external asset.
-    assetsInlineLimit: 0,
+    // `lib` below is what guarantees no second file: library mode inlines every
+    // processed asset and ignores assetsInlineLimit entirely.
     modulePreload: false,
     lib: {
       entry: 'src/main.ts',

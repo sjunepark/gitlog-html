@@ -105,20 +105,20 @@ Use the implemented equivalents of:
 Verify generated asset determinism and inspect desktop/mobile screenshots. Run
 the required code-review workflow after Claude and integration checks pass.
 
-Current evidence: a clean npm install reports no known vulnerabilities;
-Svelte and TypeScript checks pass without diagnostics; all component tests and
-the Chromium desktop/mobile file-URL suite pass; axe reports no violations in
-the representative states; generated assets are byte-reproducible and current;
-and visual review covers principal light, dark, focus, failure, dense-lane,
-long-content, and mobile-dialog states. The full Go suite, race detector, vet,
-workflow syntax check, and diff checks pass. Required review findings for
-combined history limitations, mobile safe areas, schema optionality, and clean
-build output were resolved, and the follow-up review found no remaining
-material issue. PR review follow-up also preserves selection across the mobile
-and desktop breakpoint, renders every explanation byte as inert text, keeps
-edge-boundary meaning when a parent object appears elsewhere, and holds all
-interactive targets above the touch floor. Focused review found no remaining
-material issue after these corrections.
+Current evidence: a clean npm install and audit report no known
+vulnerabilities; Svelte and TypeScript checks pass without diagnostics; 190
+component tests and 103 Chromium desktop/mobile file-URL tests pass; axe
+reports no violations in the representative states; generated assets are
+byte-reproducible and current; and visual review covers principal light, dark,
+focus, failure, dense-lane, hostile-content, long-content, and mobile-dialog
+states. The full Go suite, race detector, vet, workflow syntax check, and diff
+checks pass. Required implementation and PR review findings were resolved,
+including breakpoint-stable selection, lossless untrusted text, visible and
+inert bidirectional controls, two-level startup failure rendering, strict
+schema guards, no-network enforcement, edge-boundary meaning when a parent
+object appears elsewhere, and stable touch targets. The final independent
+whole-diff review found no remaining material correctness, security,
+accessibility, asset-synchronization, or complexity issue.
 
 ## Out of scope
 

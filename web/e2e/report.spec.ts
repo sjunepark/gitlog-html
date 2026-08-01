@@ -87,7 +87,10 @@ test.describe('standalone report opened from a file URL', () => {
     // Following a parent works the same on both layouts: on a phone the modal
     // covers the rows behind it, so a second row click is not a real gesture.
     await report.rows().first().click()
-    await page.getByRole('button', { name: /Fixed a rounding problem/ }).last().click()
+    await page
+      .locator('.details')
+      .getByRole('button', { name: /Fixed a rounding problem/ })
+      .click()
     await expect(report.rows().nth(1)).toHaveAttribute('aria-current', 'true')
     expect(page.url()).toContain(`#${secondOid}`)
 

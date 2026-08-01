@@ -15,6 +15,15 @@ function renderCompact(name = 'ordinary') {
   return render(App, { props: { report: fixture(name) } })
 }
 
+/**
+ * Commit rows, addressed as the timeline shows them. Indexing every button in
+ * the document would couple these tests to unrelated controls in the header or
+ * the dialog.
+ */
+function rows(container: HTMLElement): HTMLButtonElement[] {
+  return [...container.querySelectorAll<HTMLButtonElement>('.commit-row')]
+}
+
 describe('report application', () => {
   it('has exactly one page heading and a labelled history region', () => {
     const { container } = renderSplit()
@@ -48,7 +57,7 @@ describe('report application', () => {
   it('fills the sticky pane and announces the change once', async () => {
     const report = fixture('ordinary')
     const { container } = renderSplit()
-    await userEvent.click(screen.getAllByRole('button')[0]!)
+    await userEvent.click(rows(container)[0]!)
     await waitFor(() => expect(container.querySelector('.details')).not.toBeNull())
     expect(container.querySelector('.details-pane__subject')?.textContent?.trim()).toBe(
       report.commits[0]!.subject
@@ -80,7 +89,7 @@ describe('report application', () => {
     const report = fixture('ordinary')
     const { container } = renderCompact()
     expect(container.querySelector('.details-pane')).toBeNull()
-    await userEvent.click(screen.getAllByRole('button')[0]!)
+    await userEvent.click(rows(container)[0]!)
     const dialog = await screen.findByRole('dialog')
     expect(dialog).toHaveAttribute('open')
     expect(
@@ -90,8 +99,8 @@ describe('report application', () => {
   })
 
   it('closes the dialog, clears the fragment, and returns focus to the commit', async () => {
-    renderCompact()
-    const row = screen.getAllByRole('button')[0]!
+    const { container } = renderCompact()
+    const row = rows(container)[0]!
     await userEvent.click(row)
     await userEvent.click(await screen.findByRole('button', { name: /Close/ }))
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
@@ -104,7 +113,7 @@ describe('report application', () => {
     const target = report.commits[2]!
     const { container } = renderCompact()
 
-    await userEvent.click(screen.getAllByRole('button')[2]!)
+    await userEvent.click(rows(container)[2]!)
     await screen.findByRole('dialog')
     expect(window.location.hash).toBe(`#${target.oid}`)
 
@@ -126,8 +135,8 @@ describe('report application', () => {
   })
 
   it('still clears the selection when the reader dismisses the dialog with Escape', async () => {
-    renderCompact()
-    const row = screen.getAllByRole('button')[1]!
+    const { container } = renderCompact()
+    const row = rows(container)[1]!
     await userEvent.click(row)
     const dialog = await screen.findByRole('dialog')
 
@@ -142,9 +151,9 @@ describe('report application', () => {
     const report = fixture('ordinary')
     const target = report.commits[1]!
     matchingMedia.add(SPLIT_LAYOUT_QUERY)
-    render(App, { props: { report } })
+    const { container } = render(App, { props: { report } })
 
-    await userEvent.click(screen.getAllByRole('button')[1]!)
+    await userEvent.click(rows(container)[1]!)
     setMediaMatch(SPLIT_LAYOUT_QUERY, false)
 
     const dialog = await screen.findByRole('dialog')

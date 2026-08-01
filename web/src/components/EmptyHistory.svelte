@@ -8,9 +8,14 @@
 
 <section class="empty" aria-label="Commit history">
   {#if head.kind === 'unborn'}
-    <p class="empty__lead">
-      Branch <span class="empty__branch">{head.branch ?? ''}</span> has no commits yet.
-    </p>
+    <!-- A missing branch name states the fact rather than leaving a gap. -->
+    {#if head.branch === undefined || head.branch === ''}
+      <p class="empty__lead">This branch has no commits yet.</p>
+    {:else}
+      <p class="empty__lead">
+        Branch <span class="empty__branch">{head.branch}</span> has no commits yet.
+      </p>
+    {/if}
     <p class="empty__note">
       The repository exists, but nothing has been recorded on this branch. A report will show
       history as soon as the first commit is made.

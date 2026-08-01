@@ -37,9 +37,19 @@ export const COMPACT_METRICS: GraphMetrics = {
   boundaryReach: 20
 }
 
-/** Gutter width each breakpoint can spend before the graph has to pan. */
-const DESKTOP_BUDGET = 240
-const COMPACT_BUDGET = 104
+/**
+ * Gutter width each breakpoint can spend before the graph has to pan.
+ *
+ * These are the single source of truth for the gutter: `app.css` pins
+ * `--graph-gutter-max` to the same pixel values, and a stylesheet test keeps
+ * the two in step. They are pixels, not `rem`, because the gutter holds a
+ * drawing whose lane pitch is measured in pixels — growing it with the reader's
+ * text size would take width from the commit text without adding any lanes.
+ */
+export const SPLIT_GUTTER = 240
+export const COMPACT_GUTTER = 104
+const DESKTOP_BUDGET = SPLIT_GUTTER
+const COMPACT_BUDGET = COMPACT_GUTTER
 const DESKTOP_MIN_PITCH = 12
 const COMPACT_MIN_PITCH = 11
 
@@ -222,7 +232,10 @@ export function buildGraphGeometry(
         // A boundary edge leaves the node and stops inside the row: drawing it
         // to the bottom would imply a parent row that does not exist.
         const reach = Math.min(metrics.boundaryReach, Math.max(12, (bottom - nodeY) * 0.7))
-        const endY = nodeY + reach
+        // The floor of 12 keeps a short stub readable, but a very short row
+        // must still contain it: crossing into the next row would draw a
+        // relationship that does not exist.
+        const endY = Math.min(nodeY + reach, bottom - 2)
         const edge: GraphEdge = {
           key,
           d: segment(nodeXValue, nodeY, toX, endY),

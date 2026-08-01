@@ -168,14 +168,36 @@ function optionalString(value: unknown, path: string): string | undefined {
   return requireString(value, path)
 }
 
+/**
+ * An object ID that is present but empty is worse than an absent one: it reads
+ * as a real reference that nothing can ever match.
+ */
+function optionalNonEmptyString(value: unknown, path: string): string | undefined {
+  if (value === undefined || value === null) return undefined
+  return requireNonEmptyString(value, path)
+}
+
 function requireInteger(value: unknown, path: string): number {
   if (typeof value !== 'number' || !Number.isInteger(value)) fail(`${path} must be an integer`)
   return value
 }
 
-function optionalInteger(value: unknown, path: string): number | undefined {
+/**
+ * Integers appear in three roles here: the schema version, the counts and lane
+ * indices, and a parent index. Only the version may be any integer; every
+ * other role counts or addresses something and cannot be negative. The geometry
+ * layer turns lane numbers straight into coordinates, so a negative value would
+ * draw somewhere no row exists.
+ */
+function requireIndex(value: unknown, path: string): number {
+  const number = requireInteger(value, path)
+  if (number < 0) fail(`${path} must not be negative`)
+  return number
+}
+
+function optionalIndex(value: unknown, path: string): number | undefined {
   if (value === undefined || value === null) return undefined
-  return requireInteger(value, path)
+  return requireIndex(value, path)
 }
 
 function requireBoolean(value: unknown, path: string): boolean {
@@ -264,8 +286,8 @@ function parseCommit(value: unknown, path: string): Commit {
 
 function parseLaneState(value: unknown, path: string): LaneState {
   const record = requireRecord(value, path)
-  const state: LaneState = { lane: requireInteger(record.lane, `${path}.lane`) }
-  const expected = optionalString(record.expectedOid, `${path}.expectedOid`)
+  const state: LaneState = { lane: requireIndex(record.lane, `${path}.lane`) }
+  const expected = optionalNonEmptyString(record.expectedOid, `${path}.expectedOid`)
   if (expected !== undefined) state.expectedOid = expected
   return state
 }
@@ -273,12 +295,12 @@ function parseLaneState(value: unknown, path: string): LaneState {
 function parseTransition(value: unknown, path: string): Transition {
   const record = requireRecord(value, path)
   const transition: Transition = {
-    fromLane: requireInteger(record.fromLane, `${path}.fromLane`),
-    toLane: requireInteger(record.toLane, `${path}.toLane`),
+    fromLane: requireIndex(record.fromLane, `${path}.fromLane`),
+    toLane: requireIndex(record.toLane, `${path}.toLane`),
     kind: requireEnum(record.kind, `${path}.kind`, RELATIONSHIP_KINDS)
   }
-  const parentOid = optionalString(record.parentOid, `${path}.parentOid`)
-  const parentIndex = optionalInteger(record.parentIndex, `${path}.parentIndex`)
+  const parentOid = optionalNonEmptyString(record.parentOid, `${path}.parentOid`)
+  const parentIndex = optionalIndex(record.parentIndex, `${path}.parentIndex`)
   const boundary = optionalEnum(record.boundary, `${path}.boundary`, PARENT_VISIBILITIES)
   if (parentOid !== undefined) transition.parentOid = parentOid
   if (parentIndex !== undefined) transition.parentIndex = parentIndex
@@ -290,7 +312,7 @@ function parseGraphRow(value: unknown, path: string): GraphRow {
   const record = requireRecord(value, path)
   return {
     commitOid: requireNonEmptyString(record.commitOid, `${path}.commitOid`),
-    nodeLane: requireInteger(record.nodeLane, `${path}.nodeLane`),
+    nodeLane: requireIndex(record.nodeLane, `${path}.nodeLane`),
     incoming: requireArray(record.incoming, `${path}.incoming`).map((state, index) =>
       parseLaneState(state, `${path}.incoming[${index}]`)
     ),
@@ -328,7 +350,7 @@ export function parseReport(value: unknown): Report {
 
   const headState: HeadState = { kind: requireEnum(head.kind, 'report.repository.head.kind', HEAD_KINDS) }
   const branch = optionalString(head.branch, 'report.repository.head.branch')
-  const headOid = optionalString(head.oid, 'report.repository.head.oid')
+  const headOid = optionalNonEmptyString(head.oid, 'report.repository.head.oid')
   if (branch !== undefined) headState.branch = branch
   if (headOid !== undefined) headState.oid = headOid
 
@@ -346,15 +368,15 @@ export function parseReport(value: unknown): Report {
     },
     selection: {
       scope: requireEnum(selection.scope, 'report.selection.scope', SCOPES),
-      maximumCount: requireInteger(selection.maximumCount, 'report.selection.maximumCount'),
-      includedCount: requireInteger(selection.includedCount, 'report.selection.includedCount'),
+      maximumCount: requireIndex(selection.maximumCount, 'report.selection.maximumCount'),
+      includedCount: requireIndex(selection.includedCount, 'report.selection.includedCount'),
       truncated: requireBoolean(selection.truncated, 'report.selection.truncated')
     },
     commits: requireArray(record.commits, 'report.commits').map((commit, index) =>
       parseCommit(commit, `report.commits[${index}]`)
     ),
     graph: {
-      laneCount: requireInteger(graph.laneCount, 'report.graph.laneCount'),
+      laneCount: requireIndex(graph.laneCount, 'report.graph.laneCount'),
       rows: requireArray(graph.rows, 'report.graph.rows').map((row, index) =>
         parseGraphRow(row, `report.graph.rows[${index}]`)
       )
@@ -387,6 +409,24 @@ export function parseReport(value: unknown): Report {
       `selection reports ${report.selection.includedCount} commits but ${report.commits.length} are present`
     )
   }
+
+  // Every lane number becomes an x coordinate, and laneCount sizes the drawing
+  // surface. A lane outside that range would be painted where no lane exists,
+  // so it is rejected here rather than drawn.
+  const { laneCount } = report.graph
+  const lane = (value: number, where: string) => {
+    if (value >= laneCount) fail(`${where} uses lane ${value} but the graph has ${laneCount}`)
+  }
+  report.graph.rows.forEach((row, index) => {
+    const at = `report.graph.rows[${index}]`
+    lane(row.nodeLane, `${at}.nodeLane`)
+    row.incoming.forEach((state, position) => lane(state.lane, `${at}.incoming[${position}]`))
+    row.outgoing.forEach((state, position) => lane(state.lane, `${at}.outgoing[${position}]`))
+    row.transitions.forEach((transition, position) => {
+      lane(transition.fromLane, `${at}.transitions[${position}].fromLane`)
+      lane(transition.toLane, `${at}.transitions[${position}].toLane`)
+    })
+  })
 
   return report
 }

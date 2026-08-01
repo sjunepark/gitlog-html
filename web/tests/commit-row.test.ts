@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import CommitRow from '../src/components/CommitRow.svelte'
+import { machineDateTime } from '../src/lib/format'
 import { fixture } from './helpers'
 
 const hostile = fixture('edge-content')
@@ -76,6 +77,9 @@ describe('commit row', () => {
     const { container } = render(CommitRow, {
       props: { commit, position: 1, total: 10, selected: false, onselect: vi.fn() }
     })
-    expect(container.querySelector('time')).toHaveAttribute('datetime', commit.committer.when)
+    expect(container.querySelector('time')).toHaveAttribute(
+      'datetime',
+      machineDateTime(commit.committer.when)
+    )
   })
 })

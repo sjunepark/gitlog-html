@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/svelte'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import CommitDetails from '../src/components/CommitDetails.svelte'
+import { containsBidiControls } from '../src/lib/format'
 import { fixture } from './helpers'
 
 const ordinary = fixture('ordinary')
@@ -97,6 +98,74 @@ describe('commit details', () => {
     expect(prose?.className).toBe('prose')
   })
 
+  it('warns about bidirectional controls without touching the text', async () => {
+    // The characters stay exactly where they were recorded; the notice is how
+    // the reader learns that what is shown and what is stored can differ.
+    const commit = hostile.commits[0]!
+    const { container } = open(commit, hostile.commits)
+    expect(container.querySelector('.prose')?.textContent).toBe(commit.explanation)
+    expect(container.querySelector('.notice--inline')?.textContent).toContain(
+      'bidirectional formatting characters'
+    )
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Commit message' }))
+    expect(container.querySelector('.raw-message')?.textContent).toBe(commit.rawMessage)
+  })
+
+  it.each([
+    ['explanation', '.prose'],
+    ['commit message', '.raw-message']
+  ])('marks every bidi control in the %s while keeping the text exact', async (mode, selector) => {
+    const commit = hostile.commits[0]!
+    const source = mode === 'explanation' ? commit.explanation! : commit.rawMessage
+    const { container } = open(commit, hostile.commits)
+    if (mode === 'commit message') {
+      await userEvent.click(screen.getByRole('tab', { name: 'Commit message' }))
+    }
+
+    const field = container.querySelector(selector)!
+    // The evidence is untouched: the DOM still holds every original code point.
+    expect(field.textContent).toBe(source)
+
+    const controls = [...source].filter((character) =>
+      containsBidiControls(character)
+    )
+    const marks = [...field.querySelectorAll('.bidi-mark')]
+    expect(marks).toHaveLength(controls.length)
+    expect(marks.length).toBeGreaterThan(0)
+
+    marks.forEach((mark, index) => {
+      // Each control stands alone in its own isolate and carries a visible
+      // badge (from CSS) plus a spoken name (from aria-label).
+      expect(mark.textContent).toBe(controls[index])
+      expect(mark.getAttribute('data-mark')).toMatch(/^[A-Z]{3}$/)
+      expect(mark.getAttribute('role')).toBe('img')
+      expect(mark.getAttribute('aria-label')).toMatch(/^Bidirectional control: /)
+    })
+    // No repository content ever becomes markup.
+    expect(field.querySelector('script')).toBeNull()
+  })
+
+  it('adds no markers to text that has no bidi controls', () => {
+    const { container } = open()
+    expect(container.querySelectorAll('.bidi-mark')).toHaveLength(0)
+    expect(container.querySelector('.prose')?.textContent).toBe(ordinary.commits[0]!.explanation)
+  })
+
+  it('stays silent when the text has no bidirectional controls', () => {
+    const { container } = open()
+    expect(container.querySelector('.notice--inline')).toBeNull()
+  })
+
+  it('keeps the panel focusable when there is no explanation to tab to', () => {
+    const { container } = open(ordinary.commits[7]!)
+    const panel = container.querySelector('.details__panel')
+    expect(panel).toHaveAttribute('tabindex', '0')
+    expect(panel).toHaveAttribute('aria-labelledby')
+    const label = container.querySelector(`#${panel!.getAttribute('aria-labelledby')}`)
+    expect(label?.textContent).toBe('Commit message')
+  })
+
   it('shows an explanation that is only whitespace-separated markup as text', () => {
     const explanation = '<img src=x onerror=alert(1)>\n\n</script>'
     const commit = { ...ordinary.commits[0]!, explanation }
@@ -109,9 +178,10 @@ describe('commit details', () => {
     const { container } = open()
     const terms = [...container.querySelectorAll('.meta__term')].map((node) => node.textContent)
     expect(terms).toEqual(['Recorded', 'Labels', 'Commit ID', 'Builds on'])
-    expect(container.querySelector('.details__panel')?.compareDocumentPosition(
-      container.querySelector('.meta')!
-    )).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+    const position = container
+      .querySelector('.details__panel')!
+      .compareDocumentPosition(container.querySelector('.meta')!)
+    expect(position & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
   })
 
   it('names a single parent without merge language', () => {
