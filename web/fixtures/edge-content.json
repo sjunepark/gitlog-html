@@ -1,0 +1,270 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "gitlog-html",
+    "version": "fixture"
+  },
+  "generatedAt": "2026-07-28T15:42:00Z",
+  "repository": {
+    "name": "<script>alert('repo')</script> & \"quoted\" repository",
+    "head": {
+      "kind": "branch",
+      "branch": "main<img src=x onerror=alert(1)>",
+      "oid": "e17c8f8e8462959329a3391cabe4185142bb875d"
+    }
+  },
+  "selection": {
+    "scope": "all",
+    "maximumCount": 10,
+    "includedCount": 4,
+    "truncated": false
+  },
+  "commits": [
+    {
+      "oid": "e17c8f8e8462959329a3391cabe4185142bb875d",
+      "abbreviatedOid": "e17c8f8e8462",
+      "parents": [
+        {
+          "oid": "53955965ae29137e9353975b074729574efcf995",
+          "visibility": "visible"
+        },
+        {
+          "oid": "c0f446425e3fdebd7266e61b328affc242de0612",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Robin \"Bobby\" <img src=x onerror=alert(1)> O'Hare",
+        "email": "robin+<script>@example.test",
+        "when": "2026-07-18T22:10:00Z"
+      },
+      "committer": {
+        "name": "Automation Agent",
+        "email": "agent@example.test",
+        "when": "2026-07-18T22:11:30Z"
+      },
+      "subject": "Merge <script>alert('subject')</script> & \"quoted\" work",
+      "rawMessage": "Merge <script>alert('subject')</script> & \"quoted\" work\n\nThis body is long on purpose.\n\nIt contains a closing script sequence </script><script>alert('raw')</script>,\nquotes \" ' ` and backslashes \\ \\\\, an ampersand & and angle brackets <>.\n\nLine 01 of a deliberately long commit message that keeps going.\nLine 02 of a deliberately long commit message that keeps going.\nLine 03 of a deliberately long commit message that keeps going.\nLine 04 of a deliberately long commit message that keeps going.\nLine 05 of a deliberately long commit message that keeps going.\nLine 06 of a deliberately long commit message that keeps going.\nLine 07 of a deliberately long commit message that keeps going.\nLine 08 of a deliberately long commit message that keeps going.\nLine 09 of a deliberately long commit message that keeps going.\nLine 10 of a deliberately long commit message that keeps going.\nLine 11 of a deliberately long commit message that keeps going.\nLine 12 of a deliberately long commit message that keeps going.\nLine 13 of a deliberately long commit message that keeps going.\nLine 14 of a deliberately long commit message that keeps going.\nLine 15 of a deliberately long commit message that keeps going.\nLine 16 of a deliberately long commit message that keeps going.\nLine 17 of a deliberately long commit message that keeps going.\nLine 18 of a deliberately long commit message that keeps going.\nLine 19 of a deliberately long commit message that keeps going.\nLine 20 of a deliberately long commit message that keeps going.\nLine 21 of a deliberately long commit message that keeps going.\nLine 22 of a deliberately long commit message that keeps going.\nLine 23 of a deliberately long commit message that keeps going.\nLine 24 of a deliberately long commit message that keeps going.\nLine 25 of a deliberately long commit message that keeps going.\nLine 26 of a deliberately long commit message that keeps going.\nLine 27 of a deliberately long commit message that keeps going.\nLine 28 of a deliberately long commit message that keeps going.\nLine 29 of a deliberately long commit message that keeps going.\nLine 30 of a deliberately long commit message that keeps going.\n\nTrailing token: supercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilistic\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/main",
+          "displayName": "main",
+          "kind": "local-branch",
+          "isHead": true
+        },
+        {
+          "fullName": "refs/heads/feature/<script>",
+          "displayName": "feature/<script>",
+          "kind": "local-branch",
+          "isHead": false
+        },
+        {
+          "fullName": "refs/tags/v0.0.0-\"tag\"",
+          "displayName": "v0.0.0-\"tag\"",
+          "kind": "tag",
+          "isHead": false
+        },
+        {
+          "fullName": "refs/remotes/origin/very-long-branch-name-that-keeps-going-and-going",
+          "displayName": "origin/very-long-branch-name-that-keeps-going-and-going",
+          "kind": "remote-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "이 커밋은 신뢰할 수 없는 텍스트를 그대로 보여 줍니다. </script><script>alert('explanation')</script>\n\nThe explanation below is deliberately long so the details pane has to scroll without pushing the metadata off screen, and so the timeline row keeps a sensible height instead of growing to fit everything. The explanation below is deliberately long so the details pane has to scroll without pushing the metadata off screen, and so the timeline row keeps a sensible height instead of growing to fit everything. The explanation below is deliberately long so the details pane has to scroll without pushing the metadata off screen, and so the timeline row keeps a sensible height instead of growing to fit everything. The explanation below is deliberately long so the details pane has to scroll without pushing the metadata off screen, and so the timeline row keeps a sensible height instead of growing to fit everything. The explanation below is deliberately long so the details pane has to scroll without pushing the metadata off screen, and so the timeline row keeps a sensible height instead of growing to fit everything. The explanation below is deliberately long so the details pane has to scroll without pushing the metadata off screen, and so the timeline row keeps a sensible height instead of growing to fit everything. \n\nA single unbroken token follows, which must wrap instead of forcing the page sideways: supercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilistic\n\nRight-to-left text is preserved as written: ‮هذا نص عربي‬ and then back to English."
+    },
+    {
+      "oid": "53955965ae29137e9353975b074729574efcf995",
+      "abbreviatedOid": "53955965ae29",
+      "parents": [
+        {
+          "oid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Sam Iyer",
+        "email": "sam@example.test",
+        "when": "2026-07-17T14:00:00Z"
+      },
+      "committer": {
+        "name": "Sam Iyer",
+        "email": "sam@example.test",
+        "when": "2026-07-17T14:00:00Z"
+      },
+      "subject": "Record a very long message with no explanation at all",
+      "rawMessage": "Record a very long message with no explanation at all\n\nThis body is long on purpose.\n\nIt contains a closing script sequence </script><script>alert('raw')</script>,\nquotes \" ' ` and backslashes \\ \\\\, an ampersand & and angle brackets <>.\n\nLine 01 of a deliberately long commit message that keeps going.\nLine 02 of a deliberately long commit message that keeps going.\nLine 03 of a deliberately long commit message that keeps going.\nLine 04 of a deliberately long commit message that keeps going.\nLine 05 of a deliberately long commit message that keeps going.\nLine 06 of a deliberately long commit message that keeps going.\nLine 07 of a deliberately long commit message that keeps going.\nLine 08 of a deliberately long commit message that keeps going.\nLine 09 of a deliberately long commit message that keeps going.\nLine 10 of a deliberately long commit message that keeps going.\nLine 11 of a deliberately long commit message that keeps going.\nLine 12 of a deliberately long commit message that keeps going.\nLine 13 of a deliberately long commit message that keeps going.\nLine 14 of a deliberately long commit message that keeps going.\nLine 15 of a deliberately long commit message that keeps going.\nLine 16 of a deliberately long commit message that keeps going.\nLine 17 of a deliberately long commit message that keeps going.\nLine 18 of a deliberately long commit message that keeps going.\nLine 19 of a deliberately long commit message that keeps going.\nLine 20 of a deliberately long commit message that keeps going.\nLine 21 of a deliberately long commit message that keeps going.\nLine 22 of a deliberately long commit message that keeps going.\nLine 23 of a deliberately long commit message that keeps going.\nLine 24 of a deliberately long commit message that keeps going.\nLine 25 of a deliberately long commit message that keeps going.\nLine 26 of a deliberately long commit message that keeps going.\nLine 27 of a deliberately long commit message that keeps going.\nLine 28 of a deliberately long commit message that keeps going.\nLine 29 of a deliberately long commit message that keeps going.\nLine 30 of a deliberately long commit message that keeps going.\n\nTrailing token: supercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilistic\n",
+      "refs": []
+    },
+    {
+      "oid": "c0f446425e3fdebd7266e61b328affc242de0612",
+      "abbreviatedOid": "c0f446425e3f",
+      "parents": [
+        {
+          "oid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Sam Iyer",
+        "email": "sam@example.test",
+        "when": "2026-07-16T09:30:00Z"
+      },
+      "committer": {
+        "name": "Sam Iyer",
+        "email": "sam@example.test",
+        "when": "2026-07-16T09:30:00Z"
+      },
+      "subject": "supercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilistic",
+      "rawMessage": "supercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilisticsupercalifragilistic\n\nA subject made of one unbroken token.\n",
+      "refs": []
+    },
+    {
+      "oid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5",
+      "abbreviatedOid": "e9ba19803e3c",
+      "parents": [],
+      "author": {
+        "name": "Sam Iyer",
+        "email": "sam@example.test",
+        "when": "2026-07-15T08:00:00Z"
+      },
+      "committer": {
+        "name": "Sam Iyer",
+        "email": "sam@example.test",
+        "when": "2026-07-15T08:00:00Z"
+      },
+      "subject": "Start the repository",
+      "rawMessage": "Start the repository\n",
+      "refs": [
+        {
+          "fullName": "refs/tags/genesis",
+          "displayName": "genesis",
+          "kind": "tag",
+          "isHead": false
+        }
+      ],
+      "explanation": "This is where the repository begins. Nothing came before it."
+    }
+  ],
+  "graph": {
+    "laneCount": 2,
+    "rows": [
+      {
+        "commitOid": "e17c8f8e8462959329a3391cabe4185142bb875d",
+        "nodeLane": 0,
+        "incoming": [],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "53955965ae29137e9353975b074729574efcf995"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "c0f446425e3fdebd7266e61b328affc242de0612"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "53955965ae29137e9353975b074729574efcf995",
+            "parentIndex": 0
+          },
+          {
+            "fromLane": 0,
+            "toLane": 1,
+            "kind": "merge",
+            "parentOid": "c0f446425e3fdebd7266e61b328affc242de0612",
+            "parentIndex": 1
+          }
+        ]
+      },
+      {
+        "commitOid": "53955965ae29137e9353975b074729574efcf995",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "53955965ae29137e9353975b074729574efcf995"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "c0f446425e3fdebd7266e61b328affc242de0612"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "c0f446425e3fdebd7266e61b328affc242de0612"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "c0f446425e3fdebd7266e61b328affc242de0612",
+        "nodeLane": 1,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "c0f446425e3fdebd7266e61b328affc242de0612"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "e9ba19803e3cbf1b8b2879caebeedcb6ebefdfb5"
+          }
+        ],
+        "outgoing": [],
+        "transitions": []
+      }
+    ]
+  },
+  "warnings": []
+}

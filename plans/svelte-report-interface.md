@@ -8,16 +8,16 @@ and logical graph layout, while Go and Git/domain boundaries remain unchanged.
 
 ## Current state
 
-PRODUCT.md and docs/report-ui.md establish the product and visual world.
-docs/report-format.md establishes the offline artifact boundary. The repository
-has no frontend source or Claude-scoped Impeccable installation yet. This plan
-assumes a versioned schema fixture and graph examples exist.
+Complete. The Claude-owned Svelte 5 interface consumes schema v1, renders the
+Go-owned graph layout, and covers the approved desktop, mobile, accessibility,
+offline, hostile-content, empty, detached, shallow, truncated, dense, and
+failure states. The deterministic build emits the two committed frontend
+assets, and repository CI exercises checks, unit tests, and file-URL browser
+flows.
 
 ## Next action
 
-Codex prepares the complete $delegate-ui-to-claude handoff from the approved
-documents and stable schema fixture, then verifies and provisions Claude-only,
-repository-scoped Impeccable according to the current workflow.
+None. The next roadmap result is standalone report and CLI assembly.
 
 ## Ownership
 
@@ -104,6 +104,17 @@ Use the implemented equivalents of:
 
 Verify generated asset determinism and inspect desktop/mobile screenshots. Run
 the required code-review workflow after Claude and integration checks pass.
+
+Current evidence: a clean npm install reports no known vulnerabilities;
+Svelte and TypeScript checks pass without diagnostics; all component tests and
+the Chromium desktop/mobile file-URL suite pass; axe reports no violations in
+the representative states; generated assets are byte-reproducible and current;
+and visual review covers principal light, dark, focus, failure, dense-lane,
+long-content, and mobile-dialog states. The full Go suite, race detector, vet,
+workflow syntax check, and diff checks pass. Required review findings for
+combined history limitations, mobile safe areas, schema optionality, and clean
+build output were resolved, and the follow-up review found no remaining
+material issue.
 
 ## Out of scope
 

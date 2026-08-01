@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "gitlog-html",
+    "version": "fixture"
+  },
+  "generatedAt": "2026-07-28T15:42:00Z",
+  "repository": {
+    "name": "fresh-start",
+    "head": {
+      "kind": "unborn",
+      "branch": "main"
+    }
+  },
+  "selection": {
+    "scope": "all",
+    "maximumCount": 10,
+    "includedCount": 0,
+    "truncated": false
+  },
+  "commits": [],
+  "graph": {
+    "laneCount": 0,
+    "rows": []
+  },
+  "warnings": []
+}

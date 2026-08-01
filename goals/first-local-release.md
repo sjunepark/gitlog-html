@@ -35,16 +35,16 @@ Goal contract
 - Stable project foundation and contracts.
 - Truthful Git history extraction.
 - Deterministic commit graph layout.
+- Responsive accessible report interface.
 
 ### Current in-scope result
 
-Responsive accessible report interface.
+Safe standalone report CLI.
 
 ### Next in-scope action
 
-Stabilize the UI handoff against schema v1, provision the repository-scoped
-Claude workflow, and delegate the responsive accessible report implementation
-with required browser iteration.
+Implement strict command-line parsing and map validated options into one
+application generation request before adding standalone file assembly.
 
 ### Evidence and blockers
 
@@ -58,3 +58,8 @@ with required browser iteration.
 - Graph validation: example snapshots, generated-DAG invariants, a dense scale
   case and benchmark, a real-Git relation comparison, the full race suite, and
   `go vet ./...` pass. Required cross-module review findings were resolved.
+- Report UI validation: a clean npm install, Svelte and TypeScript checks,
+  component tests, Chromium desktop/mobile file-URL tests, automated
+  accessibility checks, deterministic asset comparison, representative visual
+  review, the full Go race suite, vet, workflow syntax, and diff checks pass.
+  All material UI and integration review findings were resolved.

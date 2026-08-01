@@ -1,0 +1,7 @@
+node_modules/
+dist/
+harness/
+.assets-check-a/
+.assets-check-b/
+test-results/
+playwright-report/

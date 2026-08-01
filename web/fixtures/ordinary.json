@@ -1,0 +1,715 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "gitlog-html",
+    "version": "fixture"
+  },
+  "generatedAt": "2026-07-28T15:42:00Z",
+  "repository": {
+    "name": "acme-quotes",
+    "head": {
+      "kind": "branch",
+      "branch": "main",
+      "oid": "5b6f5d6e7c69e7d94e955e442c60412f605c41dc"
+    }
+  },
+  "selection": {
+    "scope": "all",
+    "maximumCount": 10,
+    "includedCount": 10,
+    "truncated": true
+  },
+  "commits": [
+    {
+      "oid": "5b6f5d6e7c69e7d94e955e442c60412f605c41dc",
+      "abbreviatedOid": "5b6f5d6e7c69",
+      "parents": [
+        {
+          "oid": "c1a0307ff839970f6a98a1fe0427f95958a8d37d",
+          "visibility": "visible"
+        },
+        {
+          "oid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-27T16:20:00Z"
+      },
+      "committer": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-27T16:22:14Z"
+      },
+      "subject": "Merge quote builder into main",
+      "rawMessage": "Merge quote builder into main\n\nBrings the new quote builder onto main after review.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/main",
+          "displayName": "main",
+          "kind": "local-branch",
+          "isHead": true
+        },
+        {
+          "fullName": "refs/remotes/origin/main",
+          "displayName": "origin/main",
+          "kind": "remote-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Brought the new quote builder onto the main line of work.\nEverything that was being developed separately is now part of the product the team ships.\n\nTwo weeks of work on the builder joins the main history here, which is why this entry has two lines feeding into it."
+    },
+    {
+      "oid": "c1a0307ff839970f6a98a1fe0427f95958a8d37d",
+      "abbreviatedOid": "c1a0307ff839",
+      "parents": [
+        {
+          "oid": "dc784ea22c7fadd86efd9650f58b23ab85befc15",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-27T16:20:00Z"
+      },
+      "committer": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-27T16:20:00Z"
+      },
+      "subject": "Tighten currency rounding in totals",
+      "rawMessage": "Tighten currency rounding in totals\n\nRound once at the end instead of per line item.\n",
+      "refs": [],
+      "explanation": "Fixed a rounding problem that made some totals a cent off."
+    },
+    {
+      "oid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6",
+      "abbreviatedOid": "e78448f33dcf",
+      "parents": [
+        {
+          "oid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Milo Aranda",
+        "email": "milo@example.test",
+        "when": "2026-07-27T11:05:00Z"
+      },
+      "committer": {
+        "name": "Milo Aranda",
+        "email": "milo@example.test",
+        "when": "2026-07-27T11:05:00Z"
+      },
+      "subject": "Let customers save a quote as a draft",
+      "rawMessage": "Let customers save a quote as a draft\n\nAdds draft persistence and a restore path.\n",
+      "refs": [
+        {
+          "fullName": "refs/heads/feature/quote-builder",
+          "displayName": "feature/quote-builder",
+          "kind": "local-branch",
+          "isHead": false
+        },
+        {
+          "fullName": "refs/remotes/origin/feature/quote-builder",
+          "displayName": "origin/feature/quote-builder",
+          "kind": "remote-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Customers can now stop halfway through a quote and come back to it later. The unfinished quote is kept as a draft instead of being thrown away."
+    },
+    {
+      "oid": "dc784ea22c7fadd86efd9650f58b23ab85befc15",
+      "abbreviatedOid": "dc784ea22c7f",
+      "parents": [
+        {
+          "oid": "760eca84a1a3cccb163fc509de57374de5d9d094",
+          "visibility": "visible"
+        },
+        {
+          "oid": "7b74a5011aa25e94899f8c2772247f1c796b56d9",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-27T16:20:00Z"
+      },
+      "committer": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-25T13:10:00Z"
+      },
+      "subject": "Merge pricing table refresh",
+      "rawMessage": "Merge pricing table refresh\n\nCombines the refreshed pricing table with the ongoing work.\n",
+      "refs": [],
+      "explanation": "Combined the refreshed pricing table with work already underway."
+    },
+    {
+      "oid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b",
+      "abbreviatedOid": "8f52a9bd3545",
+      "parents": [
+        {
+          "oid": "85bc96d95f2400003b5c540f2516b3c10e528ea2",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Milo Aranda",
+        "email": "milo@example.test",
+        "when": "2026-07-27T11:05:00Z"
+      },
+      "committer": {
+        "name": "Milo Aranda",
+        "email": "milo@example.test",
+        "when": "2026-07-24T17:31:00Z"
+      },
+      "subject": "Draft the quote builder layout",
+      "rawMessage": "Draft the quote builder layout\n\nFirst pass at the multi-step layout.\n",
+      "refs": [],
+      "explanation": "Sketched the first version of the step-by-step quote screen."
+    },
+    {
+      "oid": "760eca84a1a3cccb163fc509de57374de5d9d094",
+      "abbreviatedOid": "760eca84a1a3",
+      "parents": [
+        {
+          "oid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Noor Haddad",
+        "email": "noor@example.test",
+        "when": "2026-07-11T19:04:00Z"
+      },
+      "committer": {
+        "name": "Kit Osei",
+        "email": "kit@example.test",
+        "when": "2026-07-24T08:40:00Z"
+      },
+      "subject": "Refresh the pricing table styles",
+      "rawMessage": "Refresh the pricing table styles\n\nUses the shared table rhythm and removes bespoke spacing.\n",
+      "refs": []
+    },
+    {
+      "oid": "7b74a5011aa25e94899f8c2772247f1c796b56d9",
+      "abbreviatedOid": "7b74a5011aa2",
+      "parents": [
+        {
+          "oid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Kit Osei",
+        "email": "kit@example.test",
+        "when": "2026-07-24T08:40:00Z"
+      },
+      "committer": {
+        "name": "Kit Osei",
+        "email": "kit@example.test",
+        "when": "2026-07-23T10:02:00Z"
+      },
+      "subject": "Move tax rates into configuration",
+      "rawMessage": "Move tax rates into configuration\n\nRates were hard-coded in three places.\n",
+      "refs": [],
+      "explanation": "Tax rates used to be written into the code in three different places, so changing one could quietly leave the others wrong. They now come from a single configuration file."
+    },
+    {
+      "oid": "85bc96d95f2400003b5c540f2516b3c10e528ea2",
+      "abbreviatedOid": "85bc96d95f24",
+      "parents": [
+        {
+          "oid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Milo Aranda",
+        "email": "milo@example.test",
+        "when": "2026-07-22T15:45:00Z"
+      },
+      "committer": {
+        "name": "Milo Aranda",
+        "email": "milo@example.test",
+        "when": "2026-07-22T15:45:00Z"
+      },
+      "subject": "Add a printable quote summary",
+      "rawMessage": "Add a printable quote summary\n",
+      "refs": []
+    },
+    {
+      "oid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+      "abbreviatedOid": "4b1e633312ac",
+      "parents": [
+        {
+          "oid": "fae091ca0e6eecfc93747839c843a36f7544ddaa",
+          "visibility": "visible"
+        }
+      ],
+      "author": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-21T09:15:00Z"
+      },
+      "committer": {
+        "name": "Dana Whitfield",
+        "email": "dana@example.test",
+        "when": "2026-07-21T09:15:00Z"
+      },
+      "subject": "Release 1.2.0",
+      "rawMessage": "Release 1.2.0\n\nCuts the 1.2.0 release from main.\n",
+      "refs": [
+        {
+          "fullName": "refs/tags/v1.2.0",
+          "displayName": "v1.2.0",
+          "kind": "tag",
+          "isHead": false
+        },
+        {
+          "fullName": "refs/remotes/origin/release/1.2",
+          "displayName": "origin/release/1.2",
+          "kind": "remote-branch",
+          "isHead": false
+        }
+      ],
+      "explanation": "Marked the 1.2.0 release. Everything below this point shipped to customers."
+    },
+    {
+      "oid": "fae091ca0e6eecfc93747839c843a36f7544ddaa",
+      "abbreviatedOid": "fae091ca0e6e",
+      "parents": [
+        {
+          "oid": "01a56ade507489c6a2cde7915462de7fe73e4d17",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "Kit Osei",
+        "email": "kit@example.test",
+        "when": "2026-07-20T18:02:00Z"
+      },
+      "committer": {
+        "name": "Kit Osei",
+        "email": "kit@example.test",
+        "when": "2026-07-20T18:02:00Z"
+      },
+      "subject": "Split the invoice service out of the monolith",
+      "rawMessage": "Split the invoice service out of the monolith\n\nExtracts invoicing behind a stable interface.\n",
+      "refs": [],
+      "explanation": "Separated invoicing from the rest of the application so the two can change independently."
+    }
+  ],
+  "graph": {
+    "laneCount": 3,
+    "rows": [
+      {
+        "commitOid": "5b6f5d6e7c69e7d94e955e442c60412f605c41dc",
+        "nodeLane": 0,
+        "incoming": [],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "c1a0307ff839970f6a98a1fe0427f95958a8d37d"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "c1a0307ff839970f6a98a1fe0427f95958a8d37d",
+            "parentIndex": 0
+          },
+          {
+            "fromLane": 0,
+            "toLane": 1,
+            "kind": "merge",
+            "parentOid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6",
+            "parentIndex": 1
+          }
+        ]
+      },
+      {
+        "commitOid": "c1a0307ff839970f6a98a1fe0427f95958a8d37d",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "c1a0307ff839970f6a98a1fe0427f95958a8d37d"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "dc784ea22c7fadd86efd9650f58b23ab85befc15"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "dc784ea22c7fadd86efd9650f58b23ab85befc15",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6",
+        "nodeLane": 1,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "dc784ea22c7fadd86efd9650f58b23ab85befc15"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "e78448f33dcf6ab5aa9e0db37fcb046dc65aeda6"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "dc784ea22c7fadd86efd9650f58b23ab85befc15"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "first-parent",
+            "parentOid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "dc784ea22c7fadd86efd9650f58b23ab85befc15",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "dc784ea22c7fadd86efd9650f58b23ab85befc15"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "760eca84a1a3cccb163fc509de57374de5d9d094"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 1,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "760eca84a1a3cccb163fc509de57374de5d9d094",
+            "parentIndex": 0
+          },
+          {
+            "fromLane": 0,
+            "toLane": 1,
+            "kind": "merge",
+            "parentOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9",
+            "parentIndex": 1
+          }
+        ]
+      },
+      {
+        "commitOid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b",
+        "nodeLane": 2,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "760eca84a1a3cccb163fc509de57374de5d9d094"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "8f52a9bd35458ad1cbd9724a9e64b50214b97b6b"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "760eca84a1a3cccb163fc509de57374de5d9d094"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "first-parent",
+            "parentOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "760eca84a1a3cccb163fc509de57374de5d9d094",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "760eca84a1a3cccb163fc509de57374de5d9d094"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "4b1e633312acb016babf7bc9cce76b5224ab3269"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 1,
+            "toLane": 1,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9",
+        "nodeLane": 1,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "4b1e633312acb016babf7bc9cce76b5224ab3269"
+          },
+          {
+            "lane": 1,
+            "expectedOid": "7b74a5011aa25e94899f8c2772247f1c796b56d9"
+          },
+          {
+            "lane": 2,
+            "expectedOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "4b1e633312acb016babf7bc9cce76b5224ab3269"
+          },
+          {
+            "lane": 1
+          },
+          {
+            "lane": 2,
+            "expectedOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 2,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 1,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2",
+        "nodeLane": 2,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "4b1e633312acb016babf7bc9cce76b5224ab3269"
+          },
+          {
+            "lane": 1
+          },
+          {
+            "lane": 2,
+            "expectedOid": "85bc96d95f2400003b5c540f2516b3c10e528ea2"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "4b1e633312acb016babf7bc9cce76b5224ab3269"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "continuation"
+          },
+          {
+            "fromLane": 2,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "4b1e633312acb016babf7bc9cce76b5224ab3269",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "4b1e633312acb016babf7bc9cce76b5224ab3269"
+          }
+        ],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "fae091ca0e6eecfc93747839c843a36f7544ddaa"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "fae091ca0e6eecfc93747839c843a36f7544ddaa",
+            "parentIndex": 0
+          }
+        ]
+      },
+      {
+        "commitOid": "fae091ca0e6eecfc93747839c843a36f7544ddaa",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "fae091ca0e6eecfc93747839c843a36f7544ddaa"
+          }
+        ],
+        "outgoing": [],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "01a56ade507489c6a2cde7915462de7fe73e4d17",
+            "parentIndex": 0,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "incomplete-history",
+      "message": "History continues before the oldest commit shown here."
+    },
+    {
+      "code": "description-outside-slice",
+      "message": "Two explanations described commits that are not part of this report and were left out."
+    }
+  ]
+}
