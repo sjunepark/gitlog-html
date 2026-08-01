@@ -39,13 +39,12 @@ Goal contract
 
 ### Current in-scope result
 
-Responsive report interface delivery closure.
+Retained project-scoped Claude UI tooling delivery.
 
 ### Next in-scope action
 
-Finish PR #2 checks, feedback replies, and merge. Then deliver the retained
-project-scoped Claude tooling in one review-limited supporting PR before
-starting strict command-line parsing.
+Finish the review-limited supporting PR for the retained project-scoped Claude
+tooling, then start strict command-line parsing and standalone report assembly.
 
 ### Evidence and blockers
 
@@ -66,7 +65,9 @@ starting strict command-line parsing.
   All material UI and integration review findings were resolved, including PR
   feedback for breakpoint selection, lossless explanation text, parent-edge
   boundary meaning, and stable touch targets.
-- CodeRabbit skipped the initial PR #2 head because its net diff exceeded the
-  service's file limit. The local Claude-only Impeccable installation remains
-  intact and is deferred to one necessary supporting PR, leaving the report UI
-  PR below the review limit without bypassing required review.
+- Report UI PR #2 merged into the integration branch as `3081131` after all
+  Go, web, CodeRabbit, GitGuardian, secret, and independent review gates passed.
+  All 36 CodeRabbit threads received pushed responses and were resolved.
+- The local Claude-only Impeccable installation remains intact and is being
+  delivered separately as one necessary vendored supporting PR so automated
+  review can classify it independently from project implementation source.
