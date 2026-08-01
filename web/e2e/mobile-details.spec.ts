@@ -130,6 +130,30 @@ test.describe('mobile details sheet', () => {
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(44)
   })
 
+  test('every interactive control inside the sheet clears the touch floor', async ({ report }) => {
+    await report.open('ordinary')
+    await report.rows().first().click()
+    const dialog = report.page.getByRole('dialog')
+    await expect(dialog).toBeVisible()
+
+    // Close, both tabs, and both parent controls, measured as rendered.
+    const undersized = await dialog.evaluate((node) =>
+      [...node.querySelectorAll('button, [href], input, select, textarea, [tabindex]')]
+        .filter((element) => element.getAttribute('tabindex') !== '-1')
+        .map((element) => ({
+          label: element.className || element.tagName,
+          height: element.getBoundingClientRect().height
+        }))
+        .filter((entry) => entry.height < 44)
+    )
+    expect(undersized).toEqual([])
+
+    const controls = await dialog
+      .locator('button')
+      .evaluateAll((nodes) => nodes.map((node) => node.getBoundingClientRect().height))
+    expect(controls.length).toBeGreaterThanOrEqual(5)
+  })
+
   test('holds a gutter on both edges of the sheet header', async ({ report }) => {
     await report.open('ordinary')
     await report.rows().first().click()

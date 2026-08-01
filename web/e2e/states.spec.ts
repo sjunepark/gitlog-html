@@ -80,6 +80,61 @@ test.describe('report states', () => {
     await expect(page.locator('#gitlog-html-app')).not.toBeEmpty()
   })
 
+  test('carries the selection across the split-layout breakpoint', async ({ report }) => {
+    const { page } = report
+    await page.setViewportSize({ width: 390, height: 844 })
+    await report.open('ordinary')
+
+    const row = report.rows().nth(2)
+    const oid = await row.getAttribute('data-oid')
+    await row.click()
+    await expect(page.getByRole('dialog')).toBeVisible()
+    expect(page.url()).toContain(`#${oid}`)
+
+    // Widening tears the native dialog down. That is the layout changing, not
+    // the reader dismissing the commit.
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    await expect(page.locator('.details-pane .details')).toBeVisible()
+    await expect(page.locator('.details-pane__subject')).toHaveText(
+      'Let customers save a quote as a draft'
+    )
+    await expect(row).toHaveAttribute('aria-current', 'true')
+    expect(page.url()).toContain(`#${oid}`)
+    await report.expectNoPageOverflow()
+
+    // Narrowing again returns the same commit to the sheet.
+    await page.setViewportSize({ width: 390, height: 844 })
+    await expect(page.getByRole('dialog')).toBeVisible()
+    expect(page.url()).toContain(`#${oid}`)
+  })
+
+  test('dismissing the sheet by its backdrop still clears the selection', async ({ report }) => {
+    const { page } = report
+    await page.setViewportSize({ width: 390, height: 844 })
+    await report.open('ordinary')
+
+    const row = report.rows().first()
+    await row.click()
+    await expect(page.getByRole('dialog')).toBeVisible()
+    // The sheet slides up; measuring mid-animation would aim the click at a
+    // point the sheet is about to occupy.
+    await page.evaluate(async () => {
+      await Promise.all(
+        document.getAnimations().map((animation) => animation.finished.catch(() => {}))
+      )
+    })
+
+    // The backdrop is the area above the sheet; a click there targets the
+    // dialog element itself rather than any of its content.
+    const sheet = await page.locator('dialog.sheet').boundingBox()
+    expect(sheet).not.toBeNull()
+    await page.mouse.click(sheet!.x + sheet!.width / 2, Math.max(6, sheet!.y - 20))
+    await expect(page.getByRole('dialog')).toHaveCount(0)
+    expect(new URL(page.url()).hash).toBe('')
+    await expect(row).toBeFocused()
+  })
+
   test('honours a dark colour scheme', async ({ report }) => {
     await report.page.emulateMedia({ colorScheme: 'dark' })
     await report.open('ordinary')

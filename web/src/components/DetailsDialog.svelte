@@ -42,13 +42,24 @@
   function onBackdrop(event: MouseEvent): void {
     if (event.target === dialog) onclose()
   }
+
+  /**
+   * `cancel` is the platform's signal that the reader asked to dismiss the
+   * dialog — Escape raises it, a programmatic `close()` does not. Listening for
+   * `close` instead would treat teardown as dismissal, so widening the viewport
+   * past the split-layout breakpoint would silently drop the selection and the
+   * URL fragment while the reader was still looking at that commit.
+   */
+  function onCancel(): void {
+    onclose()
+  }
 </script>
 
 <dialog
   bind:this={dialog}
   class="sheet"
   aria-labelledby="{uid}-title"
-  onclose={onclose}
+  oncancel={onCancel}
   onclick={onBackdrop}
 >
   <div class="sheet__panel" bind:this={panel} tabindex="-1">

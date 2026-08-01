@@ -3,7 +3,7 @@
  * text and returns plain strings; nothing in this module produces markup.
  */
 
-import type { Commit, HeadState, Ref, Selection } from './schema'
+import type { Commit, HeadState, ParentVisibility, Ref, Selection } from './schema'
 
 const dateOnly = new Intl.DateTimeFormat(undefined, {
   year: 'numeric',
@@ -115,6 +115,26 @@ export function boundaryLabel(visibility: string): string {
   return visibility === 'shallow-boundary'
     ? 'Not in this copy of the repository'
     : 'Outside this report'
+}
+
+/**
+ * States why a parent relationship is a boundary.
+ *
+ * The same object can be a boundary on this edge and still appear elsewhere in
+ * the report, because another ref reaches it. Visibility describes the
+ * relationship, not the object, so the reason is stated either way — otherwise
+ * a link the generator classified as incomplete would read as ordinary
+ * ancestry.
+ */
+export function parentBoundaryNote(
+  visibility: ParentVisibility,
+  shownElsewhere: boolean
+): string | null {
+  if (visibility === 'visible') return null
+  if (!shownElsewhere) return boundaryLabel(visibility)
+  return visibility === 'shallow-boundary'
+    ? 'This link is missing from this copy of the repository. The commit itself appears elsewhere in this report.'
+    : 'This link continues past the end of this report. The commit itself appears elsewhere in this report.'
 }
 
 /**

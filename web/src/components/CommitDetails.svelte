@@ -3,9 +3,9 @@
   import RefLabel from './RefLabel.svelte'
   import {
     authorDiffersFromCommitter,
-    boundaryLabel,
     formatDateTime,
     machineDateTime,
+    parentBoundaryNote,
     personText,
     summaryText
   } from '../lib/format'
@@ -33,16 +33,26 @@
     !hasExplanation ? 'raw' : requested?.oid === commit.oid ? requested.mode : 'explanation'
   )
 
-  /** Plain text only: paragraphs are split, and nothing is ever parsed as markup. */
-  const paragraphs = $derived(
-    (commit.explanation ?? '').replace(/\r\n/g, '\n').trim().split(/\n[ \t]*\n+/)
-  )
+  /**
+   * The explanation is shown exactly as it was supplied.
+   *
+   * It is a text node inside a `white-space: pre-wrap` block, so paragraphs,
+   * repeated blank separators, leading and trailing blank lines, and every
+   * other whitespace decision the author made survive. Splitting or trimming it
+   * would quietly rewrite evidence, and it is never parsed as markup.
+   */
+  const explanation = $derived(commit.explanation ?? '')
 
   const parents = $derived(
-    commit.parents.map((parent) => ({
-      ...parent,
-      commit: commits.find((candidate) => candidate.oid === parent.oid) ?? null
-    }))
+    commit.parents.map((parent) => {
+      const shown = commits.find((candidate) => candidate.oid === parent.oid) ?? null
+      return {
+        ...parent,
+        // Navigation follows the object; the note follows the relationship.
+        commit: shown,
+        boundary: parentBoundaryNote(parent.visibility, shown !== null)
+      }
+    })
   )
 
   function choose(next: Mode): void {
@@ -115,11 +125,7 @@
     tabindex={hasExplanation ? 0 : undefined}
   >
     {#if mode === 'explanation'}
-      <div class="prose">
-        {#each paragraphs as paragraph, index (index)}
-          <p class="prose__paragraph">{paragraph}</p>
-        {/each}
-      </div>
+      <div class="prose">{explanation}</div>
     {:else}
       {#if !hasExplanation}
         <p class="details__panel-label">Commit message</p>
@@ -181,6 +187,11 @@
             {#each parents as parent, index (parent.oid + index)}
               <li class="parents__item">
                 {#if parent.commit !== null}
+                  <!--
+                    The object is in this report, so it is reachable. When the
+                    edge itself is a boundary, that reason travels with the
+                    control and is part of its accessible name.
+                  -->
                   <button
                     type="button"
                     class="parents__link"
@@ -188,18 +199,22 @@
                   >
                     <span class="parents__text">
                       <span class="parents__summary">{summaryText(parent.commit)}</span>
+                      {#if parent.boundary !== null}
+                        <span class="parents__boundary">{parent.boundary}</span>
+                      {/if}
                       <span class="oid">{parent.oid}</span>
                     </span>
                     <Icon name="arrow" class="parents__arrow" />
                   </button>
                 {:else}
                   <!--
-                    A parent outside the slice is stated as such instead of
-                    being offered as a control that cannot go anywhere.
+                    A parent that is not in this report is stated as such
+                    instead of being offered as a control that cannot go
+                    anywhere.
                   -->
                   <div class="parents__outside">
                     <span class="parents__text">
-                      <span class="parents__summary">{boundaryLabel(parent.visibility)}</span>
+                      <span class="parents__summary">{parent.boundary ?? 'Not shown in this report'}</span>
                       <span class="oid">{parent.oid}</span>
                     </span>
                   </div>

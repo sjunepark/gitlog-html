@@ -39,12 +39,13 @@ Goal contract
 
 ### Current in-scope result
 
-Safe standalone report CLI.
+Responsive report interface delivery closure.
 
 ### Next in-scope action
 
-Implement strict command-line parsing and map validated options into one
-application generation request before adding standalone file assembly.
+Finish PR #2 checks, feedback replies, and merge. Then deliver the retained
+project-scoped Claude tooling in one review-limited supporting PR before
+starting strict command-line parsing.
 
 ### Evidence and blockers
 
@@ -62,4 +63,10 @@ application generation request before adding standalone file assembly.
   component tests, Chromium desktop/mobile file-URL tests, automated
   accessibility checks, deterministic asset comparison, representative visual
   review, the full Go race suite, vet, workflow syntax, and diff checks pass.
-  All material UI and integration review findings were resolved.
+  All material UI and integration review findings were resolved, including PR
+  feedback for breakpoint selection, lossless explanation text, parent-edge
+  boundary meaning, and stable touch targets.
+- CodeRabbit skipped the initial PR #2 head because its net diff exceeded the
+  service's file limit. The local Claude-only Impeccable installation remains
+  intact and is deferred to one necessary supporting PR, leaving the report UI
+  PR below the review limit without bypassing required review.

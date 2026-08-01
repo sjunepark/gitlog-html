@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest'
 import App from '../src/components/App.svelte'
 import { SPLIT_LAYOUT_QUERY } from '../src/lib/media.svelte'
 import { fixture } from './helpers'
-import { matchingMedia } from './setup'
+import { matchingMedia, setMediaMatch } from './setup'
 
 function renderSplit(name = 'ordinary') {
   matchingMedia.add(SPLIT_LAYOUT_QUERY)
@@ -97,6 +97,59 @@ describe('report application', () => {
     await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
     expect(window.location.hash).toBe('')
     await waitFor(() => expect(document.activeElement).toBe(row))
+  })
+
+  it('keeps the selection when the viewport widens past the split breakpoint', async () => {
+    const report = fixture('ordinary')
+    const target = report.commits[2]!
+    const { container } = renderCompact()
+
+    await userEvent.click(screen.getAllByRole('button')[2]!)
+    await screen.findByRole('dialog')
+    expect(window.location.hash).toBe(`#${target.oid}`)
+
+    // Widening tears the dialog down. That is the layout changing, not the
+    // reader dismissing anything.
+    setMediaMatch(SPLIT_LAYOUT_QUERY, true)
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+
+    expect(window.location.hash).toBe(`#${target.oid}`)
+    await waitFor(() =>
+      expect(container.querySelector('.details-pane__subject')?.textContent?.trim()).toBe(
+        target.subject
+      )
+    )
+    expect(container.querySelector('.commit-row--selected')).toHaveAttribute(
+      'data-oid',
+      target.oid
+    )
+  })
+
+  it('still clears the selection when the reader dismisses the dialog with Escape', async () => {
+    renderCompact()
+    const row = screen.getAllByRole('button')[1]!
+    await userEvent.click(row)
+    const dialog = await screen.findByRole('dialog')
+
+    // Escape raises `cancel` before the dialog closes; teardown never does.
+    dialog.dispatchEvent(new Event('cancel', { cancelable: true }))
+    await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull())
+    expect(window.location.hash).toBe('')
+    await waitFor(() => expect(document.activeElement).toBe(row))
+  })
+
+  it('narrowing back to one column reopens the dialog on the same commit', async () => {
+    const report = fixture('ordinary')
+    const target = report.commits[1]!
+    matchingMedia.add(SPLIT_LAYOUT_QUERY)
+    render(App, { props: { report } })
+
+    await userEvent.click(screen.getAllByRole('button')[1]!)
+    setMediaMatch(SPLIT_LAYOUT_QUERY, false)
+
+    const dialog = await screen.findByRole('dialog')
+    expect(dialog).toHaveAttribute('open')
+    expect(window.location.hash).toBe(`#${target.oid}`)
   })
 
   it('shows the empty state for an unborn branch instead of an empty timeline', () => {

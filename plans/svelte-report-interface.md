@@ -114,7 +114,11 @@ long-content, and mobile-dialog states. The full Go suite, race detector, vet,
 workflow syntax check, and diff checks pass. Required review findings for
 combined history limitations, mobile safe areas, schema optionality, and clean
 build output were resolved, and the follow-up review found no remaining
-material issue.
+material issue. PR review follow-up also preserves selection across the mobile
+and desktop breakpoint, renders every explanation byte as inert text, keeps
+edge-boundary meaning when a parent object appears elsewhere, and holds all
+interactive targets above the touch floor. Focused review found no remaining
+material issue after these corrections.
 
 ## Out of scope
 

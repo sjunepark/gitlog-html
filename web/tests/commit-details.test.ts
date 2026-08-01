@@ -68,10 +68,41 @@ describe('commit details', () => {
 
   it('keeps explanation paragraphs and line breaks without rendering markup', () => {
     const { container } = open(hostile.commits[0]!, hostile.commits)
-    const paragraphs = container.querySelectorAll('.prose__paragraph')
-    expect(paragraphs.length).toBeGreaterThan(1)
+    const prose = container.querySelector('.prose')
+    expect(prose?.textContent).toBe(hostile.commits[0]!.explanation)
     expect(container.querySelector('strong')).toBeNull()
     expect(container.textContent).toContain("<script>alert('explanation')</script>")
+  })
+
+  it('preserves the explanation byte for byte, including every blank line', () => {
+    // Leading blanks, a run of blank separators, trailing blanks, indentation,
+    // a carriage return, and markup-like text: all of it is evidence.
+    const explanation =
+      '\n\n   Leading blank lines and indentation survive.\n' +
+      '\n\n\n' +
+      'Three blank lines above this one, not collapsed to one.\r\n' +
+      '\tA tab-indented line.\n' +
+      "Markup-like text stays text: </p><script>alert('x')</script> & <b>bold?</b>\n" +
+      '\n  \n'
+
+    const commit = { ...ordinary.commits[0]!, explanation }
+    const { container } = open(commit, ordinary.commits)
+
+    const prose = container.querySelector('.prose')
+    expect(prose?.textContent).toBe(explanation)
+    expect(prose?.childElementCount).toBe(0)
+    expect(container.querySelector('script')).toBeNull()
+    expect(container.querySelector('b')).toBeNull()
+    // Whitespace is preserved by CSS, not by rewriting the text.
+    expect(prose?.className).toBe('prose')
+  })
+
+  it('shows an explanation that is only whitespace-separated markup as text', () => {
+    const explanation = '<img src=x onerror=alert(1)>\n\n</script>'
+    const commit = { ...ordinary.commits[0]!, explanation }
+    const { container } = open(commit, ordinary.commits)
+    expect(container.querySelector('.prose')?.textContent).toBe(explanation)
+    expect(container.querySelector('img')).toBeNull()
   })
 
   it('lists metadata explanation-first and in the documented order', () => {
@@ -115,6 +146,46 @@ describe('commit details', () => {
     expect(outside?.textContent).toContain('Not in this copy of the repository')
     expect(outside?.textContent).toContain(merge.parents[1]!.oid)
     expect(within(outside as HTMLElement).queryByRole('button')).toBeNull()
+  })
+
+  it('keeps a boundary reason when the same object is reachable elsewhere', async () => {
+    // A shallow boundary edge whose object another ref also puts in the report.
+    // Visibility describes the relationship, so the reason must survive the
+    // object being on screen.
+    const merge = shallow.commits[2]!
+    const boundaryOid = merge.parents[1]!.oid
+    expect(merge.parents[1]!.visibility).toBe('shallow-boundary')
+
+    const alsoVisible = {
+      ...shallow.commits[3]!,
+      oid: boundaryOid,
+      abbreviatedOid: boundaryOid.slice(0, 12),
+      parents: [],
+      subject: 'Reached through another branch',
+      rawMessage: 'Reached through another branch\n'
+    }
+    const commits = [...shallow.commits, alsoVisible]
+    const onselectparent = vi.fn()
+    const { container } = render(CommitDetails, {
+      props: { commit: merge, commits, onselectparent }
+    })
+
+    const entry = container.querySelectorAll('.parents__item')[1]
+    expect(entry?.textContent).toContain('missing from this copy of the repository')
+    expect(entry?.textContent).toContain('appears elsewhere in this report')
+    expect(entry?.textContent).toContain(boundaryOid)
+
+    // Navigation is offered, and the reason is part of the control's name.
+    const control = within(entry as HTMLElement).getByRole('button')
+    expect(control.textContent).toContain('missing from this copy of the repository')
+    await userEvent.click(control)
+    expect(onselectparent).toHaveBeenCalledWith(boundaryOid)
+  })
+
+  it('adds no boundary note to an ordinary visible parent', () => {
+    const { container } = open()
+    expect(container.querySelector('.parents__boundary')).toBeNull()
+    expect(container.querySelectorAll('.parents__link')).toHaveLength(2)
   })
 
   it('shows the full object ID as evidence', () => {

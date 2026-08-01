@@ -8,6 +8,7 @@ import {
   describeScope,
   formatDate,
   machineDateTime,
+  parentBoundaryNote,
   personText,
   summaryText
 } from '../src/lib/format'
@@ -52,6 +53,24 @@ describe('reader-facing language', () => {
   it('distinguishes a truncated parent from one missing in a shallow clone', () => {
     expect(boundaryLabel('maximum-count-boundary')).toBe('Outside this report')
     expect(boundaryLabel('shallow-boundary')).toBe('Not in this copy of the repository')
+  })
+
+  it('states a boundary reason even when the object is reachable elsewhere', () => {
+    expect(parentBoundaryNote('visible', false)).toBeNull()
+    expect(parentBoundaryNote('visible', true)).toBeNull()
+    expect(parentBoundaryNote('shallow-boundary', false)).toBe(
+      'Not in this copy of the repository'
+    )
+    expect(parentBoundaryNote('shallow-boundary', true)).toContain(
+      'missing from this copy of the repository'
+    )
+    expect(parentBoundaryNote('shallow-boundary', true)).toContain(
+      'appears elsewhere in this report'
+    )
+    expect(parentBoundaryNote('maximum-count-boundary', false)).toBe('Outside this report')
+    expect(parentBoundaryNote('maximum-count-boundary', true)).toContain(
+      'continues past the end of this report'
+    )
   })
 })
 
