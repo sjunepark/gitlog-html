@@ -39,12 +39,12 @@ Goal contract
 
 ### Current in-scope result
 
-Retained project-scoped Claude UI tooling delivery.
+Safe standalone report CLI.
 
 ### Next in-scope action
 
-Finish the review-limited supporting PR for the retained project-scoped Claude
-tooling, then start strict command-line parsing and standalone report assembly.
+Implement strict command-line parsing and standalone report assembly from the
+approved CLI contract.
 
 ### Evidence and blockers
 
@@ -68,6 +68,8 @@ tooling, then start strict command-line parsing and standalone report assembly.
 - Report UI PR #2 merged into the integration branch as `3081131` after all
   Go, web, CodeRabbit, GitGuardian, secret, and independent review gates passed.
   All 36 CodeRabbit threads received pushed responses and were resolved.
-- The local Claude-only Impeccable installation remains intact and is being
-  delivered separately as one necessary vendored supporting PR so automated
-  review can classify it independently from project implementation source.
+- Supporting PR #3 was not merged after automated review found material
+  correctness and security defects throughout the opaque third-party payload.
+  Repairing that upstream tool would exceed this goal's authority. The local
+  Claude-only installation remains ignored and is not part of the product or
+  release branch.
