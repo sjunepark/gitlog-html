@@ -44,8 +44,8 @@ Hardened release candidate.
 
 ### Next in-scope action
 
-Complete the independent hardening review and clean-checkout validation matrix,
-then deliver the hardening slice through its PR lifecycle.
+Deliver the validated hardening slice through its PR lifecycle, then advance to
+the installed agent reporting workflow.
 
 ### Evidence and blockers
 
@@ -94,5 +94,7 @@ then deliver the hardening slice through its PR lifecycle.
   validation, including neutralized assistive strings and browser titles.
   The owning Claude session resumed after its quota reset and completed the
   merge-parent role labels, computed-accessibility probes, all-control bidi
-  fixture, rebuilt assets, browser checks, and manual non-SVG review. Final
-  independent review and clean-checkout evidence remain in progress.
+  fixture, rebuilt assets, browser checks, and manual non-SVG review. The full
+  matrix passes from detached clean commit `b0f7487`; generated assets and
+  screenshots stay byte-current, and formal independent review has no material
+  findings. PR delivery remains in progress.

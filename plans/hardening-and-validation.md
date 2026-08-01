@@ -21,13 +21,15 @@ CSP monitoring, responsive behavior, and bidi-neutral derived labels and tab
 titles. The delegated merge-parent revision now names the first-parent history
 as "Continues from" and the remaining histories as "Also merges"; component,
 computed-accessibility, Chromium/WebKit, and manual non-SVG review are clean.
-The clean-checkout matrix and PR evidence remain in progress.
+The complete release matrix passes from detached clean commit `b0f7487`,
+generated assets and screenshots remain byte-current, and independent
+implementation, security, system, design, accessibility, and visual reviews
+report no material findings. PR evidence remains in progress.
 
 ## Next action
 
-Run the complete release-candidate matrix from a clean checkout, reconcile
-every applicable product criterion, and deliver the reviewed hardening slice
-through its PR lifecycle.
+Deliver the reviewed hardening slice through its PR lifecycle, then advance the
+roadmap to the installed agent workflow.
 
 ## Scope
 
@@ -112,6 +114,16 @@ tenth of a second and settled a mid-list selection in about two animation
 frames. The accepted wide-octopus benchmark stays within the graph budget, and
 wider adversarial input now fails contextually before output installation.
 These are observational baselines, not hardware-dependent CI thresholds.
+
+### Clean-checkout evidence
+
+Detached commit `b0f7487` passes formatting, the full Go and race suites, vet,
+golangci-lint, local/darwin, Linux amd64, and Windows amd64 builds, a Go build
+with Node absent, and workflow YAML parsing. A clean `npm ci` reports no known
+vulnerabilities; Svelte/TypeScript checks, 203 component tests, 214 browser
+tests, and deterministic asset checks pass. The three WebKit skips are the
+documented platform-preference/synthetic-resize cases covered in Chromium.
+Rebuilding leaves committed assets and screenshots unchanged.
 
 ## Out of scope
 
