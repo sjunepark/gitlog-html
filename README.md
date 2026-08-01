@@ -7,11 +7,22 @@ without a terminal.
 
 ## Status
 
-Product and architecture decisions are documented. Implementation has not
-started. The workspace is not yet initialized as a Git repository.
+The Go module and shared report contracts are under active implementation.
+[ROADMAP.md](ROADMAP.md) is the source of truth for the current slice and next
+planned result.
 
-The next implementation run should begin with [ROADMAP.md](ROADMAP.md) and the
-first queued plan rather than reconstructing scope from conversation history.
+## Development
+
+The backend uses the standard Go toolchain and intentionally has no runtime
+dependency on Node:
+
+    gofmt -w ./cmd ./internal
+    go test ./...
+    go vet ./...
+
+Frontend source will live in `web/`. Its deterministic build will be committed
+under `internal/report/assets` only after the UI exists; generated bundles must
+always be rebuilt from `web/` and never edited directly.
 
 ## Confirmed product shape
 
@@ -53,4 +64,3 @@ external report assets are outside the design.
 - [docs/distribution-and-skill.md](docs/distribution-and-skill.md) defines
   packaging and the eventual agent skill.
 - [ROADMAP.md](ROADMAP.md) is the only project work queue.
-

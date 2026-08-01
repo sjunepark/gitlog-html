@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "generator": {
+    "name": "gitlog-html",
+    "version": "fixture"
+  },
+  "generatedAt": "2026-08-01T12:00:00Z",
+  "repository": {
+    "name": "예제 </script> repository",
+    "head": {
+      "kind": "branch",
+      "branch": "main",
+      "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    }
+  },
+  "selection": {
+    "scope": "all",
+    "maximumCount": 2,
+    "includedCount": 2,
+    "truncated": true
+  },
+  "commits": [
+    {
+      "oid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "abbreviatedOid": "aaaaaaaaaaaa",
+      "parents": [
+        {
+          "oid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "visibility": "visible"
+        },
+        {
+          "oid": "cccccccccccccccccccccccccccccccccccccccc",
+          "visibility": "maximum-count-boundary"
+        }
+      ],
+      "author": {
+        "name": "홍길동 <img src=x onerror=alert(1)>",
+        "email": "author@example.test",
+        "when": "2026-07-31T10:00:00+09:00"
+      },
+      "committer": {
+        "name": "Merge Agent",
+        "email": "agent@example.test",
+        "when": "2026-07-31T10:05:00+09:00"
+      },
+      "subject": "Merge feature & preserve evidence",
+      "rawMessage": "Merge feature & preserve evidence\n\nDo not execute </script><script>alert(1)</script>.\nUnicode: 안녕하세요 👋\n",
+      "explanation": "두 작업 흐름을 합치고 <strong>원문</strong>을 그대로 보존했습니다.",
+      "refs": [
+        {
+          "fullName": "refs/heads/main",
+          "displayName": "main",
+          "kind": "local-branch",
+          "isHead": true
+        },
+        {
+          "fullName": "refs/remotes/origin/main",
+          "displayName": "origin/main",
+          "kind": "remote-branch",
+          "isHead": false
+        }
+      ]
+    },
+    {
+      "oid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "abbreviatedOid": "bbbbbbbbbbbb",
+      "parents": [],
+      "author": {
+        "name": "Contributor",
+        "email": "contributor@example.test",
+        "when": "2026-07-30T09:00:00Z"
+      },
+      "committer": {
+        "name": "Contributor",
+        "email": "contributor@example.test",
+        "when": "2026-07-30T09:00:00Z"
+      },
+      "subject": "Start the visible branch",
+      "rawMessage": "Start the visible branch\n",
+      "refs": [
+        {
+          "fullName": "refs/tags/v0-fixture",
+          "displayName": "v0-fixture",
+          "kind": "tag",
+          "isHead": false
+        }
+      ]
+    }
+  ],
+  "graph": {
+    "laneCount": 2,
+    "rows": [
+      {
+        "commitOid": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "nodeLane": 0,
+        "incoming": [],
+        "outgoing": [
+          {
+            "lane": 0,
+            "expectedOid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "transitions": [
+          {
+            "fromLane": 0,
+            "toLane": 0,
+            "kind": "first-parent",
+            "parentOid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "parentIndex": 0
+          },
+          {
+            "fromLane": 0,
+            "toLane": 1,
+            "kind": "merge",
+            "parentOid": "cccccccccccccccccccccccccccccccccccccccc",
+            "parentIndex": 1,
+            "boundary": "maximum-count-boundary"
+          }
+        ]
+      },
+      {
+        "commitOid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "nodeLane": 0,
+        "incoming": [
+          {
+            "lane": 0,
+            "expectedOid": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          }
+        ],
+        "outgoing": [],
+        "transitions": []
+      }
+    ]
+  },
+  "warnings": [
+    {
+      "code": "incomplete-history",
+      "message": "One parent continues beyond this report."
+    }
+  ]
+}

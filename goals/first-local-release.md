@@ -24,23 +24,37 @@ Goal contract
 
 ## Authorized amendments
 
-_None._
+- Stable project foundation and contracts — schema v1, package boundaries,
+  deterministic seams, the representative fixture, and baseline Go validation
+  are implemented and reviewed.
 
 ## Execution status
 
 ### Completed included results
 
-_None._
+- Stable project foundation and contracts.
+- Truthful Git history extraction.
+- Deterministic commit graph layout.
 
 ### Current in-scope result
 
-Stable project foundation and contracts.
+Responsive accessible report interface.
 
 ### Next in-scope action
 
-Complete the integration-branch push preflight, then reconcile and implement `plans/foundation-and-contracts.md` on the first work branch.
+Stabilize the UI handoff against schema v1, provision the repository-scoped
+Claude workflow, and delegate the responsive accessible report implementation
+with required browser iteration.
 
 ### Evidence and blockers
 
 - `codex/first-local-release` is the temporary non-production integration branch for the sequential PR lifecycle.
 - Before every push, scan both Git history and the working tree with gitleaks using redacted output.
+- Foundation validation: `gofmt`, `go test ./...`, and `go vet ./...` pass;
+  shared-contract review findings were resolved before advancing the roadmap.
+- Git extraction validation: repeated real-Git tests, the race detector, the
+  full Go suite, `go vet ./...`, and diff checks pass. Required review findings
+  for corrupt refs, parse context, and bounded output were resolved.
+- Graph validation: example snapshots, generated-DAG invariants, a dense scale
+  case and benchmark, a real-Git relation comparison, the full race suite, and
+  `go vet ./...` pass. Required cross-module review findings were resolved.
