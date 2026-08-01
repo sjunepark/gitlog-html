@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"unicode/utf8"
 
 	"github.com/sjunepark/gitlog-html/internal/history"
 )
@@ -48,13 +49,16 @@ func (loader Loader) Discover(ctx context.Context, path string) (history.Reposit
 	}
 	root := trimTransportLine(result.Stdout)
 	if root == "" {
-		return history.Repository{}, &StateError{Operation: "repository root", Err: errors.New("Git returned an empty top-level path")}
+		return history.Repository{}, &StateError{Operation: "repository root", Err: errors.New("empty top-level path reported by Git")}
 	}
 
 	branch, branchErr := loader.Runner.Run(ctx, root, "symbolic-ref", "--quiet", "--no-recurse", "HEAD")
 	_, rawHeadErr := loader.Runner.Run(ctx, root, "rev-parse", "--verify", "HEAD")
 	head, headErr := loader.Runner.Run(ctx, root, "rev-parse", "--verify", "HEAD^{commit}")
 	fullBranchName := trimTransportLine(branch.Stdout)
+	if branchErr == nil && !utf8.ValidString(fullBranchName) {
+		return history.Repository{}, &StateError{Operation: "symbolic HEAD", Err: errors.New("branch name is not valid UTF-8")}
+	}
 	branchName, isBranch := strings.CutPrefix(fullBranchName, "refs/heads/")
 
 	var headOID *history.ObjectID
@@ -89,7 +93,7 @@ func (loader Loader) Discover(ctx context.Context, path string) (history.Reposit
 		state = history.HeadState{Kind: history.HeadDetached, OID: headOID}
 	default:
 		if branchErr == nil {
-			branchErr = errors.New("Git returned an empty symbolic HEAD")
+			branchErr = errors.New("empty symbolic HEAD reported by Git")
 		}
 		return history.Repository{}, &StateError{Operation: "HEAD", Err: errors.Join(branchErr, headErr)}
 	}

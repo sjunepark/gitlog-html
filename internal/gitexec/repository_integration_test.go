@@ -3,6 +3,7 @@ package gitexec
 import (
 	"context"
 	"errors"
+	"os"
 	"path/filepath"
 	"testing"
 
@@ -27,6 +28,41 @@ func TestLoaderReportsTypedRepositoryAndExecutableFailures(t *testing.T) {
 		}
 	})
 
+}
+
+func TestLoaderDiscoversRepositoryBelowInheritedCeiling(t *testing.T) {
+	repository := newFixtureRepository(t, "sha1")
+	descendant := filepath.Join(repository.path, "nested", "deeper")
+	if err := os.MkdirAll(descendant, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	t.Setenv("GIT_CEILING_DIRECTORIES", filepath.Dir(descendant))
+
+	discovered, err := (Loader{Runner: Runner{}}).Discover(context.Background(), descendant)
+	if err != nil {
+		t.Fatalf("Discover(): %v", err)
+	}
+	wantRoot, err := filepath.EvalSymlinks(repository.path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if discovered.Root != wantRoot {
+		t.Fatalf("repository root = %q, want %q", discovered.Root, wantRoot)
+	}
+}
+
+func TestLoaderRejectsNonUTF8SymbolicHEAD(t *testing.T) {
+	repository := newFixtureRepository(t, "sha1")
+	headPath := filepath.Join(repository.path, ".git", "HEAD")
+	if err := os.WriteFile(headPath, []byte("ref: refs/heads/bad\xff\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := (Loader{Runner: Runner{}}).Discover(context.Background(), repository.path)
+	var stateErr *StateError
+	if !errors.As(err, &stateErr) || stateErr.Operation != "symbolic HEAD" {
+		t.Fatalf("Discover() error = %T %v, want symbolic-HEAD StateError", err, err)
+	}
 }
 
 func TestLoaderRejectsInvalidSelectionBeforeRunningGit(t *testing.T) {

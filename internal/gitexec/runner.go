@@ -147,19 +147,21 @@ func gitEnvironment() []string {
 		"PAGER":               "cat",
 	}
 
-	environment := make([]string, 0, len(os.Environ())+len(overrides))
-	for _, entry := range os.Environ() {
+	entries := os.Environ()
+	environment := make([]string, 0, len(entries)+len(overrides))
+	for _, entry := range entries {
 		key, _, found := strings.Cut(entry, "=")
 		if !found || isUnsafeGitEnvironmentKey(key) {
 			continue
 		}
+		overridden := false
 		for override := range overrides {
 			if strings.EqualFold(key, override) {
-				found = false
+				overridden = true
 				break
 			}
 		}
-		if !found {
+		if overridden {
 			continue
 		}
 		environment = append(environment, entry)
@@ -179,6 +181,8 @@ func isUnsafeGitEnvironmentKey(key string) bool {
 	}
 	switch upperKey {
 	case "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+		"GIT_ASKPASS",
+		"GIT_CEILING_DIRECTORIES",
 		"GIT_COMMON_DIR",
 		"GIT_CONFIG",
 		"GIT_CONFIG_GLOBAL",
@@ -186,6 +190,7 @@ func isUnsafeGitEnvironmentKey(key string) bool {
 		"GIT_CONFIG_PARAMETERS",
 		"GIT_CONFIG_SYSTEM",
 		"GIT_DIR",
+		"GIT_EDITOR",
 		"GIT_EXEC_PATH",
 		"GIT_EXTERNAL_DIFF",
 		"GIT_GRAFT_FILE",
@@ -195,8 +200,13 @@ func isUnsafeGitEnvironmentKey(key string) bool {
 		"GIT_NAMESPACE",
 		"GIT_OBJECT_DIRECTORY",
 		"GIT_PREFIX",
+		"GIT_SEQUENCE_EDITOR",
 		"GIT_SHALLOW_FILE",
+		"GIT_SSH",
+		"GIT_SSH_COMMAND",
 		"GIT_WORK_TREE":
+		return true
+	case "SSH_ASKPASS":
 		return true
 	default:
 		return false

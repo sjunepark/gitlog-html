@@ -3,9 +3,9 @@ package gitexec
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 	"testing"
 	"time"
@@ -36,6 +36,18 @@ func TestRunnerPreservesArgumentsOutputDirectoryAndSafeEnvironment(t *testing.T)
 	t.Setenv("GIT_DIR", filepath.Join(t.TempDir(), "wrong-repository"))
 	t.Setenv("git_work_tree", filepath.Join(t.TempDir(), "wrong-worktree"))
 	t.Setenv("GIT_TRACE", "1")
+	for _, key := range []string{
+		"GIT_ASKPASS",
+		"GIT_CEILING_DIRECTORIES",
+		"GIT_EDITOR",
+		"GIT_SEQUENCE_EDITOR",
+		"GIT_SSH",
+		"GIT_SSH_COMMAND",
+		"SSH_ASKPASS",
+	} {
+		t.Setenv(key, "must-not-survive")
+	}
+	t.Setenv("UNRELATED_ENVIRONMENT_KEY", "safe-value")
 
 	arguments := []string{
 		"-test.run=^TestGitExecHelperProcess$",
@@ -79,11 +91,19 @@ func TestRunnerPreservesArgumentsOutputDirectoryAndSafeEnvironment(t *testing.T)
 		"GIT_DIR=",
 		"git_work_tree=",
 		"GIT_TRACE=",
+		"GIT_ASKPASS=",
+		"GIT_CEILING_DIRECTORIES=",
+		"GIT_EDITOR=",
+		"GIT_SEQUENCE_EDITOR=",
+		"GIT_SSH=",
+		"GIT_SSH_COMMAND=",
+		"SSH_ASKPASS=",
+		"UNRELATED_ENVIRONMENT_KEY=safe-value",
 	}
 	if len(fields) > 0 && fields[len(fields)-1] == "" {
 		fields = fields[:len(fields)-1]
 	}
-	if fmt.Sprint(fields) != fmt.Sprint(want) {
+	if !slices.Equal(fields, want) {
 		t.Fatalf("helper fields:\n got: %q\nwant: %q", fields, want)
 	}
 	if _, err := os.Stat(filepath.Join(directory, "should-not-exist")); !errors.Is(err, os.ErrNotExist) {
@@ -228,6 +248,14 @@ func TestGitExecHelperProcess(t *testing.T) {
 			"GIT_DIR",
 			"git_work_tree",
 			"GIT_TRACE",
+			"GIT_ASKPASS",
+			"GIT_CEILING_DIRECTORIES",
+			"GIT_EDITOR",
+			"GIT_SEQUENCE_EDITOR",
+			"GIT_SSH",
+			"GIT_SSH_COMMAND",
+			"SSH_ASKPASS",
+			"UNRELATED_ENVIRONMENT_KEY",
 		} {
 			writeNULTerminated(key + "=" + os.Getenv(key))
 		}

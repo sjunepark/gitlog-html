@@ -17,7 +17,7 @@ supported, and corrupt loose and packed refs.
 
 ## Next action
 
-None. The next roadmap result is deterministic commit graph layout.
+None. The current roadmap result is the responsive report interface.
 
 ## Scope
 

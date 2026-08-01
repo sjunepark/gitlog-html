@@ -50,6 +50,10 @@ func TestLoaderSnapshotMatchesGitAndPreservesHistoryMetadata(t *testing.T) {
 		map[string]string{"GIT_COMMITTER_DATE": "2024-01-02T04:00:00+09:00"}, nil,
 		"tag", "-a", "v-annotated", "-m", "annotated fixture tag", featureTip,
 	)
+	repository.gitEnv(
+		map[string]string{"GIT_COMMITTER_DATE": "2024-01-02T04:01:00+09:00"}, nil,
+		"tag", "-a", "v-nested", "-m", "nested fixture tag", "v-annotated",
+	)
 	repository.git(nil, "symbolic-ref", "HEAD", "refs/heads/main")
 
 	loader := Loader{Runner: Runner{}}
@@ -95,6 +99,7 @@ func TestLoaderSnapshotMatchesGitAndPreservesHistoryMetadata(t *testing.T) {
 	assertRef(t, commitByOID(t, snapshot, merge), "refs/heads/main", "main", history.RefLocalBranch, true)
 	assertRef(t, feature, "refs/heads/feature", "feature", history.RefLocalBranch, false)
 	assertRef(t, feature, "refs/tags/v-annotated", "v-annotated", history.RefTag, false)
+	assertRef(t, feature, "refs/tags/v-nested", "v-nested", history.RefTag, false)
 	assertRef(t, commitByOID(t, snapshot, mainTip), "refs/remotes/origin/main", "origin/main", history.RefRemoteBranch, false)
 	assertRef(t, commitByOID(t, snapshot, base), "refs/tags/v-lightweight", "v-lightweight", history.RefTag, false)
 }
@@ -129,6 +134,25 @@ func TestLoaderSnapshotHandlesUnbornEmptyAndDetachedHEAD(t *testing.T) {
 		}
 		assertRef(t, &snapshot.Commits[0], "HEAD", "HEAD", history.RefOther, true)
 	})
+}
+
+func TestLoaderScopeAllUsesGitAllRevisionUniverse(t *testing.T) {
+	repository := newFixtureRepository(t, "sha1")
+	branch := repository.commit(fixedCommit("branch", 0))
+	detached := repository.commit(fixedCommit("detached", 1))
+	stash := repository.commit(fixedCommit("stash", 2))
+	notes := repository.commit(fixedCommit("notes", 3))
+	repository.updateRef("refs/heads/main", branch)
+	repository.updateRef("refs/stash", stash)
+	repository.updateRef("refs/notes/review", notes)
+	repository.git(nil, "update-ref", "--no-deref", "HEAD", detached)
+
+	snapshot := loadSnapshot(t, Loader{Runner: Runner{}}, repository.path, history.ScopeAll, 10)
+	for _, oid := range []string{branch, detached, stash, notes} {
+		if commitByOID(t, snapshot, oid) == nil {
+			t.Fatalf("scope all omitted revision %s", oid)
+		}
+	}
 }
 
 func TestLoaderRejectsStoredButInvalidBranchHEAD(t *testing.T) {
@@ -305,6 +329,19 @@ func TestLoaderSnapshotMarksShallowCloneBoundary(t *testing.T) {
 	}
 	if len(snapshot.Warnings) != 1 || snapshot.Warnings[0].Code != history.WarningIncompleteHistory {
 		t.Fatalf("warnings = %#v, want one incomplete-history warning", snapshot.Warnings)
+	}
+
+	clone.git(nil, "fetch", "--depth=1", "origin", root+":refs/heads/recovered-root")
+	all := loadSnapshot(t, Loader{Runner: Runner{}}, clone.path, history.ScopeAll, 10)
+	if commitByOID(t, all, root) == nil {
+		t.Fatal("all-ref shallow snapshot omitted separately fetched root")
+	}
+	boundary = commitByOID(t, all, middle)
+	if len(boundary.Parents) != 1 || string(boundary.Parents[0].OID) != root || boundary.Parents[0].Visibility != history.ParentShallowBoundary {
+		t.Fatalf("visible shallow parent = %#v, want disconnected shallow boundary at %s", boundary.Parents, root)
+	}
+	if len(all.Warnings) != 1 || all.Warnings[0].Code != history.WarningIncompleteHistory {
+		t.Fatalf("all-ref warnings = %#v, want one incomplete-history warning", all.Warnings)
 	}
 }
 

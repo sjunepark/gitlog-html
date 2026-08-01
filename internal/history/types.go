@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // ObjectID is an opaque, lowercase hexadecimal object name emitted by Git.
@@ -64,6 +65,9 @@ type HeadState struct {
 }
 
 func (h HeadState) Validate() error {
+	if !utf8.ValidString(h.Branch) {
+		return errors.New("HEAD branch name is not valid UTF-8")
+	}
 	switch h.Kind {
 	case HeadBranch:
 		if h.Branch == "" || h.OID == nil {

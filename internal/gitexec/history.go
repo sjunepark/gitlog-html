@@ -69,13 +69,13 @@ func (loader Loader) Snapshot(ctx context.Context, path string, scope history.Sc
 	for commitIndex := range commits {
 		for parentIndex := range commits[commitIndex].Parents {
 			parent := &commits[commitIndex].Parents[parentIndex]
-			if _, ok := visible[parent.OID]; ok {
-				parent.Visibility = history.ParentVisible
-				continue
-			}
 			if _, ok := shallow[commits[commitIndex].OID]; ok {
 				parent.Visibility = history.ParentShallowBoundary
 				shallowBoundary = true
+				continue
+			}
+			if _, ok := visible[parent.OID]; ok {
+				parent.Visibility = history.ParentVisible
 				continue
 			}
 			parent.Visibility = history.ParentMaximumBoundary

@@ -2,10 +2,11 @@ package gitexec
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
-	"sort"
+	"slices"
 	"strings"
 	"unicode/utf8"
 
@@ -30,9 +31,7 @@ func (loader Loader) attachRefs(ctx context.Context, repository history.Reposito
 		}
 	}
 	for index := range commits {
-		sort.Slice(commits[index].Refs, func(left, right int) bool {
-			return refLess(commits[index].Refs[left], commits[index].Refs[right])
-		})
+		slices.SortFunc(commits[index].Refs, compareRefs)
 	}
 	return nil
 }
@@ -100,18 +99,19 @@ func classifyRef(fullName string) (history.RefKind, string) {
 	return history.RefOther, fullName
 }
 
-func refLess(left, right history.Ref) bool {
-	order := map[history.RefKind]int{
-		history.RefLocalBranch:  0,
-		history.RefRemoteBranch: 1,
-		history.RefTag:          2,
-		history.RefOther:        3,
+var refKindOrder = map[history.RefKind]int{
+	history.RefLocalBranch:  0,
+	history.RefRemoteBranch: 1,
+	history.RefTag:          2,
+	history.RefOther:        3,
+}
+
+func compareRefs(left, right history.Ref) int {
+	if order := cmp.Compare(refKindOrder[left.Kind], refKindOrder[right.Kind]); order != 0 {
+		return order
 	}
-	if order[left.Kind] != order[right.Kind] {
-		return order[left.Kind] < order[right.Kind]
+	if order := cmp.Compare(left.DisplayName, right.DisplayName); order != 0 {
+		return order
 	}
-	if left.DisplayName != right.DisplayName {
-		return left.DisplayName < right.DisplayName
-	}
-	return left.FullName < right.FullName
+	return cmp.Compare(left.FullName, right.FullName)
 }

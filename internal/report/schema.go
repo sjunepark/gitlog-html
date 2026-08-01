@@ -196,6 +196,9 @@ func (d Document) Validate() error {
 	if d.Selection.IncludedCount > d.Selection.MaximumCount {
 		return fmt.Errorf("selection includes %d commits beyond maximum %d", d.Selection.IncludedCount, d.Selection.MaximumCount)
 	}
+	if d.Graph.Rows == nil {
+		return errors.New("graph rows must be an array")
+	}
 	if len(d.Graph.Rows) != len(d.Commits) {
 		return fmt.Errorf("graph has %d rows for %d commits", len(d.Graph.Rows), len(d.Commits))
 	}
@@ -224,9 +227,9 @@ func (d Document) Validate() error {
 				if !visible || row <= index {
 					return fmt.Errorf("commit %d parent %d is visible but not present at a later row", index, parentIndex)
 				}
-			default:
+			case string(history.ParentMaximumBoundary):
 				if visible {
-					return fmt.Errorf("commit %d parent %d is a boundary but appears at row %d", index, parentIndex, row)
+					return fmt.Errorf("commit %d parent %d is a maximum-count boundary but appears at row %d", index, parentIndex, row)
 				}
 			}
 		}
@@ -315,6 +318,15 @@ func validateCommit(commit Commit) error {
 }
 
 func validateGraphRow(row GraphRow, commit Commit, laneCount int) error {
+	if row.Incoming == nil {
+		return errors.New("incoming must be an array")
+	}
+	if row.Outgoing == nil {
+		return errors.New("outgoing must be an array")
+	}
+	if row.Transitions == nil {
+		return errors.New("transitions must be an array")
+	}
 	if row.CommitOID != commit.OID {
 		return errors.New("object ID does not match commit")
 	}
@@ -332,7 +344,7 @@ func validateGraphRow(row GraphRow, commit Commit, laneCount int) error {
 				return fmt.Errorf("%s lane %d: %w", group.label, index, err)
 			}
 			if state.Lane != index {
-				return fmt.Errorf("%s lane %d is non-canonical: got index %d", group.label, state.Lane, index)
+				return fmt.Errorf("%s lane at index %d is non-canonical: got lane %d", group.label, index, state.Lane)
 			}
 			if state.ExpectedOID != nil {
 				if _, err := history.ParseObjectID(*state.ExpectedOID); err != nil {

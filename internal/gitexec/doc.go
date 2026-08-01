@@ -1,4 +1,4 @@
-// Package gitexec is the process boundary for invoking the installed Git
-// executable. Its implementation begins after the shared history contract is
-// established.
+// Package gitexec invokes the installed Git executable and coordinates
+// repository discovery and history extraction through a hardened process
+// boundary.
 package gitexec

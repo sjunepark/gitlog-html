@@ -215,7 +215,7 @@ func TestBuildRejectsInvalidTopology(t *testing.T) {
 		{name: "duplicate commit", commits: []history.Commit{commit("a"), commit("a")}},
 		{name: "visible parent absent", commits: []history.Commit{commit("a", visible("b"))}},
 		{name: "visible parent earlier", commits: []history.Commit{commit("a"), commit("b", visible("a"))}},
-		{name: "boundary parent visible", commits: []history.Commit{commit("a", maximum("b")), commit("b")}},
+		{name: "maximum boundary parent visible", commits: []history.Commit{commit("a", maximum("b")), commit("b")}},
 		{name: "unknown visibility", commits: []history.Commit{commit("a", history.Parent{OID: "b", Visibility: "unknown"})}},
 	}
 	for _, test := range tests {
@@ -226,6 +226,16 @@ func TestBuildRejectsInvalidTopology(t *testing.T) {
 				t.Fatalf("Build() error = %T %v, want InputError", err, err)
 			}
 		})
+	}
+}
+
+func TestBuildKeepsVisibleShallowTargetDisconnected(t *testing.T) {
+	layout, err := Build([]history.Commit{commit("a", shallow("b")), commit("b")})
+	if err != nil {
+		t.Fatalf("Build(): %v", err)
+	}
+	if got, want := snapshot(layout), "a@0 in=- out=- tx=first-parent:0>0:b#0[shallow-boundary]\nb@0 in=- out=- tx=-"; got != want {
+		t.Fatalf("layout:\n%s\nwant:\n%s", got, want)
 	}
 }
 

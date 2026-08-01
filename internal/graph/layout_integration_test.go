@@ -8,6 +8,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -17,6 +18,8 @@ import (
 )
 
 func TestLayoutRelationsMatchRealGitFixture(t *testing.T) {
+	requireGit228(t)
+
 	repository := filepath.Join(t.TempDir(), "repository")
 	if err := os.Mkdir(repository, 0o700); err != nil {
 		t.Fatal(err)
@@ -92,11 +95,39 @@ func runGit(t *testing.T, repository string, environment []string, arguments ...
 	return stdout.String()
 }
 
+func requireGit228(t *testing.T) {
+	t.Helper()
+	output, err := exec.Command("git", "version").Output()
+	if err != nil {
+		t.Skipf("Git is unavailable: %v", err)
+	}
+	fields := strings.Fields(string(output))
+	if len(fields) < 3 {
+		t.Skipf("cannot determine Git version from %q", output)
+	}
+	parts := strings.Split(fields[2], ".")
+	if len(parts) < 2 {
+		t.Skipf("cannot determine Git version from %q", output)
+	}
+	major, majorErr := strconv.Atoi(parts[0])
+	minor, minorErr := strconv.Atoi(parts[1])
+	if majorErr != nil || minorErr != nil {
+		t.Skipf("cannot determine Git version from %q", output)
+	}
+	if major < 2 || major == 2 && minor < 28 {
+		t.Skipf("Git 2.28 or newer is required; found %s", fields[2])
+	}
+}
+
 func ExampleBuild() {
-	layout, _ := graph.Build([]history.Commit{
+	layout, err := graph.Build([]history.Commit{
 		{OID: "a", Parents: []history.Parent{{OID: "b", Visibility: history.ParentVisible}}},
 		{OID: "b"},
 	})
+	if err != nil {
+		fmt.Println("build:", err)
+		return
+	}
 	fmt.Println(layout.LaneCount, layout.Rows[0].NodeLane, layout.Rows[1].NodeLane)
 	// Output: 1 0 0
 }

@@ -135,10 +135,11 @@ func validateInput(commits []history.Commit) error {
 				if parentRow <= rowIndex {
 					return &InputError{Row: rowIndex, ParentIndex: &index, Err: errors.New("visible parent is not at a later row")}
 				}
-			case history.ParentMaximumBoundary, history.ParentShallowBoundary:
+			case history.ParentMaximumBoundary:
 				if visible {
-					return &InputError{Row: rowIndex, ParentIndex: &index, Err: errors.New("boundary parent appears in the visible slice")}
+					return &InputError{Row: rowIndex, ParentIndex: &index, Err: errors.New("maximum-count boundary parent appears in the visible slice")}
 				}
+			case history.ParentShallowBoundary:
 			default:
 				return &InputError{Row: rowIndex, ParentIndex: &index, Err: fmt.Errorf("unsupported visibility %q", parent.Visibility)}
 			}
@@ -289,6 +290,6 @@ func oidPointer(oid history.ObjectID) *history.ObjectID {
 }
 
 func intPointer(value int) *int {
-	copy := value
-	return &copy
+	pointer := value
+	return &pointer
 }

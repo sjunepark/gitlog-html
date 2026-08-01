@@ -23,6 +23,12 @@ func TestParseObjectIDIsLengthAgnostic(t *testing.T) {
 	}
 }
 
+func TestHeadStateRejectsNonUTF8Branch(t *testing.T) {
+	if err := (HeadState{Kind: HeadUnborn, Branch: "bad\xff"}).Validate(); err == nil {
+		t.Fatal("HeadState.Validate() unexpectedly accepted a non-UTF-8 branch")
+	}
+}
+
 func TestExplanationPreservesNonblankText(t *testing.T) {
 	if got := Explanation(" \n\t"); got != nil {
 		t.Fatalf("blank explanation = %q, want nil", *got)
