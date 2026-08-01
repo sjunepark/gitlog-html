@@ -26,7 +26,8 @@ Tests cover:
 - graph example snapshots and invariants;
 - schema serialization and unsupported-version behavior;
 - HTML escaping and content-policy generation;
-- output collision, force, symlink, and atomic-write behavior.
+- output collision, force, symlink, failed-write preservation, and the
+  Unix-like same-directory atomic-install boundary.
 
 Race testing is required for packages that introduce concurrency. Do not add
 concurrency merely to justify it.
@@ -120,4 +121,3 @@ Before the roadmap is complete:
 - the implementation receives the required code review and material findings
   are resolved;
 - README and architecture paths match the implemented repository.
-

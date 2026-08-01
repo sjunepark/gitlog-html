@@ -18,7 +18,10 @@ The main risks are:
 - accidental disclosure when a report is shared.
 
 The first release does not claim isolation from a fully malicious local Git
-executable or operating system.
+executable or operating system. The caller must also control the output
+directory while generation is in progress; defending the final rename against
+a separate local process racing to replace directory entries is outside this
+release's threat model.
 
 ## Process execution
 
@@ -65,7 +68,9 @@ does not replace it.
 - Resolve the output parent before writing.
 - Refuse symlink and non-regular replacement targets.
 - Create a temporary sibling with restrictive creation semantics.
-- Flush, close, and atomically rename only after complete rendering.
+- Flush and close before a same-directory rename. That final installation is
+  atomic on Unix-like systems; on other platforms it follows the host rename
+  semantics only after the same complete-write checks.
 - Remove only the temporary file created by the failed invocation.
 - Never modify the inspected repository.
 
@@ -99,4 +104,3 @@ machine.
 
 Diff inclusion is deferred partly because it materially changes privacy and
 size risks.
-

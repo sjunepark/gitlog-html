@@ -38,7 +38,8 @@ In the browser:
 ### CLI
 
 The Go command validates user intent, resolves paths, coordinates generation,
-reports warnings, and writes the output atomically. Its public behavior is
+reports warnings, and installs completed output atomically on Unix-like
+systems. Its public behavior is
 defined by [docs/cli-contract.md](docs/cli-contract.md).
 
 ### Git process adapter
@@ -95,8 +96,9 @@ HTML generation. See
    slice.
 5. The renderer serializes a versioned report model and inlines compiled UI
    assets.
-6. The writer creates a temporary sibling file and atomically installs the
-   final output without following a symlink.
+6. The writer creates a temporary sibling file and installs the final output
+   without following a symlink. The same-directory rename is atomic on
+   Unix-like systems; other platforms use their host rename semantics.
 
 ## Viewing flow
 
@@ -116,7 +118,7 @@ The foundation plan should establish these starting points:
 - internal/history: domain types and explanation attachment.
 - internal/graph: logical lane assignment.
 - internal/report: schema conversion, asset embedding, security policy, and
-  atomic output.
+  atomic Unix-like output with complete-write-before-install behavior elsewhere.
 - web: Svelte source, TypeScript report contract, UI tests, and visual fixtures.
 - internal/report/assets: committed deterministic frontend build output.
 - skill/gitlog-html: thin skill instructions and references.
@@ -151,4 +153,3 @@ entry point that cannot be explained here concisely.
   embedded in the Go executable.
 - A modern browser executes the generated report. Mobile browsers view the
   report but never need to run the generator.
-

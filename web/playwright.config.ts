@@ -8,6 +8,9 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
   testDir: './e2e',
   outputDir: './test-results',
+  // Builds the real CLI and generates reports from real repositories once,
+  // before any worker starts. See e2e/generate-reports.ts.
+  globalSetup: './e2e/generate-reports.ts',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,

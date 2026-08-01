@@ -123,7 +123,8 @@ assets.
 
 Go performs final assembly rather than relying on a single-file Vite plugin.
 This gives the renderer one place to enforce escaping, CSP, metadata, and
-atomic file output.
+atomic file output on Unix-like systems, with complete-write-before-install
+semantics on other platforms.
 
 ## Metadata and offline behavior
 
