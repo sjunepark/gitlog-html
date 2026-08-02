@@ -206,6 +206,24 @@ func TestBuildRejectsGraphBeyondComplexityBudget(t *testing.T) {
 	}
 }
 
+func TestBuildAcceptsMaximumLinearSelection(t *testing.T) {
+	commits := make([]history.Commit, history.MaximumCommitCount)
+	for index := range commits {
+		oid := fmt.Sprintf("%x", index)
+		parent := fmt.Sprintf("%x", index+1)
+		commits[index] = commit(oid, visible(parent))
+	}
+	commits[len(commits)-1].Parents[0].Visibility = history.ParentMaximumBoundary
+
+	layout, err := Build(commits)
+	if err != nil {
+		t.Fatalf("Build(maximum linear selection): %v", err)
+	}
+	if len(layout.Rows) != history.MaximumCommitCount || layout.LaneCount != 1 {
+		t.Fatalf("layout has %d rows and %d lanes", len(layout.Rows), layout.LaneCount)
+	}
+}
+
 func BenchmarkBuildWideOctopus(b *testing.B) {
 	commits := wideOctopus(256)
 	b.ReportAllocs()

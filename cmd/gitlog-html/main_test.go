@@ -59,6 +59,7 @@ func TestExecuteExitCategories(t *testing.T) {
 	}{
 		{"invalid scope", []string{"--scope", "nearby"}, generatorFunc(nil), 2, "unsupported history scope"},
 		{"nonpositive limit", []string{"--max-count", "0"}, generatorFunc(nil), 2, "positive integer"},
+		{"limit above safety ceiling", []string{"--max-count", "40001"}, generatorFunc(nil), 2, "must not exceed 40000"},
 		{"positional", []string{"generate"}, generatorFunc(nil), 2, "unexpected positional"},
 		{"single dash", []string{"-repo", "."}, generatorFunc(nil), 2, "--name form"},
 		{"duplicate", []string{"--scope", "all", "--scope", "current"}, generatorFunc(nil), 2, "provided only once"},

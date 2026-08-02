@@ -74,7 +74,9 @@ does not replace it.
 - Remove only the temporary file created by the failed invocation.
 - Refuse output within the resolved Git directory, common directory, or
   worktree control path even when --force is explicit.
-- Never modify the inspected repository, including linked-worktree metadata.
+- Never modify Git administrative storage for the inspected repository,
+  including linked-worktree metadata. The report itself may be written into
+  the repository working tree.
 
 ## Truthfulness
 

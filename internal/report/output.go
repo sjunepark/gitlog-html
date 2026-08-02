@@ -86,6 +86,14 @@ func WriteFile(path string, force bool, protectedPaths []string, render func(io.
 func rejectProtectedOutput(path string, protectedPaths []string) error {
 	for _, protected := range protectedPaths {
 		resolved, err := filepath.EvalSymlinks(protected)
+		if errors.Is(err, os.ErrNotExist) {
+			parent, parentErr := filepath.EvalSymlinks(filepath.Dir(protected))
+			if parentErr != nil {
+				return &OutputError{Operation: "inspect protected path for", Path: path, Err: parentErr}
+			}
+			resolved = filepath.Join(parent, filepath.Base(protected))
+			err = nil
+		}
 		if err != nil {
 			return &OutputError{Operation: "inspect protected path for", Path: path, Err: err}
 		}
@@ -101,7 +109,13 @@ func rejectProtectedOutput(path string, protectedPaths []string) error {
 }
 
 func sameOrDescendant(path, protected string) (bool, error) {
+	if filepath.Clean(path) == filepath.Clean(protected) {
+		return true, nil
+	}
 	protectedInfo, err := os.Stat(protected)
+	if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	}
 	if err != nil {
 		return false, err
 	}

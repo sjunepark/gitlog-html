@@ -11,7 +11,7 @@ import (
 // material that one report can request. Ordinary long histories remain cheap,
 // while adversarially wide histories cannot amplify bounded Git output into
 // unbounded graph allocations.
-const MaximumLayoutComplexity = 200_000
+const MaximumLayoutComplexity = 5 * history.MaximumCommitCount
 
 // ComplexityError reports a valid topology whose serialized lane and edge
 // material would exceed the release safety budget.

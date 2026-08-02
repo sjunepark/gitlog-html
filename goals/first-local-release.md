@@ -76,7 +76,7 @@ the installed agent reporting workflow.
   All material UI and integration review findings were resolved, including PR
   feedback for breakpoint selection, lossless explanation text, parent-edge
   boundary meaning, and stable touch targets.
-- CLI implementation and PR delivery are complete. Full Go, race, vet,
+- CLI implementation and PR `#4` delivery are complete. Full Go, race, vet,
   build, cross-build, workflow, frontend, deterministic-asset, component, and
   desktop/mobile browser validation pass. Real generated artifacts prove
   default all-ref selection against an unmerged ref, current ancestry,

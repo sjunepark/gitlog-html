@@ -35,9 +35,10 @@ empty report instead of a crash. Arbitrary revision expressions are deferred.
 
     --max-count N
 
-Default: 10. N must be a positive integer. It limits commits total across the
-selected history, matching Git's maximum-count semantics. It is not applied per
-branch.
+Default: 10. N must be a positive integer no greater than 40,000. It limits
+commits total across the selected history, matching Git's maximum-count
+semantics. It is not applied per branch. Wider graph shapes can still reach the
+cumulative layout safety budget before that commit ceiling.
 
 ### Explanations
 

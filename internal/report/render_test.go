@@ -270,3 +270,19 @@ func TestWriteFileRefusesProtectedPathsThroughResolvedParents(t *testing.T) {
 		t.Fatalf("protected HEAD = %q, %v", contents, readErr)
 	}
 }
+
+func TestWriteFileRefusesMissingReservedControlPath(t *testing.T) {
+	directory := t.TempDir()
+	protected := filepath.Join(directory, ".git")
+
+	_, err := WriteFile(protected, false, []string{protected}, func(writer io.Writer) error {
+		_, writeErr := io.WriteString(writer, "report")
+		return writeErr
+	})
+	if err == nil || !strings.Contains(err.Error(), "Git administrative storage") {
+		t.Fatalf("WriteFile() error = %v, want administrative-storage refusal", err)
+	}
+	if _, statErr := os.Lstat(protected); !errors.Is(statErr, os.ErrNotExist) {
+		t.Fatalf("reserved control path was created: %v", statErr)
+	}
+}

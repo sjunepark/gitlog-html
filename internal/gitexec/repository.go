@@ -52,23 +52,41 @@ func (loader Loader) AdministrativePaths(ctx context.Context, root string) ([]st
 		return nil, &StateError{Operation: "Git common directory", Err: err}
 	}
 
-	paths := []string{
-		filepath.Join(root, ".git"),
+	return resolveAdministrativePaths(root,
 		trimTransportLine(gitDir.Stdout),
 		trimTransportLine(commonDir.Stdout),
-	}
-	for index, path := range paths {
+	)
+}
+
+func resolveAdministrativePaths(root string, reported ...string) ([]string, error) {
+	for _, path := range reported {
 		if path == "" {
 			return nil, &StateError{Operation: "Git administrative paths", Err: errors.New("git reported an empty path")}
 		}
+	}
+	candidates := append([]string{filepath.Join(root, ".git")}, reported...)
+	paths := make([]string, 0, len(candidates))
+	for index, path := range candidates {
 		if !filepath.IsAbs(path) {
 			path = filepath.Join(root, path)
 		}
 		resolved, resolveErr := filepath.EvalSymlinks(path)
+		// root/.git is a defensive control-path candidate rather than a path
+		// reported by Git. Some valid worktree configurations omit it, but the
+		// reserved location still must not become report output. Resolve its
+		// existing parent while the two Git-reported paths remain mandatory.
+		if index == 0 && errors.Is(resolveErr, os.ErrNotExist) {
+			parent, parentErr := filepath.EvalSymlinks(filepath.Dir(path))
+			if parentErr != nil {
+				return nil, &StateError{Operation: "Git administrative paths", Err: fmt.Errorf("resolve parent of %q: %w", path, parentErr)}
+			}
+			paths = append(paths, filepath.Join(parent, filepath.Base(path)))
+			continue
+		}
 		if resolveErr != nil {
 			return nil, &StateError{Operation: "Git administrative paths", Err: fmt.Errorf("resolve %q: %w", path, resolveErr)}
 		}
-		paths[index] = filepath.Clean(resolved)
+		paths = append(paths, filepath.Clean(resolved))
 	}
 	return paths, nil
 }

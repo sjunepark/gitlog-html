@@ -46,6 +46,46 @@ func TestLoaderResolvesStandardAndLinkedWorktreeAdministrativePaths(t *testing.T
 	}
 }
 
+func TestResolveAdministrativePathsProtectsMissingControlCandidate(t *testing.T) {
+	root := t.TempDir()
+	gitDir := filepath.Join(t.TempDir(), "git-dir")
+	commonDir := filepath.Join(t.TempDir(), "common-dir")
+	for _, path := range []string{gitDir, commonDir} {
+		if err := os.Mkdir(path, 0o700); err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	paths, err := resolveAdministrativePaths(root, gitDir, commonDir)
+	if err != nil {
+		t.Fatalf("resolveAdministrativePaths(): %v", err)
+	}
+	want := make([]string, 0, 3)
+	for _, path := range []string{filepath.Join(root, ".git"), gitDir, commonDir} {
+		parent, parentErr := filepath.EvalSymlinks(filepath.Dir(path))
+		if parentErr != nil {
+			t.Fatal(parentErr)
+		}
+		path = filepath.Join(parent, filepath.Base(path))
+		resolved, resolveErr := filepath.EvalSymlinks(path)
+		if resolveErr != nil && !errors.Is(resolveErr, os.ErrNotExist) {
+			t.Fatal(resolveErr)
+		}
+		if resolveErr == nil {
+			path = resolved
+		}
+		want = append(want, path)
+	}
+	if !slices.Equal(paths, want) {
+		t.Fatalf("paths = %q, want Git-reported paths", paths)
+	}
+
+	missingReported := filepath.Join(t.TempDir(), "missing-git-dir")
+	if _, err := resolveAdministrativePaths(root, missingReported, commonDir); err == nil || !errors.Is(err, os.ErrNotExist) {
+		t.Fatalf("missing Git-reported path error = %v, want os.ErrNotExist", err)
+	}
+}
+
 func TestLoaderReportsTypedRepositoryAndExecutableFailures(t *testing.T) {
 	t.Run("not a repository", func(t *testing.T) {
 		_, err := (Loader{Runner: Runner{}}).Snapshot(context.Background(), t.TempDir(), history.ScopeAll, 10)

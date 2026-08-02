@@ -60,6 +60,24 @@ func (loaderFunc) AdministrativePaths(context.Context, string) ([]string, error)
 	return nil, nil
 }
 
+func TestServiceRejectsCommitCountAboveSafetyCeilingBeforeLoading(t *testing.T) {
+	called := false
+	loader := loaderFunc(func(context.Context, string, history.Scope, int) (history.Snapshot, error) {
+		called = true
+		return history.Snapshot{}, nil
+	})
+
+	_, err := (Service{Loader: loader}).Run(context.Background(), Request{
+		Repository: ".", Scope: history.ScopeAll, Maximum: history.MaximumCommitCount + 1, OutputPath: "report.html",
+	})
+	if err == nil || !strings.Contains(err.Error(), "must not exceed 40000") {
+		t.Fatalf("Run() error = %v, want commit-count ceiling", err)
+	}
+	if called {
+		t.Fatal("loader was called for an invalid maximum")
+	}
+}
+
 func TestServiceBuildsExplainedReport(t *testing.T) {
 	when := time.Date(2026, 8, 1, 12, 0, 0, 0, time.UTC)
 	oid := history.ObjectID(strings.Repeat("a", 40))

@@ -52,6 +52,9 @@ func (service Service) Run(ctx context.Context, request Request) (Result, error)
 	if request.Maximum <= 0 {
 		return Result{}, errors.New("generate report: maximum commit count must be positive")
 	}
+	if request.Maximum > history.MaximumCommitCount {
+		return Result{}, fmt.Errorf("generate report: maximum commit count must not exceed %d", history.MaximumCommitCount)
+	}
 	if request.Repository == "" {
 		return Result{}, errors.New("generate report: repository path is empty")
 	}

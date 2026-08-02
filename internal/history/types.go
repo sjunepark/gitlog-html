@@ -218,6 +218,11 @@ type Selection struct {
 	Truncated bool
 }
 
+// MaximumCommitCount is the largest history slice accepted by the local
+// release. It keeps every linear selection within the graph materialization
+// budget while wider topologies remain subject to their cumulative cost.
+const MaximumCommitCount = 40_000
+
 type WarningCode string
 
 const (
