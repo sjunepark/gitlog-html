@@ -33,10 +33,13 @@ combined result.
 
 The result must match the commit set and ordering intent of:
 
-    git log --graph --oneline --decorate --all -n N
+    git --no-replace-objects log --graph --oneline --decorate --all -n N
 
 The implementation adds a machine-readable pretty format and disables color
 and signature presentation. It does not consume the visible command output.
+Replacement refs are local presentation indirection rather than recorded
+history. The CLI disables them for discovery, selection, report generation,
+and agent evidence so every path sees stored commits and parents.
 
 ## Machine-readable records
 
@@ -140,4 +143,3 @@ Integration fixtures created with the real Git executable cover:
 - disconnected orphan histories;
 - Unicode, multiline, and HTML-looking identities and messages;
 - alternate object format when supported.
-

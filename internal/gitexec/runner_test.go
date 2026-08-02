@@ -74,6 +74,7 @@ func TestRunnerPreservesArgumentsOutputDirectoryAndSafeEnvironment(t *testing.T)
 		"value with spaces",
 		"$(touch should-not-exist); echo unsafe",
 		"GIT_OPTIONAL_LOCKS=0",
+		"GIT_NO_REPLACE_OBJECTS=1",
 		"GIT_PAGER=cat",
 		"GIT_TERMINAL_PROMPT=0",
 		"NO_COLOR=1",
@@ -255,6 +256,7 @@ func TestGitExecHelperProcess(t *testing.T) {
 		}
 		for _, key := range []string{
 			"GIT_OPTIONAL_LOCKS",
+			"GIT_NO_REPLACE_OBJECTS",
 			"GIT_PAGER",
 			"GIT_TERMINAL_PROMPT",
 			"NO_COLOR",

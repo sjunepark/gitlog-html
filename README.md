@@ -7,16 +7,16 @@ without a terminal.
 
 ## Status
 
-The local CLI and report are implemented. Release-candidate hardening and the
-thin installed-agent workflow are tracked in [ROADMAP.md](ROADMAP.md), the
-source of truth for the current and next result.
+The local CLI and report have passed release-candidate hardening. The final
+thin installed-agent workflow is tracked in [ROADMAP.md](ROADMAP.md), the
+source of truth for the current result.
 
 ## Development
 
 Build and exercise the CLI with the standard Go toolchain. It intentionally has
 no runtime dependency on Node:
 
-    gofmt -w ./cmd ./internal
+    gofmt -w ./cmd ./e2e ./internal
     go test ./...
     go vet ./...
 
@@ -39,7 +39,7 @@ from `web/`; never edit generated assets directly:
 - A Go CLI invokes the installed Git executable and generates one HTML file.
 - The default history is equivalent to:
 
-      git log --graph --oneline --decorate --all -n 10
+      git --no-replace-objects log --graph --oneline --decorate --all -n 10
 
 - The commit limit and all-refs/current-branch scope are configurable.
 - The report visibly preserves branch divergence and merge convergence.
@@ -72,5 +72,5 @@ external report assets are outside the design.
 - [docs/security.md](docs/security.md) defines trust boundaries and controls.
 - [docs/verification.md](docs/verification.md) defines required evidence.
 - [docs/distribution-and-skill.md](docs/distribution-and-skill.md) defines
-  packaging and the eventual agent skill.
+  local packaging and the installed agent skill.
 - [ROADMAP.md](ROADMAP.md) is the only project work queue.

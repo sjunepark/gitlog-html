@@ -27,6 +27,27 @@ func (function generatorFunc) Run(ctx context.Context, request generate.Request)
 	return function(ctx, request)
 }
 
+type inspectorStub struct {
+	snapshot      history.Snapshot
+	evidence      string
+	receivedRoot  string
+	receivedOID   history.ObjectID
+	receivedPatch bool
+	snapshotErr   error
+	evidenceErr   error
+}
+
+func (stub *inspectorStub) Snapshot(context.Context, string, history.Scope, int) (history.Snapshot, error) {
+	return stub.snapshot, stub.snapshotErr
+}
+
+func (stub *inspectorStub) Evidence(_ context.Context, root string, oid history.ObjectID, patch bool) (string, error) {
+	stub.receivedRoot = root
+	stub.receivedOID = oid
+	stub.receivedPatch = patch
+	return stub.evidence, stub.evidenceErr
+}
+
 func TestExecuteDefaultsAndSuccessDiagnostics(t *testing.T) {
 	var received generate.Request
 	service := generatorFunc(func(_ context.Context, request generate.Request) (generate.Result, error) {
@@ -83,6 +104,54 @@ func TestExecuteHelp(t *testing.T) {
 	exit := execute(context.Background(), []string{"--help"}, &stdout, &stderr, generatorFunc(nil))
 	if exit != 0 || !strings.Contains(stdout.String(), "Usage: gitlog-html") || stderr.Len() != 0 {
 		t.Fatalf("execute(--help) = %d, stdout = %q, stderr = %q", exit, stdout.String(), stderr.String())
+	}
+}
+
+func TestExecuteInspectSelectionAndEvidence(t *testing.T) {
+	oid := history.ObjectID(strings.Repeat("a", 40))
+	inspector := &inspectorStub{snapshot: history.Snapshot{
+		Repository: history.Repository{Root: "/resolved/repository"},
+		Selection:  history.Selection{Truncated: true},
+		Commits:    []history.Commit{{OID: oid}},
+	}, evidence: "commit evidence\n"}
+
+	var stdout, stderr bytes.Buffer
+	exit := executeInspect(context.Background(), []string{"--scope", "current", "--max-count", "1"}, &stdout, &stderr, inspector)
+	if exit != 0 || stdout.String() != `{"oids":["`+string(oid)+`"],"truncated":true}`+"\n" || stderr.Len() != 0 {
+		t.Fatalf("selection exit = %d, stdout = %q, stderr = %q", exit, stdout.String(), stderr.String())
+	}
+
+	stdout.Reset()
+	exit = executeInspect(context.Background(), []string{"--oid", string(oid), "--patch"}, &stdout, &stderr, inspector)
+	if exit != 0 || !strings.Contains(stdout.String(), `"evidence":"commit evidence\n"`) {
+		t.Fatalf("evidence exit = %d, stdout = %q, stderr = %q", exit, stdout.String(), stderr.String())
+	}
+	if inspector.receivedRoot != "/resolved/repository" || inspector.receivedOID != oid || !inspector.receivedPatch {
+		t.Fatalf("evidence request = root %q, oid %q, patch %t", inspector.receivedRoot, inspector.receivedOID, inspector.receivedPatch)
+	}
+}
+
+func TestExecuteInspectRejectsInvalidOrUnselectedEvidence(t *testing.T) {
+	selected := history.ObjectID(strings.Repeat("a", 40))
+	inspector := &inspectorStub{snapshot: history.Snapshot{Commits: []history.Commit{{OID: selected}}}}
+	tests := []struct {
+		name      string
+		arguments []string
+		wantExit  int
+		wantError string
+	}{
+		{name: "patch without oid", arguments: []string{"--patch"}, wantExit: 2, wantError: "requires --oid"},
+		{name: "invalid oid", arguments: []string{"--oid", "not-an-oid"}, wantExit: 2, wantError: "lowercase hexadecimal"},
+		{name: "outside selection", arguments: []string{"--oid", strings.Repeat("b", 40)}, wantExit: 1, wantError: "outside the selected history"},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			var stdout, stderr bytes.Buffer
+			exit := executeInspect(context.Background(), test.arguments, &stdout, &stderr, inspector)
+			if exit != test.wantExit || !strings.Contains(stderr.String(), test.wantError) {
+				t.Fatalf("executeInspect() = %d, stderr = %q; want %d and %q", exit, stderr.String(), test.wantExit, test.wantError)
+			}
+		})
 	}
 }
 

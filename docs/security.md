@@ -94,9 +94,16 @@ interpretations. Generation prints a concise reminder that the output is a
 portable snapshot and should be reviewed before sharing.
 
 The report contains no remote URL, absolute repository path, environment
-variable, Git config, or source diff in the first release. The eventual skill
+variable, Git config, or source diff in the first release. The installed skill
 must not upload the report or explanations unless the user separately requests
 and authorizes that action.
+
+The agent's `inspect` operation uses the same Go-owned Git runner and history
+selector as report generation. It disables replacement refs, accepts evidence
+only for an exact object ID in the selected slice, applies a dedicated 4 MiB
+Git-output ceiling per evidence request, and emits structured JSON with Unicode
+format and non-layout control runes named so repository text cannot reorder or
+control trusted terminal or agent output.
 
 ## Resource limits
 

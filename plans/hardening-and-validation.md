@@ -24,12 +24,14 @@ computed-accessibility, Chromium/WebKit, and manual non-SVG review are clean.
 The complete release matrix passes from detached clean commit `b0f7487`,
 generated assets and screenshots remain byte-current, and independent
 implementation, security, system, design, accessibility, and visual reviews
-report no material findings. PR evidence remains in progress.
+report no material findings. PR #5 feedback was resolved at `7ab6a83`; its
+updated Go, web, GitGuardian, and CodeRabbit checks passed, and the reviewed
+slice merged into the integration branch at `d32e85c`.
 
 ## Next action
 
-Deliver the reviewed hardening slice through its PR lifecycle, then advance the
-roadmap to the installed agent workflow.
+No remaining action within this plan. The installed agent workflow owns the
+remaining first-release work.
 
 ## Scope
 
@@ -63,8 +65,8 @@ roadmap to the installed agent workflow.
 ## Completion conditions
 
 - Every CLI/report success criterion in PRODUCT.md has linked evidence. The
-  installed-skill equivalence criterion is handed to the final agent-skill plan
-  and remains a goal-level completion condition.
+  installed-skill equivalence criterion is fulfilled by the final agent-skill
+  plan and remains recorded in the goal-level evidence.
 - All required commands pass from a clean checkout.
 - Generated assets are reproducible and current.
 - Browser reports work offline after being moved.
@@ -101,8 +103,9 @@ full logs or session transcripts.
   inert; visible isolated markers preserve and expose bidi controls across
   names, branches, subjects, refs, and identities, while flat assistive strings
   and the browser title replace controls with explicit short names.
-- Installed-skill equivalence: intentionally pending the next roadmap plan and
-  still required before the first-local-release goal can complete.
+- Installed-skill equivalence: the final agent-skill plan proves installed-path
+  report generation with exact Go-owned selection, optional explanations,
+  hostile text, merges, failure diagnostics, and offline file-URL rendering.
 
 ### Performance observations
 
@@ -129,4 +132,3 @@ Rebuilding leaves committed assets and screenshots unchanged.
 
 - Publishing a public release.
 - New product features discovered during validation.
-- Skill packaging, which has its own final plan.

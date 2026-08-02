@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -26,6 +27,11 @@ type generator interface {
 	Run(context.Context, generate.Request) (generate.Result, error)
 }
 
+type repositoryInspector interface {
+	Snapshot(context.Context, string, history.Scope, int) (history.Snapshot, error)
+	Evidence(context.Context, string, history.ObjectID, bool) (string, error)
+}
+
 type options struct {
 	repository       string
 	scope            history.Scope
@@ -35,6 +41,14 @@ type options struct {
 	force            bool
 }
 
+type inspectOptions struct {
+	repository string
+	scope      history.Scope
+	maximum    int
+	oid        history.ObjectID
+	patch      bool
+}
+
 func main() {
 	os.Exit(run())
 }
@@ -42,11 +56,80 @@ func main() {
 func run() int {
 	ctx, stop := commandContext()
 	defer stop()
+	loader := gitexec.Loader{Runner: gitexec.Runner{}}
 	service := generate.Service{
-		Loader:    gitexec.Loader{Runner: gitexec.Runner{}},
+		Loader:    loader,
 		Generator: report.Generator{Name: "gitlog-html", Version: version},
 	}
-	return execute(ctx, os.Args[1:], os.Stdout, os.Stderr, service)
+	return executeCommand(ctx, os.Args[1:], os.Stdout, os.Stderr, service, loader)
+}
+
+func executeCommand(ctx context.Context, arguments []string, stdout, stderr io.Writer, service generator, inspector repositoryInspector) int {
+	if len(arguments) > 0 && arguments[0] == "inspect" {
+		return executeInspect(ctx, arguments[1:], stdout, stderr, inspector)
+	}
+	return execute(ctx, arguments, stdout, stderr, service)
+}
+
+func executeInspect(ctx context.Context, arguments []string, stdout, stderr io.Writer, inspector repositoryInspector) int {
+	parsed, err := parseInspectOptions(arguments)
+	if errors.Is(err, flag.ErrHelp) {
+		writeInspectUsage(stdout)
+		return 0
+	}
+	if err != nil {
+		fprintf(stderr, "error: %v\n\n", err)
+		writeInspectUsage(stderr)
+		return 2
+	}
+
+	snapshot, err := inspector.Snapshot(ctx, parsed.repository, parsed.scope, parsed.maximum)
+	if err != nil {
+		fprintf(stderr, "error: %v\n", err)
+		return 1
+	}
+	encoder := json.NewEncoder(stdout)
+	encoder.SetEscapeHTML(true)
+	if parsed.oid == "" {
+		oids := make([]history.ObjectID, len(snapshot.Commits))
+		for index, commit := range snapshot.Commits {
+			oids[index] = commit.OID
+		}
+		if err := encoder.Encode(struct {
+			OIDs      []history.ObjectID `json:"oids"`
+			Truncated bool               `json:"truncated"`
+		}{OIDs: oids, Truncated: snapshot.Selection.Truncated}); err != nil {
+			fprintf(stderr, "error: write inspection output: %v\n", err)
+			return 1
+		}
+		return 0
+	}
+
+	selected := false
+	for _, commit := range snapshot.Commits {
+		if commit.OID == parsed.oid {
+			selected = true
+			break
+		}
+	}
+	if !selected {
+		fprintf(stderr, "error: object ID %q is outside the selected history\n", parsed.oid)
+		return 1
+	}
+	evidence, err := inspector.Evidence(ctx, snapshot.Repository.Root, parsed.oid, parsed.patch)
+	if err != nil {
+		fprintf(stderr, "error: inspect commit evidence: %v\n", err)
+		return 1
+	}
+	if err := encoder.Encode(struct {
+		OID           history.ObjectID `json:"oid"`
+		Evidence      string           `json:"evidence"`
+		PatchIncluded bool             `json:"patchIncluded"`
+	}{OID: parsed.oid, Evidence: evidence, PatchIncluded: parsed.patch}); err != nil {
+		fprintf(stderr, "error: write inspection output: %v\n", err)
+		return 1
+	}
+	return 0
 }
 
 func commandContext() (context.Context, context.CancelFunc) {
@@ -140,6 +223,55 @@ func parseOptions(arguments []string) (options, error) {
 	return parsed, nil
 }
 
+func parseInspectOptions(arguments []string) (inspectOptions, error) {
+	parsed := inspectOptions{repository: ".", scope: history.ScopeAll, maximum: 10}
+	if err := rejectSingleDashFlags(arguments); err != nil {
+		return inspectOptions{}, err
+	}
+
+	flags := flag.NewFlagSet("gitlog-html inspect", flag.ContinueOnError)
+	flags.SetOutput(io.Discard)
+	flags.Usage = func() {}
+	flags.Var(&stringFlag{name: "repo", destination: &parsed.repository}, "repo", "repository or descendant path to inspect")
+	scope := string(parsed.scope)
+	flags.Var(&stringFlag{name: "scope", destination: &scope}, "scope", "history scope: all or current")
+	flags.Var(&intFlag{name: "max-count", destination: &parsed.maximum}, "max-count", fmt.Sprintf("positive maximum commit count up to %d", history.MaximumCommitCount))
+	oid := ""
+	flags.Var(&stringFlag{name: "oid", destination: &oid}, "oid", "exact selected full object ID to inspect")
+	flags.Var(&boolFlag{name: "patch", destination: &parsed.patch}, "patch", "include the bounded patch in commit evidence")
+	if err := flags.Parse(arguments); err != nil {
+		return inspectOptions{}, err
+	}
+	if flags.NArg() != 0 {
+		return inspectOptions{}, fmt.Errorf("unexpected positional arguments: %s", strings.Join(flags.Args(), " "))
+	}
+	if parsed.repository == "" {
+		return inspectOptions{}, errors.New("--repo must not be empty")
+	}
+	parsedScope, err := history.ParseScope(scope)
+	if err != nil {
+		return inspectOptions{}, fmt.Errorf("--scope: %w", err)
+	}
+	parsed.scope = parsedScope
+	if parsed.maximum <= 0 {
+		return inspectOptions{}, errors.New("--max-count must be a positive integer")
+	}
+	if parsed.maximum > history.MaximumCommitCount {
+		return inspectOptions{}, fmt.Errorf("--max-count must not exceed %d", history.MaximumCommitCount)
+	}
+	if oid != "" {
+		parsedOID, err := history.ParseObjectID(oid)
+		if err != nil {
+			return inspectOptions{}, fmt.Errorf("--oid: %w", err)
+		}
+		parsed.oid = parsedOID
+	}
+	if parsed.patch && parsed.oid == "" {
+		return inspectOptions{}, errors.New("--patch requires --oid")
+	}
+	return parsed, nil
+}
+
 func rejectSingleDashFlags(arguments []string) error {
 	expectsValue := false
 	for _, argument := range arguments {
@@ -158,7 +290,7 @@ func rejectSingleDashFlags(arguments []string) error {
 			continue
 		}
 		switch name {
-		case "repo", "scope", "max-count", "descriptions", "output":
+		case "repo", "scope", "max-count", "descriptions", "output", "oid":
 			expectsValue = true
 		}
 	}
@@ -246,6 +378,7 @@ func (*boolFlag) IsBoolFlag() bool { return true }
 
 func writeUsage(writer io.Writer) {
 	fprintln(writer, "Usage: gitlog-html [flags]")
+	fprintln(writer, "       gitlog-html inspect [flags]")
 	fprintln(writer, "")
 	fprintln(writer, "  --repo PATH            repository or descendant path (default: current directory)")
 	fprintln(writer, "  --scope all|current    history selection (default: all)")
@@ -253,6 +386,16 @@ func writeUsage(writer io.Writer) {
 	fprintln(writer, "  --descriptions PATH    optional UTF-8 JSON explanation map")
 	fprintln(writer, "  --output PATH          standalone HTML path (default: git-history.html)")
 	fprintln(writer, "  --force                replace an existing regular output file")
+}
+
+func writeInspectUsage(writer io.Writer) {
+	fprintln(writer, "Usage: gitlog-html inspect [flags]")
+	fprintln(writer, "")
+	fprintln(writer, "  --repo PATH            repository or descendant path (default: current directory)")
+	fprintln(writer, "  --scope all|current    history selection (default: all)")
+	fprintf(writer, "  --max-count N          positive total commit limit up to %d (default: 10)\n", history.MaximumCommitCount)
+	fprintln(writer, "  --oid FULL_OID         inspect one exact commit from the selected history")
+	fprintln(writer, "  --patch                include the bounded patch; requires --oid")
 }
 
 func fprintln(writer io.Writer, value string) {

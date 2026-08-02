@@ -147,18 +147,19 @@ func (buffer *limitedBuffer) Truncated() bool { return buffer.truncated }
 
 func gitEnvironment() []string {
 	overrides := map[string]string{
-		"GIT_CONFIG_COUNT":    "3",
-		"GIT_CONFIG_KEY_0":    "color.ui",
-		"GIT_CONFIG_VALUE_0":  "false",
-		"GIT_CONFIG_KEY_1":    "core.pager",
-		"GIT_CONFIG_VALUE_1":  "cat",
-		"GIT_CONFIG_KEY_2":    "core.hooksPath",
-		"GIT_CONFIG_VALUE_2":  os.DevNull,
-		"GIT_OPTIONAL_LOCKS":  "0",
-		"GIT_PAGER":           "cat",
-		"GIT_TERMINAL_PROMPT": "0",
-		"NO_COLOR":            "1",
-		"PAGER":               "cat",
+		"GIT_CONFIG_COUNT":       "3",
+		"GIT_CONFIG_KEY_0":       "color.ui",
+		"GIT_CONFIG_VALUE_0":     "false",
+		"GIT_CONFIG_KEY_1":       "core.pager",
+		"GIT_CONFIG_VALUE_1":     "cat",
+		"GIT_CONFIG_KEY_2":       "core.hooksPath",
+		"GIT_CONFIG_VALUE_2":     os.DevNull,
+		"GIT_NO_REPLACE_OBJECTS": "1",
+		"GIT_OPTIONAL_LOCKS":     "0",
+		"GIT_PAGER":              "cat",
+		"GIT_TERMINAL_PROMPT":    "0",
+		"NO_COLOR":               "1",
+		"PAGER":                  "cat",
 	}
 
 	entries := os.Environ()

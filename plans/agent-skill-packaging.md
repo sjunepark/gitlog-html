@@ -9,16 +9,33 @@ data.
 
 ## Current state
 
-The intended workflow and boundary are defined in
-docs/distribution-and-skill.md. No skill directory, installation procedure,
-launcher, or end-to-end skill test exists. This plan assumes the CLI has passed
-hardening.
+The skill-creator workflow produced a concise repository-owned skill with
+generated agent metadata, focused CLI and explanation references, and a narrow
+launcher that delegates all product behavior to the CLI. Local installation
+uses a non-overwriting symlink to the reviewed source. An end-to-end Go test
+proves installed-path invocation, exact all/current selection, linear and merge
+history, optional explanations, hostile text, collision preservation, and
+missing-prerequisite diagnostics. Fresh no-explanation and explained agent runs
+both generated the requested artifacts without changing the repository; their
+reports rendered offline through the existing Playwright file-URL harness.
+Independent review found no remaining pre-feedback implementation defect after
+the shared Go inspection path, unborn-history handling, guarded installation,
+and terminal cleanup fixes. Selection and evidence now reuse the production Go
+loader, so the skill contains no Git invocation or duplicated history
+semantics. The pre-feedback implementation passed the complete matrix from
+detached clean commit `ef71029`. The Go-owned inspection, replacement-ref,
+evidence-hardening, and checkout-fallback feedback delta then passed independent
+review and the complete Go, race, vet, lint, local/Linux/Windows build, skill,
+workflow, frontend, deterministic-asset, and Chromium/WebKit matrix from
+detached clean commit `af86b3f`. A fresh installed-symlink run used `inspect`
+for exact selection and real patch evidence, generated an explained report,
+and rendered it offline in Chromium and WebKit without console or network
+errors. PR delivery remains in progress.
 
 ## Next action
 
-Invoke the $skill-creator workflow and design the minimal trigger description,
-instructions, references, and optional launcher around the installed
-gitlog-html executable.
+Deliver the reviewed and clean-validated installed-workflow slice through its
+PR lifecycle.
 
 ## Scope
 
@@ -30,8 +47,10 @@ gitlog-html executable.
 - Teach plain-text explanation writing, evidence/interpretation separation,
   merge explanation, and full-object-ID JSON keys.
 - Make explanations optional and state the subject fallback.
-- Use a task-owned temporary directory for explanation JSON and remove only
-  that directory after successful delivery.
+- Use a task-owned temporary directory for explanation JSON. Remove only that
+  directory immediately before the final response, after capturing any failure
+  diagnostic needed for recovery, and disclose its exact path if cleanup
+  fails.
 - Invoke an installed or repository-local CLI through a narrow, diagnostic
   launcher only if the skill-creator guidance supports it.
 - Preserve the CLI's output collision and force behavior.
@@ -65,6 +84,8 @@ The skill must:
 - The skill remains a thin orchestration layer and contains no graph, parser,
   renderer, or copied Go implementation.
 - A fresh agent run can follow the skill without relying on this conversation.
+- Selection and evidence reuse the cross-platform Go CLI and do not duplicate
+  Git invocation or history semantics in the skill.
 
 ## Validation
 

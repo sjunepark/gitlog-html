@@ -5,9 +5,11 @@
 The executable is named gitlog-html.
 
     gitlog-html [flags]
+    gitlog-html inspect [flags]
 
-The initial command has one generation path. Subcommands are not introduced
-until the product needs a second independently meaningful operation.
+The default path generates a report. The `inspect` operation supports the
+installed agent's independently meaningful selection and evidence step while
+keeping Git invocation and history semantics in Go.
 
 ## Flags
 
@@ -27,6 +29,10 @@ Default: all.
 
 - all selects the same ref universe as Git's --all revision option.
 - current selects HEAD and its ancestry.
+
+Both scopes disable replacement-object rewriting. A `refs/replace/*` ref is
+still part of the `--all` ref universe, but it does not substitute another
+object's contents or parents during discovery, selection, or inspection.
 
 The enum prevents contradictory all/current flags. An unborn HEAD produces an
 empty report instead of a crash. Arbitrary revision expressions are deferred.
@@ -82,6 +88,29 @@ rename semantics after the same complete-write and target-safety checks.
 Allows replacement of an existing regular output file, atomically on
 Unix-like systems.
 
+## Agent inspection
+
+    gitlog-html inspect \
+      [--repo PATH] \
+      [--scope all|current] \
+      [--max-count N] \
+      [--oid FULL_OID] \
+      [--patch]
+
+Without `--oid`, inspection returns structured JSON containing the exact full
+object IDs selected by the same loader used for report generation, in report
+order, plus the truncation state. With `--oid`, the CLI first proves exact
+membership in that selected slice and returns structured commit-message,
+identity, parent, and changed-file evidence. `--patch` adds the bounded patch
+and requires `--oid`.
+
+Inspection invokes real Git without a shell, uses the CLI's sanitized process
+environment and output limits, ignores replacement refs, and names Unicode
+format and non-layout control runes before JSON serialization. Each evidence
+request has a dedicated 4 MiB Git-output ceiling before serialization. It does
+not accept arbitrary revision expressions. A missing or outside-slice object
+ID cannot be used to inspect unrelated repository history.
+
 ## Examples
 
 Default report:
@@ -98,11 +127,16 @@ Agent-enriched report:
       --descriptions /path/to/descriptions.json \
       --output /path/to/history.html
 
+Exact agent selection and evidence:
+
+    gitlog-html inspect --scope all --max-count 10
+    gitlog-html inspect --scope all --max-count 10 --oid 012345...
+
 ## Output and diagnostics
 
-Successful stdout contains the resolved output path and a compact summary of
-the included commits and warnings. Machine data belongs in the report rather
-than stdout.
+Successful generation stdout contains the resolved output path and a compact
+summary of the included commits and warnings. Successful inspection stdout is
+structured JSON intended for the installed local agent workflow.
 
 Warnings go to stderr and do not change the success status when the report is
 truthful and usable. Operational and validation errors include the attempted
