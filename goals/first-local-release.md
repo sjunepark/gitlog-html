@@ -1,6 +1,6 @@
 # Goal: First local release
 
-Status: active
+Status: complete
 Planning scope: ROADMAP.md
 
 ## Original contract
@@ -38,21 +38,23 @@ Goal contract
 - Responsive accessible report interface.
 - Safe standalone report CLI.
 - Hardened release candidate.
+- Installed agent reporting workflow.
 
 ### Current in-scope result
 
-Installed agent reporting workflow.
+None.
 
 ### Next in-scope action
 
-Complete independent review and clean validation for the installed workflow,
-then deliver its final implementation PR and run the goal-level completion
-audit.
+None within this goal. Public release publication and distribution remain
+explicitly excluded.
 
-### Evidence and blockers
+### Completion evidence
 
 - `codex/first-local-release` is the temporary non-production integration branch for the sequential PR lifecycle.
-- Before every push, scan both Git history and the working tree with gitleaks using redacted output.
+- Every push in the sequential PR lifecycle was preceded by redacted gitleaks
+  history and working-tree scans plus supplemental credential-content and
+  sensitive-filename scans.
 - PR #2 merged the responsive report interface into the integration branch at
   `30811316deb2f888377283af709042f9c653a8fe`.
 - PR #3 was closed without merge. Its third-party Claude tooling payload is
@@ -97,7 +99,8 @@ audit.
   fixes now protect ordinary and linked-worktree storage, enforce a cumulative
   graph budget without replacing output, and cancel Git promptly at overflow.
   Full normal/race/vet/lint validation and independent follow-up security
-  review pass. Chromium and WebKit offline/CSP/bidi hardening pass independent
+  review pass. Chromium initial-offline and WebKit
+  request-monitored/post-load-offline file-URL hardening pass independent
   validation, including neutralized assistive strings and browser titles.
   The owning Claude session resumed after its quota reset and completed the
   merge-parent role labels, computed-accessibility probes, all-control bidi
@@ -110,8 +113,9 @@ audit.
   and fallback, linear and merge histories, hostile text, output collision,
   and prerequisite diagnostics. Two fresh agents generated representative
   reports without modifying the repository or leaking temporary explanation
-  data, and both artifacts rendered offline through the Playwright file-URL
-  harness. Independent review is clean after fixing Git-environment isolation,
+  data, and both artifacts rendered through the Playwright file-URL harness
+  with Chromium initially offline and WebKit request-monitored then offline.
+  Independent review is clean after fixing Git-environment isolation,
   unborn-history handling, guarded installation, and terminal cleanup. The
   installed explanation workflow now uses the production Go selector and
   bounded evidence path rather than shell-owned Git semantics.
@@ -122,6 +126,41 @@ audit.
   local/Linux/Windows build, skill, workflow, frontend, deterministic-asset,
   and Chromium/WebKit matrix from detached clean commit `af86b3f`. A fresh
   installed-symlink run used `inspect` for exact selection and real patch
-  evidence, generated an explained report, and rendered it offline in Chromium
-  and WebKit without console or network errors. Final PR delivery remains in
-  progress.
+  evidence, generated an explained report, and rendered it from file URLs in
+  Chromium and WebKit with outbound requests blocked and no console errors. PR
+  #6 passed Go, web,
+  GitGuardian, CodeRabbit, gitleaks history and directory scans, supplemental
+  secret scans, and the complete feedback workflow with no unresolved threads.
+  It merged into the integration branch at
+  `d2e7af6b77a7f6407c311de6380fa36a03be9815`.
+
+### Product success criteria audit
+
+- Default selection and topology: real-Git fixtures and generated-report
+  browser tests prove the latest ten commits across all refs, merge and branch
+  relationships, truncation, roots, and disconnected history against Git's
+  selected object IDs and parent relationships.
+- Explanation and fallback: component, generated-report, CLI, and installed
+  workflow tests prove explanation-first details, exact raw-message access,
+  subject fallback, and useful reports without descriptions.
+- Standalone offline report: moved-file Chromium tests load with networking
+  disabled; WebKit file-URL tests monitor every request and cut the network
+  after load. Together they prove one self-contained file with current embedded
+  assets, no external requests, and no console or CSP failures.
+- Responsive and accessible interface: desktop and mobile visual review,
+  keyboard flows, focus behavior, automated accessibility checks, computed
+  accessible-name probes, zoom, text-size, dark-mode, and reduced-motion tests
+  pass without relying on the SVG for meaning.
+- Untrusted content: Go parsing tests reject invalid UTF-8, while serialization,
+  component, Chromium, and WebKit tests prove valid malicious-looking HTML,
+  bidirectional controls, refs, identities, messages, and explanations remain
+  inert and readable.
+- CLI and installed-skill equivalence: the installed symlink delegates exact
+  selection, bounded evidence, report generation, and collision policy to the
+  production Go CLI; end-to-end tests and fresh explained and fallback runs
+  prove equivalent inputs and outputs without duplicated Git semantics.
+- Repository-required validation: the complete detached-clean Go, race, vet,
+  lint, local/Linux/Windows build, skill, workflow, frontend,
+  deterministic-asset, Chromium, and WebKit matrix passes, material review
+  findings are resolved, and every implementation PR is merged with green
+  checks and no unresolved review threads.

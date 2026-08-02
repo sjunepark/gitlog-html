@@ -17,7 +17,7 @@ flows.
 
 ## Next action
 
-None. The current roadmap result is hardening and validation.
+None — outcome complete.
 
 ## Ownership
 

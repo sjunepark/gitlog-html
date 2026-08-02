@@ -16,7 +16,7 @@ review findings were resolved.
 
 ## Next action
 
-None. The current roadmap result is hardening and validation.
+None — outcome complete.
 
 ## Scope
 

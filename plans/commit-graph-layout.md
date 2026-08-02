@@ -16,7 +16,7 @@ the graph package and rejecting inconsistent serialized graphs.
 
 ## Next action
 
-None. The next roadmap result is the responsive Svelte report interface.
+None — outcome complete.
 
 ## Scope
 

@@ -75,7 +75,9 @@ clones are skipped only with an explicit reason.
 Exercise the final file through a file URL, not only through the Vite server.
 Representative desktop and narrow mobile viewports cover:
 
-- initial load with networking disabled;
+- Chromium initial load with networking disabled; WebKit initial load under
+  request monitoring followed by post-load offline interaction because its
+  file-URL navigation cannot start under offline emulation;
 - commit selection by pointer and keyboard;
 - explanation-first and raw-message behavior;
 - fragment initialization, back, and forward;

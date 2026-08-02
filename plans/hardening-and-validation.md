@@ -9,15 +9,16 @@ resolved.
 
 ## Current state
 
-The integrated CLI and report now cover the real-Git, graph, standalone-file,
-hostile-content, accessibility, desktop, and mobile paths required by the
-earlier slices. Hardening review found and resolved repository-administration
+Complete. The integrated CLI and report cover the real-Git, graph,
+standalone-file, hostile-content, accessibility, desktop, and mobile paths
+required by the earlier slices. Hardening review found and resolved repository-administration
 output corruption, graph resource amplification, and non-terminating Git
 output-limit behavior; the follow-up security review is clean. Warm local CLI
 measurements on default and larger real-Git slices remain interactive, the
 accepted wide-graph benchmark is bounded, and a Go-only build succeeds with
-Node absent. Chromium and WebKit file-URL suites now prove offline operation,
-CSP monitoring, responsive behavior, and bidi-neutral derived labels and tab
+Node absent. Chromium initial-offline and WebKit request-monitored then
+post-load-offline file-URL suites prove network-independent operation, CSP
+monitoring, responsive behavior, and bidi-neutral derived labels and tab
 titles. The delegated merge-parent revision now names the first-parent history
 as "Continues from" and the remaining histories as "Also merges"; component,
 computed-accessibility, Chromium/WebKit, and manual non-SVG review are clean.
@@ -30,8 +31,7 @@ slice merged into the integration branch at `d32e85c`.
 
 ## Next action
 
-No remaining action within this plan. The installed agent workflow owns the
-remaining first-release work.
+None — outcome complete.
 
 ## Scope
 
@@ -105,7 +105,8 @@ full logs or session transcripts.
   and the browser title replace controls with explicit short names.
 - Installed-skill equivalence: the final agent-skill plan proves installed-path
   report generation with exact Go-owned selection, optional explanations,
-  hostile text, merges, failure diagnostics, and offline file-URL rendering.
+  hostile text, merges, failure diagnostics, and network-independent file-URL
+  rendering.
 
 ### Performance observations
 
