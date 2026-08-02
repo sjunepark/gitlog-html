@@ -10,9 +10,9 @@ The generator does not host a site, mutate a repository, call an LLM, or fetch
 runtime assets. Explanation generation belongs to the calling agent and the
 installed skill.
 
-This document describes the implemented local CLI and report architecture.
-The final roadmap slice adds only the thin installed-agent orchestration layer;
-it does not move the ownership boundaries below.
+This document describes the implemented local CLI, report, and installed-agent
+architecture. The installed skill is only a thin orchestration layer; it does
+not move the ownership boundaries below.
 
 ## System shape
 

@@ -11,13 +11,15 @@ data.
 
 Complete. The skill-creator workflow produced a concise repository-owned skill
 with generated agent metadata, focused CLI and explanation references, and a
-narrow launcher that delegates all product behavior to the CLI. Local installation
-uses a non-overwriting symlink to the reviewed source. An end-to-end Go test
+narrow launcher that delegates all product behavior to the CLI. Local
+installation uses a non-overwriting symlink to the reviewed source. An
+end-to-end Go test
 proves installed-path invocation, exact all/current selection, linear and merge
 history, optional explanations, hostile text, collision preservation, and
 missing-prerequisite diagnostics. Fresh no-explanation and explained agent runs
 both generated the requested artifacts without changing the repository; their
-reports rendered offline through the existing Playwright file-URL harness.
+reports rendered through the existing Playwright file-URL harness with Chromium
+initially offline and WebKit request-monitored then offline.
 Independent review found no remaining pre-feedback implementation defect after
 the shared Go inspection path, unborn-history handling, guarded installation,
 and terminal cleanup fixes. Selection and evidence now reuse the production Go
@@ -29,10 +31,11 @@ review and the complete Go, race, vet, lint, local/Linux/Windows build, skill,
 workflow, frontend, deterministic-asset, and Chromium/WebKit matrix from
 detached clean commit `af86b3f`. A fresh installed-symlink run used `inspect`
 for exact selection and real patch evidence, generated an explained report,
-and rendered it offline in Chromium and WebKit without console or network
-errors. PR #6 passed Go, web, GitGuardian, CodeRabbit, gitleaks history and
-directory scans, supplemental secret scans, and the complete feedback workflow
-with no unresolved threads. It merged into the integration branch at
+and rendered it from file URLs with Chromium initially offline and WebKit
+request-monitored then offline, without console errors. PR #6 passed Go, web,
+GitGuardian, CodeRabbit, gitleaks history and directory scans, supplemental
+secret scans, and the complete feedback workflow with no unresolved threads.
+It merged into the integration branch at
 `d2e7af6b77a7f6407c311de6380fa36a03be9815`.
 
 ## Next action

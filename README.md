@@ -7,9 +7,10 @@ without a terminal.
 
 ## Status
 
-The local CLI and report have passed release-candidate hardening. The final
-thin installed-agent workflow is tracked in [ROADMAP.md](ROADMAP.md), the
-source of truth for the current result.
+The first local release is complete: the validated Go CLI, standalone
+responsive report, and thin installed-agent workflow are delivered on the
+local integration branch. [ROADMAP.md](ROADMAP.md) remains the source of truth
+for current work and has no queued result.
 
 ## Development
 

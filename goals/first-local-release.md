@@ -99,7 +99,8 @@ explicitly excluded.
   fixes now protect ordinary and linked-worktree storage, enforce a cumulative
   graph budget without replacing output, and cancel Git promptly at overflow.
   Full normal/race/vet/lint validation and independent follow-up security
-  review pass. Chromium and WebKit offline/CSP/bidi hardening pass independent
+  review pass. Chromium initial-offline and WebKit
+  request-monitored/post-load-offline file-URL hardening pass independent
   validation, including neutralized assistive strings and browser titles.
   The owning Claude session resumed after its quota reset and completed the
   merge-parent role labels, computed-accessibility probes, all-control bidi
@@ -112,8 +113,9 @@ explicitly excluded.
   and fallback, linear and merge histories, hostile text, output collision,
   and prerequisite diagnostics. Two fresh agents generated representative
   reports without modifying the repository or leaking temporary explanation
-  data, and both artifacts rendered offline through the Playwright file-URL
-  harness. Independent review is clean after fixing Git-environment isolation,
+  data, and both artifacts rendered through the Playwright file-URL harness
+  with Chromium initially offline and WebKit request-monitored then offline.
+  Independent review is clean after fixing Git-environment isolation,
   unborn-history handling, guarded installation, and terminal cleanup. The
   installed explanation workflow now uses the production Go selector and
   bounded evidence path rather than shell-owned Git semantics.
@@ -124,8 +126,9 @@ explicitly excluded.
   local/Linux/Windows build, skill, workflow, frontend, deterministic-asset,
   and Chromium/WebKit matrix from detached clean commit `af86b3f`. A fresh
   installed-symlink run used `inspect` for exact selection and real patch
-  evidence, generated an explained report, and rendered it offline in Chromium
-  and WebKit without console or network errors. PR #6 passed Go, web,
+  evidence, generated an explained report, and rendered it from file URLs in
+  Chromium and WebKit with outbound requests blocked and no console errors. PR
+  #6 passed Go, web,
   GitGuardian, CodeRabbit, gitleaks history and directory scans, supplemental
   secret scans, and the complete feedback workflow with no unresolved threads.
   It merged into the integration branch at
@@ -140,9 +143,10 @@ explicitly excluded.
 - Explanation and fallback: component, generated-report, CLI, and installed
   workflow tests prove explanation-first details, exact raw-message access,
   subject fallback, and useful reports without descriptions.
-- Standalone offline report: moved-file Chromium and WebKit file-URL tests run
-  with networking disabled and prove one self-contained file with current
-  embedded assets, no external requests, and no console or CSP failures.
+- Standalone offline report: moved-file Chromium tests load with networking
+  disabled; WebKit file-URL tests monitor every request and cut the network
+  after load. Together they prove one self-contained file with current embedded
+  assets, no external requests, and no console or CSP failures.
 - Responsive and accessible interface: desktop and mobile visual review,
   keyboard flows, focus behavior, automated accessibility checks, computed
   accessible-name probes, zoom, text-size, dark-mode, and reduced-motion tests
