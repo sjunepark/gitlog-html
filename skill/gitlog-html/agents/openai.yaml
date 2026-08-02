@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitLog HTML"
+  short_description: "Create grounded standalone Git history reports"
+  default_prompt: "Use $gitlog-html to create a standalone visual history report for this repository."

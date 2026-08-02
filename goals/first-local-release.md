@@ -37,15 +37,17 @@ Goal contract
 - Deterministic commit graph layout.
 - Responsive accessible report interface.
 - Safe standalone report CLI.
+- Hardened release candidate.
 
 ### Current in-scope result
 
-Hardened release candidate.
+Installed agent reporting workflow.
 
 ### Next in-scope action
 
-Deliver the validated hardening slice through its PR lifecycle, then advance to
-the installed agent reporting workflow.
+Complete independent review and clean validation for the installed workflow,
+then deliver its final implementation PR and run the goal-level completion
+audit.
 
 ### Evidence and blockers
 
@@ -61,6 +63,11 @@ the installed agent reporting workflow.
   GitGuardian, gitleaks history and directory scans, supplemental secret scans,
   independent review, and the complete feedback workflow with no unresolved
   threads.
+- PR #5 merged the hardened release candidate into the integration branch at
+  `d32e85c30bff9c8ece35c980c4fcc8e02b7d4d02`. Its final head passed the full
+  local review matrix, clean-checkout validation, Go and web CI, GitGuardian,
+  gitleaks history and directory scans, supplemental secret scans, and the
+  complete feedback workflow with no unresolved threads.
 - Foundation validation: `gofmt`, `go test ./...`, and `go vet ./...` pass;
   shared-contract review findings were resolved before advancing the roadmap.
 - Git extraction validation: repeated real-Git tests, the race detector, the
@@ -97,4 +104,15 @@ the installed agent reporting workflow.
   fixture, rebuilt assets, browser checks, and manual non-SVG review. The full
   matrix passes from detached clean commit `b0f7487`; generated assets and
   screenshots stay byte-current, and formal independent review has no material
-  findings. PR delivery remains in progress.
+  findings. PR delivery is complete.
+- The repository-owned agent skill now validates through both its source and
+  installed symlink. Its end-to-end test proves exact selection, explanations
+  and fallback, linear and merge histories, hostile text, output collision,
+  and prerequisite diagnostics. Two fresh agents generated representative
+  reports without modifying the repository or leaking temporary explanation
+  data, and both artifacts rendered offline through the Playwright file-URL
+  harness. Independent review is clean after fixing Git-environment isolation,
+  unborn-history handling, guarded installation, and terminal cleanup. The
+  installed explanation workflow is intentionally validated on the local
+  POSIX host; native non-POSIX orchestration is not claimed in this release.
+  Clean-checkout validation and final PR delivery remain in progress.

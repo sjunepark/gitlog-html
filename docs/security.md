@@ -94,7 +94,7 @@ interpretations. Generation prints a concise reminder that the output is a
 portable snapshot and should be reviewed before sharing.
 
 The report contains no remote URL, absolute repository path, environment
-variable, Git config, or source diff in the first release. The eventual skill
+variable, Git config, or source diff in the first release. The installed skill
 must not upload the report or explanations unless the user separately requests
 and authorizes that action.
 

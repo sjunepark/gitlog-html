@@ -6,11 +6,11 @@ defined in [PRODUCT.md](PRODUCT.md); system boundaries are in
 
 ## Current
 
-[Harden and validate the complete product](plans/hardening-and-validation.md)
+[Package the agent skill and delivery workflow](plans/agent-skill-packaging.md)
 
 ## Plans
 
-1. [Package the agent skill and delivery workflow](plans/agent-skill-packaging.md)
+_None._
 
 ## Tasks
 

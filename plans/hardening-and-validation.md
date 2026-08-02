@@ -24,12 +24,14 @@ computed-accessibility, Chromium/WebKit, and manual non-SVG review are clean.
 The complete release matrix passes from detached clean commit `b0f7487`,
 generated assets and screenshots remain byte-current, and independent
 implementation, security, system, design, accessibility, and visual reviews
-report no material findings. PR evidence remains in progress.
+report no material findings. PR #5 feedback was resolved at `7ab6a83`; its
+updated Go, web, GitGuardian, and CodeRabbit checks passed, and the reviewed
+slice merged into the integration branch at `d32e85c`.
 
 ## Next action
 
-Deliver the reviewed hardening slice through its PR lifecycle, then advance the
-roadmap to the installed agent workflow.
+No remaining action within this plan. The installed agent workflow owns the
+remaining first-release work.
 
 ## Scope
 

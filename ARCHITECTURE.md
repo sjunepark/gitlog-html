@@ -8,7 +8,7 @@ computes a display model, and writes one self-contained interactive HTML file.
 
 The generator does not host a site, mutate a repository, call an LLM, or fetch
 runtime assets. Explanation generation belongs to the calling agent and the
-eventual skill.
+installed skill.
 
 This document describes the implemented local CLI and report architecture.
 The final roadmap slice adds only the thin installed-agent orchestration layer;
@@ -121,8 +121,8 @@ HTML generation. See
   same-directory rename on Unix-like systems.
 - web: Svelte source, TypeScript report contract, UI tests, and visual fixtures.
 - internal/report/assets: committed deterministic frontend build output.
-- skill/gitlog-html: reserved for the final roadmap slice's thin installed
-  orchestration instructions and references.
+- skill/gitlog-html: thin installed orchestration instructions, executable
+  diagnostics, and focused CLI and explanation references.
 
 Nested architecture documents are not justified before these subsystems exist.
 Add one only when a subtree develops an independent lifecycle or contributor

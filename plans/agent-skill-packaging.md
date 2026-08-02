@@ -9,16 +9,27 @@ data.
 
 ## Current state
 
-The intended workflow and boundary are defined in
-docs/distribution-and-skill.md. No skill directory, installation procedure,
-launcher, or end-to-end skill test exists. This plan assumes the CLI has passed
-hardening.
+The skill-creator workflow produced a concise repository-owned skill with
+generated agent metadata, focused CLI and explanation references, and a narrow
+launcher that delegates all product behavior to the CLI. Local installation
+uses a non-overwriting symlink to the reviewed source. An end-to-end Go test
+proves installed-path invocation, exact all/current selection, linear and merge
+history, optional explanations, hostile text, collision preservation, and
+missing-prerequisite diagnostics. Fresh no-explanation and explained agent runs
+both generated the requested artifacts without changing the repository; their
+reports rendered offline through the existing Playwright file-URL harness.
+Independent review found no remaining implementation defect after the shared
+Git wrapper, unborn-history handling, guarded installation, and terminal
+cleanup fixes. The reviewed first-release boundary intentionally validates the
+installed explanation workflow on POSIX; a native non-POSIX hardened Git path
+is deferred rather than claimed without evidence. Clean validation and PR
+delivery remain in progress.
 
 ## Next action
 
-Invoke the $skill-creator workflow and design the minimal trigger description,
-instructions, references, and optional launcher around the installed
-gitlog-html executable.
+Resolve any material independent-review findings, run the complete clean
+validation matrix, and deliver the installed-workflow slice through its PR
+lifecycle.
 
 ## Scope
 
@@ -30,8 +41,10 @@ gitlog-html executable.
 - Teach plain-text explanation writing, evidence/interpretation separation,
   merge explanation, and full-object-ID JSON keys.
 - Make explanations optional and state the subject fallback.
-- Use a task-owned temporary directory for explanation JSON and remove only
-  that directory after successful delivery.
+- Use a task-owned temporary directory for explanation JSON. Remove only that
+  directory immediately before the final response, after capturing any failure
+  diagnostic needed for recovery, and disclose its exact path if cleanup
+  fails.
 - Invoke an installed or repository-local CLI through a narrow, diagnostic
   launcher only if the skill-creator guidance supports it.
 - Preserve the CLI's output collision and force behavior.
@@ -65,6 +78,8 @@ The skill must:
 - The skill remains a thin orchestration layer and contains no graph, parser,
   renderer, or copied Go implementation.
 - A fresh agent run can follow the skill without relying on this conversation.
+- Installed orchestration is supported and validated on the first release's
+  local POSIX host; the standalone Go CLI retains its cross-platform boundary.
 
 ## Validation
 
@@ -81,3 +96,4 @@ The skill must:
 - Bundling platform-specific binaries inside the skill.
 - LLM calls inside the Go CLI.
 - Uploading or sharing reports automatically.
+- Native non-POSIX explanation orchestration for the installed skill.
