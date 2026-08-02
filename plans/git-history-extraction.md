@@ -17,7 +17,7 @@ supported, and corrupt loose and packed refs.
 
 ## Next action
 
-None. The current roadmap result is the responsive report interface.
+None — outcome complete.
 
 ## Scope
 

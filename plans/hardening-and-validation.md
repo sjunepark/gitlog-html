@@ -9,9 +9,9 @@ resolved.
 
 ## Current state
 
-The integrated CLI and report now cover the real-Git, graph, standalone-file,
-hostile-content, accessibility, desktop, and mobile paths required by the
-earlier slices. Hardening review found and resolved repository-administration
+Complete. The integrated CLI and report cover the real-Git, graph,
+standalone-file, hostile-content, accessibility, desktop, and mobile paths
+required by the earlier slices. Hardening review found and resolved repository-administration
 output corruption, graph resource amplification, and non-terminating Git
 output-limit behavior; the follow-up security review is clean. Warm local CLI
 measurements on default and larger real-Git slices remain interactive, the
@@ -30,8 +30,7 @@ slice merged into the integration branch at `d32e85c`.
 
 ## Next action
 
-No remaining action within this plan. The installed agent workflow owns the
-remaining first-release work.
+None — outcome complete.
 
 ## Scope
 

@@ -6,7 +6,7 @@ defined in [PRODUCT.md](PRODUCT.md); system boundaries are in
 
 ## Current
 
-[Package the agent skill and delivery workflow](plans/agent-skill-packaging.md)
+_None. The first local release is complete._
 
 ## Plans
 

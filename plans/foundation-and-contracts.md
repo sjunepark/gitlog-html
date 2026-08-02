@@ -18,8 +18,7 @@ and the required shared-contract review pass.
 
 ## Next action
 
-None — outcome complete. Git extraction can implement directly against the
-stable history types without changing the report wire contract implicitly.
+None — outcome complete.
 
 ## Scope
 
