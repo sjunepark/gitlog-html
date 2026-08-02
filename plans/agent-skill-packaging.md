@@ -23,11 +23,14 @@ the shared Go inspection path, unborn-history handling, guarded installation,
 and terminal cleanup fixes. Selection and evidence now reuse the production Go
 loader, so the skill contains no Git invocation or duplicated history
 semantics. The pre-feedback implementation passed the complete matrix from
-detached clean commit `ef71029`. The subsequent Go-owned inspection,
-replacement-ref, evidence-hardening, and checkout-fallback feedback delta
-passes local Go, race, vet, lint, skill, and end-to-end validation; its
-replacement clean-checkout matrix remains pending. PR delivery remains in
-progress.
+detached clean commit `ef71029`. The Go-owned inspection, replacement-ref,
+evidence-hardening, and checkout-fallback feedback delta then passed independent
+review and the complete Go, race, vet, lint, local/Linux/Windows build, skill,
+workflow, frontend, deterministic-asset, and Chromium/WebKit matrix from
+detached clean commit `af86b3f`. A fresh installed-symlink run used `inspect`
+for exact selection and real patch evidence, generated an explained report,
+and rendered it offline in Chromium and WebKit without console or network
+errors. PR delivery remains in progress.
 
 ## Next action
 
