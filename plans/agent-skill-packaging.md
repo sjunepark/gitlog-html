@@ -18,14 +18,16 @@ history, optional explanations, hostile text, collision preservation, and
 missing-prerequisite diagnostics. Fresh no-explanation and explained agent runs
 both generated the requested artifacts without changing the repository; their
 reports rendered offline through the existing Playwright file-URL harness.
-Independent review found no remaining implementation defect after the shared
-Git wrapper, unborn-history handling, guarded installation, and terminal
-cleanup fixes. The reviewed first-release boundary intentionally validates the
-installed explanation workflow on POSIX; a native non-POSIX hardened Git path
-is deferred rather than claimed without evidence. The complete Go, race, vet,
-lint, local/Linux/Windows build, skill, workflow, frontend, deterministic-asset,
-and Chromium/WebKit matrix passes from detached clean commit `ef71029`. PR
-delivery remains in progress.
+Independent review found no remaining pre-feedback implementation defect after
+the shared Go inspection path, unborn-history handling, guarded installation,
+and terminal cleanup fixes. Selection and evidence now reuse the production Go
+loader, so the skill contains no Git invocation or duplicated history
+semantics. The pre-feedback implementation passed the complete matrix from
+detached clean commit `ef71029`. The subsequent Go-owned inspection,
+replacement-ref, evidence-hardening, and checkout-fallback feedback delta
+passes local Go, race, vet, lint, skill, and end-to-end validation; its
+replacement clean-checkout matrix remains pending. PR delivery remains in
+progress.
 
 ## Next action
 
@@ -79,8 +81,8 @@ The skill must:
 - The skill remains a thin orchestration layer and contains no graph, parser,
   renderer, or copied Go implementation.
 - A fresh agent run can follow the skill without relying on this conversation.
-- Installed orchestration is supported and validated on the first release's
-  local POSIX host; the standalone Go CLI retains its cross-platform boundary.
+- Selection and evidence reuse the cross-platform Go CLI and do not duplicate
+  Git invocation or history semantics in the skill.
 
 ## Validation
 
@@ -97,4 +99,3 @@ The skill must:
 - Bundling platform-specific binaries inside the skill.
 - LLM calls inside the Go CLI.
 - Uploading or sharing reports automatically.
-- Native non-POSIX explanation orchestration for the installed skill.

@@ -21,18 +21,18 @@ the CLI.
    [scripts/run-report.sh](scripts/run-report.sh) for narrow prerequisite
    diagnostics and invocation. Pass a repository-local executable with
    `--cli PATH` when it is not installed on `PATH`.
-   Use [scripts/run-git.sh](scripts/run-git.sh) for every selection and evidence
-   command so ambient Git routing variables cannot redirect inspection away
-   from the requested repository.
+   Use the CLI's `inspect` operation for every selection and evidence request;
+   do not invoke Git separately. The Go implementation owns repository
+   discovery, history semantics, process isolation, and evidence bounds.
 5. Do not add `--force` unless the user explicitly authorizes replacing the
    exact existing report. Never work around the CLI's target protections.
 
 ## Generate
 
-1. Identify the exact selected full object IDs using the safe command in the
-   CLI reference. Keep the requested scope and total limit identical to the
-   report invocation. For unresolved current `HEAD`, skip explanation creation
-   and invoke the CLI so it owns the unborn-versus-invalid diagnosis.
+1. Identify the exact selected full object IDs using the `inspect` command in
+   the CLI reference. Keep the requested scope and total limit identical to the
+   report invocation. For unresolved or empty current history, omit
+   descriptions and let the CLI preserve its explicit repository diagnosis.
 2. When explanations are requested, inspect evidence for each selected commit
    and write a JSON object in a task-owned temporary directory outside the
    worktree. Use a structured JSON serializer and restrictive permissions.

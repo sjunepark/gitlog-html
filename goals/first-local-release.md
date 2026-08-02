@@ -113,8 +113,11 @@ audit.
   data, and both artifacts rendered offline through the Playwright file-URL
   harness. Independent review is clean after fixing Git-environment isolation,
   unborn-history handling, guarded installation, and terminal cleanup. The
-  installed explanation workflow is intentionally validated on the local
-  POSIX host; native non-POSIX orchestration is not claimed in this release.
-  The complete Go, race, vet, lint, local/Linux/Windows build, skill, workflow,
-  frontend, deterministic-asset, and Chromium/WebKit matrix passes from
-  detached clean commit `ef71029`. Final PR delivery remains in progress.
+  installed explanation workflow now uses the production Go selector and
+  bounded evidence path rather than shell-owned Git semantics.
+  The pre-feedback implementation passed the complete matrix from detached
+  clean commit `ef71029`. The subsequent Go-owned inspection,
+  replacement-ref, evidence-hardening, and checkout-fallback feedback delta
+  passes local Go, race, vet, lint, skill, and end-to-end validation; its
+  replacement clean-checkout matrix remains pending. Final PR delivery remains
+  in progress.

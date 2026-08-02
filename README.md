@@ -39,7 +39,7 @@ from `web/`; never edit generated assets directly:
 - A Go CLI invokes the installed Git executable and generates one HTML file.
 - The default history is equivalent to:
 
-      git log --graph --oneline --decorate --all -n 10
+      git --no-replace-objects log --graph --oneline --decorate --all -n 10
 
 - The commit limit and all-refs/current-branch scope are configurable.
 - The report visibly preserves branch divergence and merge convergence.

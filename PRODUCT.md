@@ -61,7 +61,7 @@ explanation falls back to the commit subject without presenting an empty state.
 The default selection is the most recent ten commits across all refs, matching
 the intent of:
 
-    git log --graph --oneline --decorate --all -n 10
+    git --no-replace-objects log --graph --oneline --decorate --all -n 10
 
 The limit applies to commits total, not commits per branch. This can truncate
 older graph lanes. The report must show that an edge continues outside the
@@ -129,4 +129,3 @@ The first release is complete when:
 - the CLI and installed skill can generate equivalent reports from the same
   inputs;
 - all validation in [docs/verification.md](docs/verification.md) passes.
-

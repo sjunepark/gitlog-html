@@ -31,7 +31,7 @@ truth.
 The skill turns the CLI into an agent workflow. It helps an agent:
 
 1. choose all refs or current branch and a commit limit;
-2. identify the exact visible commits using equivalent Git selection;
+2. identify the exact visible commits through the CLI's production selector;
 3. inspect each commit's message, metadata, changed-file statistics, and diff
    evidence as needed;
 4. write optional plain-text explanations grounded in that evidence;
@@ -69,16 +69,15 @@ it generated explanations or relied on commit subjects.
         explanation-guidance.md
         cli-reference.md
       scripts/
-        run-git.sh
         run-report.sh
 
 The executable remains an installed prerequisite or a repository-local binary.
 A launcher may locate and invoke it and provide a useful installation error,
 but it does not embed platform-specific binaries or duplicate product logic.
-The first local installed workflow targets a POSIX-shell host so selection and
-explanation evidence can use the reviewed Git-environment wrapper. The Go CLI
-remains cross-platform, but native non-POSIX explanation orchestration is not
-claimed or validated in this release.
+The POSIX launcher is a convenience only. Selection and explanation evidence
+use the cross-platform Go CLI's `inspect` operation directly, so Git invocation,
+history semantics, environment isolation, output bounds, and replacement-ref
+handling stay behind the product boundary.
 
 ## Local development installation
 
@@ -131,5 +130,5 @@ recovery; disclose the exact path and private-data risk if cleanup fails.
 - It follows the output overwrite policy and never silently replaces a report.
 - Its instructions stay thin and route implementation details to the CLI and
   project documentation.
-- Its installed orchestration is validated on the release's local POSIX host;
-  native non-POSIX explanation orchestration remains deferred.
+- Its selection and evidence path is owned by the cross-platform Go CLI rather
+  than shell commands or duplicated Git semantics.

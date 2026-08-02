@@ -121,8 +121,9 @@ HTML generation. See
   same-directory rename on Unix-like systems.
 - web: Svelte source, TypeScript report contract, UI tests, and visual fixtures.
 - internal/report/assets: committed deterministic frontend build output.
-- skill/gitlog-html: thin installed orchestration instructions, executable
-  diagnostics, and focused CLI and explanation references.
+- skill/gitlog-html: thin installed orchestration instructions, one executable
+  diagnostic launcher, and focused CLI and explanation references. Selection
+  and evidence remain Go-owned through the CLI's `inspect` operation.
 
 Nested architecture documents are not justified before these subsystems exist.
 Add one only when a subtree develops an independent lifecycle or contributor

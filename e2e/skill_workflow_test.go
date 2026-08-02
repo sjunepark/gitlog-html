@@ -26,24 +26,28 @@ func TestInstalledSkillWorkflow(t *testing.T) {
 
 	root := projectRoot(t)
 	temporary := t.TempDir()
-	cli := filepath.Join(temporary, "gitlog-html")
+	developmentRoot := filepath.Join(temporary, "development-checkout")
+	checkoutSkill := filepath.Join(developmentRoot, "skill", "gitlog-html")
+	if err := os.CopyFS(checkoutSkill, os.DirFS(filepath.Join(root, "skill", "gitlog-html"))); err != nil {
+		t.Fatalf("copy skill into development checkout: %v", err)
+	}
+	cli := filepath.Join(developmentRoot, "gitlog-html")
 	run(t, root, nil, "go", "build", "-o", cli, "./cmd/gitlog-html")
 
 	installed := filepath.Join(temporary, "codex-home", "skills", "gitlog-html")
 	if err := os.MkdirAll(filepath.Dir(installed), 0o755); err != nil {
 		t.Fatalf("create installed skill parent: %v", err)
 	}
-	if err := os.Symlink(filepath.Join(root, "skill", "gitlog-html"), installed); err != nil {
+	if err := os.Symlink(checkoutSkill, installed); err != nil {
 		t.Fatalf("install skill symlink: %v", err)
 	}
 	launcher := filepath.Join(installed, "scripts", "run-report.sh")
-	safeGit := filepath.Join(installed, "scripts", "run-git.sh")
 
 	repository, hostileOID, mergeOID := createHistoryFixture(t, temporary)
 
 	t.Run("without explanations", func(t *testing.T) {
 		output := filepath.Join(temporary, "without-explanations.html")
-		pathEnvironment := environmentWith(os.Environ(), "PATH", temporary+string(os.PathListSeparator)+os.Getenv("PATH"))
+		pathEnvironment := environmentWith(os.Environ(), "PATH", developmentRoot+string(os.PathListSeparator)+os.Getenv("PATH"))
 		run(t, root, pathEnvironment, launcher,
 			"--",
 			"--repo", repository,
@@ -53,13 +57,39 @@ func TestInstalledSkillWorkflow(t *testing.T) {
 		)
 
 		document := decodeReport(t, output)
-		want := selectedOIDs(t, safeGit, repository, "current", 2, nil)
+		want := selectedOIDs(t, cli, repository, "current", 2, nil)
 		assertSelectedOIDs(t, document, want)
 		for _, commit := range document.Commits {
 			if commit.Explanation != nil {
 				t.Fatalf("commit %s unexpectedly has an explanation", commit.OID)
 			}
 		}
+		assertStandalone(t, output)
+	})
+
+	t.Run("checkout-local CLI discovery", func(t *testing.T) {
+		pathDirectory := filepath.Join(temporary, "fallback-path")
+		if err := os.Mkdir(pathDirectory, 0o700); err != nil {
+			t.Fatalf("create fallback PATH: %v", err)
+		}
+		for _, executable := range []string{"git", "dirname"} {
+			resolved, err := exec.LookPath(executable)
+			if err != nil {
+				t.Fatalf("resolve %s: %v", executable, err)
+			}
+			if err := os.Symlink(resolved, filepath.Join(pathDirectory, executable)); err != nil {
+				t.Fatalf("link %s into fallback PATH: %v", executable, err)
+			}
+		}
+		output := filepath.Join(temporary, "checkout-local.html")
+		pathEnvironment := environmentWith(os.Environ(), "PATH", pathDirectory)
+		run(t, root, pathEnvironment, launcher,
+			"--",
+			"--repo", repository,
+			"--scope", "current",
+			"--max-count", "2",
+			"--output", output,
+		)
 		assertStandalone(t, output)
 	})
 
@@ -94,7 +124,7 @@ func TestInstalledSkillWorkflow(t *testing.T) {
 		)
 
 		document := decodeReport(t, output)
-		want := selectedOIDs(t, safeGit, repository, "all", 10, poisonedEnvironment)
+		want := selectedOIDs(t, cli, repository, "all", 10, poisonedEnvironment)
 		assertSelectedOIDs(t, document, want)
 		byOID := make(map[string]report.Commit, len(document.Commits))
 		for _, commit := range document.Commits {
@@ -110,17 +140,31 @@ func TestInstalledSkillWorkflow(t *testing.T) {
 			}
 		}
 		if !strings.Contains(byOID[hostileOID].RawMessage, "</script><script>") ||
-			!strings.Contains(byOID[hostileOID].RawMessage, "\u202e") {
+			!strings.Contains(byOID[hostileOID].RawMessage, "\u202e") ||
+			!strings.Contains(byOID[hostileOID].RawMessage, "\u009b") {
 			t.Fatalf("hostile commit text was not preserved: %q", byOID[hostileOID].RawMessage)
 		}
 		if len(byOID[mergeOID].Parents) != 2 {
 			t.Fatalf("merge has %d parents, want 2", len(byOID[mergeOID].Parents))
 		}
-		shownOID := strings.TrimSpace(run(t, root, poisonedEnvironment, safeGit,
-			"-C", repository, "show", "--no-ext-diff", "--no-textconv", "--format=%H", "--no-patch", hostileOID, "--",
-		))
-		if shownOID != hostileOID {
-			t.Fatalf("safe evidence inspection returned %q, want %q", shownOID, hostileOID)
+		evidenceOutput := run(t, root, poisonedEnvironment, cli,
+			"inspect", "--repo", repository, "--scope", "all", "--max-count", "10", "--oid", hostileOID, "--patch",
+		)
+		var evidence struct {
+			OID           string `json:"oid"`
+			Evidence      string `json:"evidence"`
+			PatchIncluded bool   `json:"patchIncluded"`
+		}
+		if err := json.Unmarshal([]byte(evidenceOutput), &evidence); err != nil {
+			t.Fatalf("decode evidence output: %v\n%s", err, evidenceOutput)
+		}
+		if evidence.OID != hostileOID || !evidence.PatchIncluded || !strings.Contains(evidence.Evidence, "safe content") ||
+			!strings.Contains(evidence.Evidence, "</script><script>") ||
+			!strings.Contains(evidence.Evidence, "[U+202E]") ||
+			!strings.Contains(evidence.Evidence, "[U+009B]") ||
+			strings.ContainsRune(evidence.Evidence, '\u202e') ||
+			strings.ContainsRune(evidence.Evidence, '\u009b') {
+			t.Fatalf("safe evidence inspection = %#v", evidence)
 		}
 		assertStandalone(t, output)
 
@@ -174,7 +218,8 @@ func createHistoryFixture(t *testing.T, parent string) (string, string, string) 
 	run(t, repository, nil, "git", "config", "user.email", "skill@example.test")
 
 	writeAndCommit(t, repository, "history.txt", "root\n", "Create the history fixture")
-	writeAndCommit(t, repository, "hostile.txt", "safe content\n", "Preserve </script><script> text \u202e safely")
+	rootOID := strings.TrimSpace(run(t, repository, nil, "git", "rev-parse", "HEAD"))
+	writeAndCommit(t, repository, "hostile.txt", "safe content\n", "Preserve </script><script> text \u202e and \u009b safely")
 	hostileOID := strings.TrimSpace(run(t, repository, nil, "git", "rev-parse", "HEAD"))
 
 	run(t, repository, nil, "git", "switch", "-c", "feature")
@@ -185,6 +230,7 @@ func createHistoryFixture(t *testing.T, parent string) (string, string, string) 
 	mergeOID := strings.TrimSpace(run(t, repository, nil, "git", "rev-parse", "HEAD"))
 	run(t, repository, nil, "git", "branch", "linear", hostileOID)
 	run(t, repository, nil, "git", "switch", "linear")
+	run(t, repository, nil, "git", "replace", hostileOID, rootOID)
 	return repository, hostileOID, mergeOID
 }
 
@@ -197,11 +243,21 @@ func writeAndCommit(t *testing.T, repository, name, contents, message string) {
 	run(t, repository, nil, "git", "commit", "-m", message)
 }
 
-func selectedOIDs(t *testing.T, gitCommand, repository, scope string, maximum int, environment []string) []string {
+func selectedOIDs(t *testing.T, cli, repository, scope string, maximum int, environment []string) []string {
 	t.Helper()
+	output := run(t, repository, environment, cli,
+		"inspect", "--repo", repository, "--scope", scope, "--max-count", fmt.Sprint(maximum),
+	)
+	var inspected struct {
+		OIDs []string `json:"oids"`
+	}
+	if err := json.Unmarshal([]byte(output), &inspected); err != nil {
+		t.Fatalf("decode selected object IDs: %v\n%s", err, output)
+	}
+
 	arguments := []string{
-		"-C", repository, "--no-pager", "log", "--topo-order", "--no-show-signature",
-		"--no-color", "--no-decorate", "--encoding=UTF-8",
+		"--no-replace-objects", "-C", repository, "--no-pager", "log", "--topo-order",
+		"--no-show-signature", "--no-color", "--no-decorate", "--encoding=UTF-8",
 		fmt.Sprintf("--max-count=%d", maximum), "--format=%H",
 	}
 	if scope == "all" {
@@ -209,8 +265,11 @@ func selectedOIDs(t *testing.T, gitCommand, repository, scope string, maximum in
 	} else {
 		arguments = append(arguments, "HEAD")
 	}
-	lines := strings.Fields(run(t, repository, environment, gitCommand, arguments...))
-	return lines
+	want := strings.Fields(run(t, repository, nil, "git", arguments...))
+	if !slices.Equal(inspected.OIDs, want) {
+		t.Fatalf("inspect object IDs = %v, reference Git = %v", inspected.OIDs, want)
+	}
+	return inspected.OIDs
 }
 
 func decodeReport(t *testing.T, path string) report.Document {

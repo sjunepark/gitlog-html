@@ -7,22 +7,22 @@ Use `--scope all` by default. It selects commits reachable from all refs. Use
 `HEAD` ancestry. The default `--max-count` is 10; it limits the total selected
 commits, not each branch, and must be between 1 and 40,000.
 
-Before writing explanations, obtain the visible full object IDs in the same
-topological order and sanitized Git environment as the CLI. Resolve
-`/path/to/skill` to this skill directory and use its shared Git wrapper:
+Before writing explanations, obtain the visible full object IDs from the same
+Go selector used by report generation. Resolve `/path/to/skill` to this skill
+directory and invoke the CLI through the launcher:
 
 ```sh
-/path/to/skill/scripts/run-git.sh -C /absolute/repository --no-pager log \
-  --topo-order --no-show-signature --no-color --no-decorate \
-  --encoding=UTF-8 --max-count=10 --format=%H --all
+/path/to/skill/scripts/run-report.sh -- inspect \
+  --repo /absolute/repository \
+  --scope all \
+  --max-count 10
 ```
 
-For current scope, first use the same wrapper with `rev-parse --verify --quiet
-HEAD^{commit}`. When that succeeds, replace `--all` above with `HEAD`. When it
-does not, omit descriptions and invoke the CLI with `--scope current`; the CLI
-will distinguish an intentional unborn history from invalid repository state.
-Do not replace the selection with per-branch logs or ASCII graph parsing, and
-never run these commands through ambient Git directly.
+The JSON `oids` array contains exact selected full object IDs in report order.
+For current scope, pass `--scope current`. An empty array is a valid unborn or
+empty selection; omit descriptions. Preserve any nonzero CLI diagnostic. Do
+not replace selection with per-branch Git logs, ASCII graph parsing, or direct
+Git invocation.
 
 ## Invocation
 
@@ -45,11 +45,8 @@ installed `gitlog-html`, or an executable named `gitlog-html` at the root of a
 development checkout containing this skill. It does not parse repositories,
 select commits, or render output.
 
-This first local release validates installed-agent orchestration on hosts with
-a POSIX shell. On a host without one, the standalone Go CLI can still be
-invoked directly with the documented flags, but do not claim that the skill's
-exact-selection or explanation-evidence workflow was completed: its hardened
-Git wrapper has no validated native equivalent in this release. The launcher
+On a host without a POSIX shell, perform the same prerequisite checks and
+invoke `gitlog-html` directly, including its `inspect` operation. The launcher
 adds no product behavior and is not required for report correctness.
 
 The CLI refuses to replace an existing output unless `--force` is present.
