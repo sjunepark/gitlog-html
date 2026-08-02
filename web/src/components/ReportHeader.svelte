@@ -1,4 +1,5 @@
 <script lang="ts">
+  import BidiText from './BidiText.svelte'
   import Icon from './Icon.svelte'
   import { describeHead, describeScope, formatDateTime, machineDateTime } from '../lib/format'
   import type { Report } from '../lib/schema'
@@ -33,10 +34,10 @@
 </script>
 
 <header class="report-header">
-  <h1 class="report-header__name">{report.repository.name}</h1>
+  <h1 class="report-header__name"><BidiText text={report.repository.name} /></h1>
   <p class="report-header__scope">
     <span class="report-header__head">
-      {describeHead(head)}{#if detachedAt !== null}<span class="report-header__oid">{detachedAt}</span>{/if}
+      <BidiText text={describeHead(head)} />{#if detachedAt !== null}<span class="report-header__oid">{detachedAt}</span>{/if}
     </span>
     <span class="report-header__divider" aria-hidden="true"></span>
     <span>{describeScope(report.selection)}</span>

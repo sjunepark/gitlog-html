@@ -110,7 +110,7 @@ func parseOptions(arguments []string) (options, error) {
 	flags.Var(&stringFlag{name: "repo", destination: &parsed.repository}, "repo", "repository or descendant path to inspect")
 	scope := string(parsed.scope)
 	flags.Var(&stringFlag{name: "scope", destination: &scope}, "scope", "history scope: all or current")
-	flags.Var(&intFlag{name: "max-count", destination: &parsed.maximum}, "max-count", "positive maximum commit count")
+	flags.Var(&intFlag{name: "max-count", destination: &parsed.maximum}, "max-count", fmt.Sprintf("positive maximum commit count up to %d", history.MaximumCommitCount))
 	flags.Var(&stringFlag{name: "descriptions", destination: &parsed.descriptionsPath}, "descriptions", "UTF-8 JSON explanation map")
 	flags.Var(&stringFlag{name: "output", destination: &parsed.outputPath}, "output", "standalone HTML output path")
 	flags.Var(&boolFlag{name: "force", destination: &parsed.force}, "force", "replace an existing regular output file")
@@ -130,6 +130,9 @@ func parseOptions(arguments []string) (options, error) {
 	parsed.scope = parsedScope
 	if parsed.maximum <= 0 {
 		return options{}, errors.New("--max-count must be a positive integer")
+	}
+	if parsed.maximum > history.MaximumCommitCount {
+		return options{}, fmt.Errorf("--max-count must not exceed %d", history.MaximumCommitCount)
 	}
 	if parsed.outputPath == "" {
 		return options{}, errors.New("--output must not be empty")
@@ -246,7 +249,7 @@ func writeUsage(writer io.Writer) {
 	fprintln(writer, "")
 	fprintln(writer, "  --repo PATH            repository or descendant path (default: current directory)")
 	fprintln(writer, "  --scope all|current    history selection (default: all)")
-	fprintln(writer, "  --max-count N          positive total commit limit (default: 10)")
+	fprintf(writer, "  --max-count N          positive total commit limit up to %d (default: 10)\n", history.MaximumCommitCount)
 	fprintln(writer, "  --descriptions PATH    optional UTF-8 JSON explanation map")
 	fprintln(writer, "  --output PATH          standalone HTML path (default: git-history.html)")
 	fprintln(writer, "  --force                replace an existing regular output file")

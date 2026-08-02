@@ -25,7 +25,7 @@ func (err *OutputError) Unwrap() error { return err.Err }
 // only after a complete write, flush, close, and final target safety check.
 // The final same-directory rename is atomic on Unix-like systems; Go does not
 // expose a portable atomic-rename guarantee on every supported platform.
-func WriteFile(path string, force bool, render func(io.Writer) error) (resolved string, err error) {
+func WriteFile(path string, force bool, protectedPaths []string, render func(io.Writer) error) (resolved string, err error) {
 	resolved, err = filepath.Abs(path)
 	if err != nil {
 		return "", &OutputError{Operation: "resolve", Path: path, Err: err}
@@ -36,6 +36,9 @@ func WriteFile(path string, force bool, render func(io.Writer) error) (resolved 
 		return "", &OutputError{Operation: "inspect parent for", Path: resolved, Err: err}
 	}
 	resolved = filepath.Join(parent, filepath.Base(resolved))
+	if err := rejectProtectedOutput(resolved, protectedPaths); err != nil {
+		return "", err
+	}
 
 	initial, err := inspectOutput(resolved, force)
 	if err != nil {
@@ -78,6 +81,66 @@ func WriteFile(path string, force bool, render func(io.Writer) error) (resolved 
 		return "", &OutputError{Operation: "install", Path: resolved, Err: err}
 	}
 	return resolved, nil
+}
+
+func rejectProtectedOutput(path string, protectedPaths []string) error {
+	for _, protected := range protectedPaths {
+		resolved, err := filepath.EvalSymlinks(protected)
+		if errors.Is(err, os.ErrNotExist) {
+			parent, parentErr := filepath.EvalSymlinks(filepath.Dir(protected))
+			if parentErr != nil {
+				return &OutputError{Operation: "inspect protected path for", Path: path, Err: parentErr}
+			}
+			resolved = filepath.Join(parent, filepath.Base(protected))
+			err = nil
+		}
+		if err != nil {
+			return &OutputError{Operation: "inspect protected path for", Path: path, Err: err}
+		}
+		inside, err := sameOrDescendant(path, filepath.Clean(resolved))
+		if err != nil {
+			return &OutputError{Operation: "compare protected path for", Path: path, Err: err}
+		}
+		if inside {
+			return &OutputError{Operation: "inspect", Path: path, Err: errors.New("refusing to replace Git administrative storage")}
+		}
+	}
+	return nil
+}
+
+func sameOrDescendant(path, protected string) (bool, error) {
+	if filepath.Clean(path) == filepath.Clean(protected) {
+		return true, nil
+	}
+	protectedInfo, err := os.Stat(protected)
+	if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	if targetInfo, targetErr := os.Stat(path); targetErr == nil {
+		if os.SameFile(protectedInfo, targetInfo) {
+			return true, nil
+		}
+	} else if !errors.Is(targetErr, os.ErrNotExist) {
+		return false, targetErr
+	}
+	if !protectedInfo.IsDir() {
+		return false, nil
+	}
+	for current := filepath.Dir(path); ; current = filepath.Dir(current) {
+		info, statErr := os.Stat(current)
+		if statErr != nil {
+			return false, statErr
+		}
+		if os.SameFile(protectedInfo, info) {
+			return true, nil
+		}
+		if parent := filepath.Dir(current); parent == current {
+			return false, nil
+		}
+	}
 }
 
 func inspectOutput(path string, force bool) (fs.FileInfo, error) {

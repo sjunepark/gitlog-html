@@ -7,6 +7,23 @@ import (
 	"github.com/sjunepark/gitlog-html/internal/history"
 )
 
+// MaximumLayoutComplexity bounds the cumulative serialized lane and edge
+// material that one report can request. Ordinary long histories remain cheap,
+// while adversarially wide histories cannot amplify bounded Git output into
+// unbounded graph allocations.
+const MaximumLayoutComplexity = 5 * history.MaximumCommitCount
+
+// ComplexityError reports a valid topology whose serialized lane and edge
+// material would exceed the release safety budget.
+type ComplexityError struct {
+	Row   int
+	Limit int
+}
+
+func (err *ComplexityError) Error() string {
+	return fmt.Sprintf("layout row %d exceeds the %d-unit graph complexity limit", err.Row, err.Limit)
+}
+
 // InputError reports history that cannot form the promised topological layout.
 type InputError struct {
 	Row         int
@@ -43,7 +60,27 @@ func Build(commits []history.Commit) (Layout, error) {
 	active := []laneSlot{}
 	rows := make([]Row, len(commits))
 	laneCount := 0
+	complexity := 0
 	for rowIndex, commit := range commits {
+		// Check a conservative per-row upper bound before materializing lane
+		// snapshots. The bound includes both lane snapshots, continuations, and
+		// parent edges, including a newly allocated lane for a disconnected tip.
+		expected := 0
+		for _, slot := range active {
+			if slot.expected != nil {
+				expected++
+			}
+		}
+		growth := len(commit.Parents)
+		if growth == 0 {
+			growth = 1
+		}
+		for _, contribution := range []int{len(active), len(active), growth, expected, len(commit.Parents)} {
+			if contribution > MaximumLayoutComplexity-complexity {
+				return Layout{}, &ComplexityError{Row: rowIndex, Limit: MaximumLayoutComplexity}
+			}
+			complexity += contribution
+		}
 		incoming := laneStates(active)
 		nodeLane := findExpectedLane(active, commit.OID)
 		if nodeLane < 0 {

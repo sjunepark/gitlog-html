@@ -17,6 +17,7 @@ import (
 
 type SnapshotLoader interface {
 	Snapshot(context.Context, string, history.Scope, int) (history.Snapshot, error)
+	AdministrativePaths(context.Context, string) ([]string, error)
 }
 
 type Request struct {
@@ -51,6 +52,9 @@ func (service Service) Run(ctx context.Context, request Request) (Result, error)
 	if request.Maximum <= 0 {
 		return Result{}, errors.New("generate report: maximum commit count must be positive")
 	}
+	if request.Maximum > history.MaximumCommitCount {
+		return Result{}, fmt.Errorf("generate report: maximum commit count must not exceed %d", history.MaximumCommitCount)
+	}
 	if request.Repository == "" {
 		return Result{}, errors.New("generate report: repository path is empty")
 	}
@@ -68,6 +72,10 @@ func (service Service) Run(ctx context.Context, request Request) (Result, error)
 			return Result{}, err
 		}
 		snapshot = history.AttachDescriptions(snapshot, descriptions)
+	}
+	administrativePaths, err := service.Loader.AdministrativePaths(ctx, snapshot.Repository.Root)
+	if err != nil {
+		return Result{}, fmt.Errorf("protect repository storage: %w", err)
 	}
 	layout, err := graph.Build(snapshot.Commits)
 	if err != nil {
@@ -87,7 +95,7 @@ func (service Service) Run(ctx context.Context, request Request) (Result, error)
 		return Result{}, fmt.Errorf("assemble report model: %w", err)
 	}
 	renderer := report.Renderer{NonceSource: service.NonceSource}
-	outputPath, err := report.WriteFile(request.OutputPath, request.Force, func(writer io.Writer) error {
+	outputPath, err := report.WriteFile(request.OutputPath, request.Force, administrativePaths, func(writer io.Writer) error {
 		return renderer.Render(writer, document)
 	})
 	if err != nil {

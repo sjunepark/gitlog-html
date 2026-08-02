@@ -173,6 +173,30 @@ func TestRunnerReturnsTypedErrorForOversizedStdout(t *testing.T) {
 	}
 }
 
+func TestRunnerStopsProducerPromptlyAtStdoutLimit(t *testing.T) {
+	t.Setenv("GO_WANT_GITEXEC_HELPER", "1")
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	started := time.Now()
+	result, err := (Runner{Executable: os.Args[0], MaxStdoutBytes: 1024}).Run(
+		ctx,
+		"",
+		"-test.run=^TestGitExecHelperProcess$",
+		"--",
+		"stream",
+	)
+	var limitErr *OutputLimitError
+	if !errors.As(err, &limitErr) {
+		t.Fatalf("Run() error = %T %v, want OutputLimitError", err, err)
+	}
+	if len(result.Stdout) != 1024 {
+		t.Fatalf("stdout bytes = %d, want 1024", len(result.Stdout))
+	}
+	if ctx.Err() != nil || time.Since(started) >= 3*time.Second {
+		t.Fatalf("producer was not stopped promptly: elapsed %s, context %v", time.Since(started), ctx.Err())
+	}
+}
+
 func TestRunnerReturnsTypedCancellationError(t *testing.T) {
 	t.Setenv("GO_WANT_GITEXEC_HELPER", "1")
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Millisecond)
@@ -271,6 +295,13 @@ func TestGitExecHelperProcess(t *testing.T) {
 	case "large":
 		_, _ = os.Stdout.WriteString("abcdefghijklmnopqrstuvwxyz")
 		os.Exit(0)
+	case "stream":
+		chunk := make([]byte, 64*1024)
+		for {
+			if _, err := os.Stdout.Write(chunk); err != nil {
+				os.Exit(0)
+			}
+		}
 	default:
 		os.Exit(95)
 	}

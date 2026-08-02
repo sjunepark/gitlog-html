@@ -33,10 +33,24 @@ test.describe('standalone report opened from a file URL', () => {
     await report.expectNoPageOverflow()
   })
 
+  test('reaches the first commit with Tab', async ({ report }, testInfo) => {
+    // Safari ships with "Press Tab to highlight each item on a webpage" off, so
+    // WebKit's Tab visits form fields only. That is a browser preference, not a
+    // property of the report: the same control is focusable and Enter- and
+    // Space-activated in WebKit, which the next test asserts in every engine.
+    test.skip(
+      testInfo.project.name === 'webkit-mobile',
+      'WebKit does not move Tab focus to buttons unless full keyboard access is enabled'
+    )
+    await report.open('ordinary')
+    await report.page.keyboard.press('Tab')
+    await expect(report.rows().first()).toBeFocused()
+  })
+
   test('selects with the keyboard using Enter and Space', async ({ report }) => {
     await report.open('ordinary')
     const { page } = report
-    await page.keyboard.press('Tab')
+    await report.rows().first().focus()
     await expect(report.rows().first()).toBeFocused()
     await page.keyboard.press('Enter')
     await expect(report.details()).toBeVisible()
@@ -54,11 +68,18 @@ test.describe('standalone report opened from a file URL', () => {
 
   test('keeps the keyboard focus ring visible on the commit control', async ({ report }) => {
     await report.open('ordinary')
-    await report.page.keyboard.press('Tab')
+    // Focused directly rather than by Tab, so the ring is asserted in every
+    // engine: `:focus-visible` matches on programmatic focus in all three.
+    await report.rows().first().focus()
     const outline = await report.rows().first().evaluate((node) => {
       const style = getComputedStyle(node)
-      return { width: style.outlineWidth, style: style.outlineStyle }
+      return {
+        width: style.outlineWidth,
+        style: style.outlineStyle,
+        focusVisible: node.matches(':focus-visible')
+      }
     })
+    expect(outline.focusVisible).toBe(true)
     expect(outline.style).not.toBe('none')
     expect(Number.parseFloat(outline.width)).toBeGreaterThanOrEqual(2)
   })
@@ -101,6 +122,36 @@ test.describe('standalone report opened from a file URL', () => {
     await page.goForward()
     await expect(report.rows().nth(1)).toHaveAttribute('aria-current', 'true')
     expect(page.url()).toContain(`#${secondOid}`)
+  })
+
+  test('renders with the network switched off, not merely unused', async ({ report }) => {
+    // Monitoring outgoing requests shows the report never tries to reach the
+    // network; this shows it does not need one.
+    await report.open('ordinary')
+    const { page } = report
+
+    // Chromium contexts are already offline before the file loads, but on a
+    // file document `navigator.onLine` only follows a state change, so a
+    // context that started offline still reads as online. WebKit cannot
+    // navigate to a file URL while offline at all, so it loads connected.
+    // Driving the transition explicitly makes the state real and observable in
+    // every engine. Nothing is in flight between these two calls, and the
+    // fixture still fails on any request that leaves the document.
+    await page.context().setOffline(false)
+    await page.context().setOffline(true)
+
+    expect(await page.evaluate(() => navigator.onLine)).toBe(false)
+    // A behavioural probe from inside the document would prove the policy
+    // rather than the network: `connect-src 'none'` refuses every connection
+    // before the network layer is reached. The report cannot call out even if
+    // it wanted to, so the flag is the evidence that belongs at this layer.
+
+    // The report is fully usable in that state.
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('acme-quotes')
+    await expect(report.rows()).toHaveCount(10)
+    await report.rows().first().click()
+    await expect(report.details()).toBeVisible()
+    await report.expectNoPageOverflow()
   })
 
   test('reads the report data from the inert JSON element only', async ({ report }) => {

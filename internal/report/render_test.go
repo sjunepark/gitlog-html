@@ -13,7 +13,7 @@ import (
 
 func TestRenderProducesSafeStandaloneDocument(t *testing.T) {
 	document := fixtureDocument(t)
-	document.Repository.Name = `hostile </title><script>alert("title")</script> & repo`
+	document.Repository.Name = "hostile </title><script>alert(\"title\")</script> & repo A\u202eBC\u202c Z"
 	document.Commits[0].RawMessage += "\n</script><script>alert('data')</script>\u2028\u2029"
 	document.Commits[0].Subject = strings.Split(document.Commits[0].RawMessage, "\n")[0]
 
@@ -29,7 +29,7 @@ func TestRenderProducesSafeStandaloneDocument(t *testing.T) {
 		`script-src 'nonce-fixed-nonce'`,
 		`style-src 'nonce-fixed-nonce'`,
 		`connect-src 'none'`,
-		`hostile &lt;/title&gt;&lt;script&gt;alert(&#34;title&#34;)&lt;/script&gt; &amp; repo`,
+		`hostile &lt;/title&gt;&lt;script&gt;alert(&#34;title&#34;)&lt;/script&gt; &amp; repo A[RLO]BC[PDF] Z — commit history`,
 		`\u003c/script\u003e\u003cscript\u003ealert('data')\u003c/script\u003e\u2028\u2029`,
 	} {
 		if !strings.Contains(html, want) {
@@ -39,10 +39,40 @@ func TestRenderProducesSafeStandaloneDocument(t *testing.T) {
 	if strings.Contains(html, `</title><script>alert("title")`) || strings.Contains(html, `</script><script>alert('data')`) {
 		t.Fatal("dynamic content escaped its inert encoding")
 	}
+	if strings.Contains(strings.SplitN(html, "</title>", 2)[0], "\u202e") ||
+		strings.Contains(strings.SplitN(html, "</title>", 2)[0], "\u202c") {
+		t.Fatal("report title contains active bidirectional controls")
+	}
 	for _, forbidden := range []string{`<script src=`, `<link rel="stylesheet"`, `type="module"`, `sourceMappingURL=`} {
 		if strings.Contains(html, forbidden) {
 			t.Fatalf("rendered document contains forbidden runtime dependency %q", forbidden)
 		}
+	}
+}
+
+func TestNeutralizeBidiControlsNamesEveryFormattingCharacter(t *testing.T) {
+	input := "\u061c\u200e\u200f\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069"
+	want := "[ALM][LRM][RLM][LRE][RLE][PDF][LRO][RLO][LRI][RLI][FSI][PDI]"
+	if got := neutralizeBidiControls(input); got != want {
+		t.Fatalf("neutralizeBidiControls() = %q, want %q", got, want)
+	}
+	if got := neutralizeBidiControls("ordinary repository"); got != "ordinary repository" {
+		t.Fatalf("neutralizeBidiControls() changed ordinary text to %q", got)
+	}
+}
+
+func TestRenderNeutralizesEveryTitleBidiControl(t *testing.T) {
+	document := fixtureDocument(t)
+	document.Repository.Name = "A\u061c\u200e\u200f\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069Z"
+
+	var output bytes.Buffer
+	err := (Renderer{NonceSource: NonceFunc(func() (string, error) { return "fixed-nonce", nil })}).Render(&output, document)
+	if err != nil {
+		t.Fatalf("Render(): %v", err)
+	}
+	want := "<title>A[ALM][LRM][RLM][LRE][RLE][PDF][LRO][RLO][LRI][RLI][FSI][PDI]Z — commit history</title>"
+	if !strings.Contains(output.String(), want) {
+		t.Fatalf("rendered document missing neutral title %q", want)
 	}
 }
 
@@ -90,13 +120,13 @@ func TestWriteFileProtectsTargetsAndCleansTemporary(t *testing.T) {
 		return err
 	}
 
-	if _, err := WriteFile(output, false, render); err == nil || !strings.Contains(err.Error(), "already exists") {
+	if _, err := WriteFile(output, false, nil, render); err == nil || !strings.Contains(err.Error(), "already exists") {
 		t.Fatalf("WriteFile(no force) error = %v", err)
 	}
 	if contents, _ := os.ReadFile(output); string(contents) != "original" {
 		t.Fatalf("collision changed output to %q", contents)
 	}
-	resolved, err := WriteFile(output, true, render)
+	resolved, err := WriteFile(output, true, nil, render)
 	if err != nil {
 		t.Fatalf("WriteFile(force): %v", err)
 	}
@@ -118,7 +148,7 @@ func TestWriteFileProtectsTargetsAndCleansTemporary(t *testing.T) {
 
 	failure := errors.New("render stopped")
 	failedOutput := filepath.Join(directory, "failed.html")
-	if _, err := WriteFile(failedOutput, false, func(writer io.Writer) error {
+	if _, err := WriteFile(failedOutput, false, nil, func(writer io.Writer) error {
 		_, _ = io.WriteString(writer, "partial")
 		return failure
 	}); !errors.Is(err, failure) {
@@ -131,7 +161,7 @@ func TestWriteFileProtectsTargetsAndCleansTemporary(t *testing.T) {
 	if err := os.WriteFile(output, []byte("protected original"), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if _, err := WriteFile(output, true, func(writer io.Writer) error {
+	if _, err := WriteFile(output, true, nil, func(writer io.Writer) error {
 		closer, ok := writer.(io.Closer)
 		if !ok {
 			return errors.New("temporary writer is not closable")
@@ -176,7 +206,7 @@ func TestWriteFileRefusesSymlinkDirectoryAndMissingParent(t *testing.T) {
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			if _, err := WriteFile(test.path, true, render); err == nil || !strings.Contains(err.Error(), test.want) {
+			if _, err := WriteFile(test.path, true, nil, render); err == nil || !strings.Contains(err.Error(), test.want) {
 				t.Fatalf("WriteFile() error = %v, want substring %q", err, test.want)
 			}
 		})
@@ -197,7 +227,7 @@ func TestWriteFileResolvesOutputParent(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resolved, err := WriteFile(filepath.Join(linkedParent, "report.html"), false, func(writer io.Writer) error {
+	resolved, err := WriteFile(filepath.Join(linkedParent, "report.html"), false, nil, func(writer io.Writer) error {
 		_, err := io.WriteString(writer, "report")
 		return err
 	})
@@ -211,5 +241,48 @@ func TestWriteFileResolvesOutputParent(t *testing.T) {
 	want := filepath.Join(resolvedParent, "report.html")
 	if resolved != want {
 		t.Fatalf("resolved path = %q, want %q", resolved, want)
+	}
+}
+
+func TestWriteFileRefusesProtectedPathsThroughResolvedParents(t *testing.T) {
+	directory := t.TempDir()
+	protected := filepath.Join(directory, "repository", ".git")
+	if err := os.MkdirAll(protected, 0o700); err != nil {
+		t.Fatal(err)
+	}
+	head := filepath.Join(protected, "HEAD")
+	if err := os.WriteFile(head, []byte("ref: refs/heads/main\n"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	alias := filepath.Join(directory, "administrative-link")
+	if err := os.Symlink(protected, alias); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := WriteFile(filepath.Join(alias, "HEAD"), true, []string{protected}, func(writer io.Writer) error {
+		_, writeErr := io.WriteString(writer, "replacement")
+		return writeErr
+	})
+	if err == nil || !strings.Contains(err.Error(), "Git administrative storage") {
+		t.Fatalf("WriteFile() error = %v, want administrative-storage refusal", err)
+	}
+	if contents, readErr := os.ReadFile(head); readErr != nil || string(contents) != "ref: refs/heads/main\n" {
+		t.Fatalf("protected HEAD = %q, %v", contents, readErr)
+	}
+}
+
+func TestWriteFileRefusesMissingReservedControlPath(t *testing.T) {
+	directory := t.TempDir()
+	protected := filepath.Join(directory, ".git")
+
+	_, err := WriteFile(protected, false, []string{protected}, func(writer io.Writer) error {
+		_, writeErr := io.WriteString(writer, "report")
+		return writeErr
+	})
+	if err == nil || !strings.Contains(err.Error(), "Git administrative storage") {
+		t.Fatalf("WriteFile() error = %v, want administrative-storage refusal", err)
+	}
+	if _, statErr := os.Lstat(protected); !errors.Is(statErr, os.ErrNotExist) {
+		t.Fatalf("reserved control path was created: %v", statErr)
 	}
 }

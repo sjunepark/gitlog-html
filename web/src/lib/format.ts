@@ -109,7 +109,10 @@ export function commitAccessibleLabel(commit: Commit, position: number, total: n
   if (commit.parents.length >= 2) parts.push(`Merge of ${commit.parents.length} commits`)
   if (commit.parents.length === 0) parts.push('Start of history')
   parts.push(formatDateTime(commit.committer.when))
-  return parts.join('. ')
+  // An accessible name replaces the element's own text for assistive
+  // technology, so the marked-up spans inside the row cannot protect it. The
+  // controls are named here instead.
+  return neutralizeBidiControls(parts.join('. '))
 }
 
 /** Exhaustive by construction: a new visibility forces a wording decision. */
@@ -232,6 +235,29 @@ export function segmentBidiControls(text: string): TextSegment[] {
 
 export const BIDI_NOTICE =
   'This text contains bidirectional formatting characters. They can make it read differently from how it is stored.'
+
+/**
+ * Replaces every bidi formatting control with its bracketed short name.
+ *
+ * This is for strings that never become a text node a reader can inspect —
+ * an `aria-label`, a live-region announcement, a document title. Those are
+ * consumed as flat strings, so `BidiText`'s per-control isolation cannot reach
+ * them and an override inside one still reorders what it is read or displayed
+ * beside. Naming the control keeps the string honest about what it contains,
+ * and matches what the Go assembler now does for the browser title, so the two
+ * layers describe hostile input the same way.
+ *
+ * Visible evidence surfaces are untouched: they keep the original code points
+ * and mark them instead, so nothing is lost from the record.
+ */
+export function neutralizeBidiControls(text: string): string {
+  let out = ''
+  for (const character of text) {
+    const name = BIDI_NAMES[character.codePointAt(0) ?? -1]
+    out += name === undefined ? character : `[${name[0]}]`
+  }
+  return out
+}
 
 /**
  * Author identity is shown separately only when it differs materially from the

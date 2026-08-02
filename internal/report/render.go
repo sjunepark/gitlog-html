@@ -21,8 +21,8 @@ type Renderer struct {
 }
 
 // Render emits the complete offline document. Dynamic repository content has
-// exactly two encodings: escaped HTML in the title and HTML-safe JSON in the
-// inert data element.
+// exactly two encodings: bidi-neutralized, escaped HTML in the title and
+// HTML-safe JSON in the inert data element.
 func (renderer Renderer) Render(writer io.Writer, document Document) error {
 	if err := document.Validate(); err != nil {
 		return fmt.Errorf("validate report document: %w", err)
@@ -70,7 +70,7 @@ func (renderer Renderer) Render(writer io.Writer, document Document) error {
 	output.WriteString(policy)
 	output.WriteString("\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, viewport-fit=cover\">\n")
 	output.WriteString("<meta name=\"color-scheme\" content=\"light dark\">\n<title>")
-	output.WriteString(html.EscapeString(document.Repository.Name))
+	output.WriteString(html.EscapeString(neutralizeBidiControls(document.Repository.Name)))
 	output.WriteString(" — commit history</title>\n<style nonce=\"")
 	output.WriteString(nonce)
 	output.WriteString("\">")
@@ -91,6 +91,28 @@ func (renderer Renderer) Render(writer io.Writer, document Document) error {
 		return fmt.Errorf("write standalone report: %w", err)
 	}
 	return nil
+}
+
+var bidiControlReplacer = strings.NewReplacer(
+	"\u061c", "[ALM]",
+	"\u200e", "[LRM]",
+	"\u200f", "[RLM]",
+	"\u202a", "[LRE]",
+	"\u202b", "[RLE]",
+	"\u202c", "[PDF]",
+	"\u202d", "[LRO]",
+	"\u202e", "[RLO]",
+	"\u2066", "[LRI]",
+	"\u2067", "[RLI]",
+	"\u2068", "[FSI]",
+	"\u2069", "[PDI]",
+)
+
+// neutralizeBidiControls keeps a title derived from repository evidence while
+// preventing an untrusted directional control from reordering the trusted
+// suffix or browser chrome. The visible short names match the report UI.
+func neutralizeBidiControls(text string) string {
+	return bidiControlReplacer.Replace(text)
 }
 
 func containsClosingElement(contents, element string) bool {

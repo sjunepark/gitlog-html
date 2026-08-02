@@ -87,7 +87,7 @@ mount contents with an intentional readable error state.
 The deterministic frontend build writes exactly
 `internal/report/assets/app.js` and `internal/report/assets/app.css`. These
 files contain no source map reference, import, dynamic chunk, or external
-resource and are committed so the later Go assembly layer can embed them
+resource and are committed so the Go assembly layer can embed them
 without Node.
 
 ## Safe embedding
@@ -132,7 +132,8 @@ The head includes:
 
 - UTF-8 charset before text-bearing content;
 - responsive viewport configuration;
-- report title derived from the inert repository display name;
+- report title derived from the repository display name, with bidirectional
+  controls replaced by their visible short names before HTML escaping;
 - color-scheme support;
 - content-security policy;
 - no base element.

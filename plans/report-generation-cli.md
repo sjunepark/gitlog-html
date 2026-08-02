@@ -8,19 +8,15 @@ report through the approved CLI, with atomic installation on Unix-like systems.
 
 ## Current state
 
-The outcome is implemented, validated, and independently reviewed on
-`codex/report-generation-cli`; PR delivery is pending. The strict CLI,
-description reader, generation coordinator, standalone renderer, and
-sibling-file writer consume the completed Git, graph, schema, and committed UI
-assets. All material review findings are resolved, including portable rename
-claims, all-ref selection proof, required-tool failures, shallow-skip scope,
-and complete hostile-content evidence through the real generated artifact.
+Complete. PR #4 merged the reviewed CLI and standalone report into
+`codex/first-local-release`. The strict CLI, description reader, generation
+coordinator, standalone renderer, and sibling-file writer consume the completed
+Git, graph, schema, and committed UI assets. All material implementation and PR
+review findings were resolved.
 
 ## Next action
 
-Deliver the reviewed slice through its PR lifecycle, merge it into
-`codex/first-local-release`, then advance ROADMAP.md to hardening and
-validation.
+None. The current roadmap result is hardening and validation.
 
 ## Scope
 

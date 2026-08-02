@@ -11,6 +11,7 @@ export type ReportName =
   | 'ordinary'
   | 'dense'
   | 'edge-content'
+  | 'bidi-controls'
   | 'empty-unborn'
   | 'detached-shallow'
   | 'unsupported-schema'
@@ -33,9 +34,10 @@ export function fixtureOids(name: ReportName): string[] {
 
 /**
  * Every test runs against a real file URL and fails on any console error,
- * uncaught exception, or request that leaves the document. A standalone report
- * that phones home, or that logs an error while rendering, is a defect
- * regardless of what it looks like.
+ * uncaught exception, content-security-policy violation, or request that leaves
+ * the document. A standalone report that phones home, that logs an error while
+ * rendering, or that needs the policy relaxed is a defect regardless of what it
+ * looks like.
  */
 export const test = base.extend<{ report: ReportPage }>({
   report: async ({ page }, use) => {
@@ -47,8 +49,28 @@ export const test = base.extend<{ report: ReportPage }>({
     page.on('request', (request) => {
       if (!request.url().startsWith('file:')) problems.push(`network request: ${request.url()}`)
     })
+
+    // The policy is watched directly rather than inferred from console text.
+    // The binding and the listener are installed before any navigation, and
+    // the init script re-runs for every document, so a violation raised while
+    // a generated report is still starting up is reported like any other.
+    await page.exposeFunction('__reportPolicyViolation', (detail: string) => {
+      problems.push(`CSP violation: ${detail}`)
+    })
+    await page.addInitScript(() => {
+      document.addEventListener('securitypolicyviolation', (event) => {
+        const report = (
+          window as unknown as { __reportPolicyViolation?: (detail: string) => void }
+        ).__reportPolicyViolation
+        report?.(
+          `${event.effectiveDirective || event.violatedDirective} blocked ` +
+            `${event.blockedURI || '(inline)'}`
+        )
+      })
+    })
+
     await use(new ReportPage(page, problems))
-    expect(problems, 'the report must run silently and offline').toEqual([])
+    expect(problems, 'the report must run silently, offline, and within its policy').toEqual([])
   }
 })
 

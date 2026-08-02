@@ -1,4 +1,5 @@
 <script lang="ts">
+  import BidiText from './BidiText.svelte'
   import CommitDetails from './CommitDetails.svelte'
   import Icon from './Icon.svelte'
   import { commitTitle } from '../lib/format'
@@ -65,7 +66,7 @@
 >
   <div class="sheet__panel" bind:this={panel} tabindex="-1">
     <div class="sheet__head">
-      <h2 class="sheet__title" id="{uid}-title">{title}</h2>
+      <h2 class="sheet__title" id="{uid}-title"><BidiText text={title} /></h2>
       <button type="button" class="sheet__close" onclick={onclose}>
         <Icon name="close" class="sheet__close-icon" />
         Close

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import BidiText from './BidiText.svelte'
   import RefLabel from './RefLabel.svelte'
   import { commitAccessibleLabel, formatDate, formatTime, machineDateTime, summaryText } from '../lib/format'
   import type { Commit } from '../lib/schema'
@@ -40,7 +41,7 @@
     </time>
     <span class="commit-row__time">{formatTime(commit.committer.when)}</span>
   </span>
-  <span class="commit-row__summary">{summary}</span>
+  <span class="commit-row__summary"><BidiText text={summary} /></span>
   {#if commit.refs.length > 0}
     <span class="commit-row__refs">
       {#each commit.refs as ref (ref.fullName)}

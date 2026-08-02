@@ -17,7 +17,7 @@ flows.
 
 ## Next action
 
-None. The next roadmap result is standalone report and CLI assembly.
+None. The current roadmap result is hardening and validation.
 
 ## Ownership
 
@@ -106,13 +106,13 @@ Verify generated asset determinism and inspect desktop/mobile screenshots. Run
 the required code-review workflow after Claude and integration checks pass.
 
 Current evidence: a clean npm install and audit report no known
-vulnerabilities; Svelte and TypeScript checks pass without diagnostics; 190
-component tests and 103 Chromium desktop/mobile file-URL tests pass; axe
-reports no violations in the representative states; generated assets are
-byte-reproducible and current; and visual review covers principal light, dark,
-focus, failure, dense-lane, hostile-content, long-content, and mobile-dialog
-states. The full Go suite, race detector, vet, workflow syntax check, and diff
-checks pass. Required implementation and PR review findings were resolved,
+vulnerabilities; Svelte and TypeScript checks, component tests, and Chromium
+desktop/mobile file-URL tests pass; axe reports no violations in representative
+states; generated assets are byte-reproducible and current; and visual review
+covers principal light, dark, focus, failure, dense-lane, hostile-content,
+long-content, and mobile-dialog states. The full Go suite, race detector, vet,
+workflow syntax check, and diff checks pass. Required implementation and PR
+review findings were resolved,
 including breakpoint-stable selection, lossless untrusted text, visible and
 inert bidirectional controls, two-level startup failure rendering, strict
 schema guards, no-network enforcement, edge-boundary meaning when a parent

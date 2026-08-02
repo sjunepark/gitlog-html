@@ -6,6 +6,7 @@ const FIXTURES: ReportName[] = [
   'ordinary',
   'dense',
   'edge-content',
+  'bidi-controls',
   'empty-unborn',
   'detached-shallow'
 ]

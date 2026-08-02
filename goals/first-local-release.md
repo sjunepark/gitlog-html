@@ -36,15 +36,16 @@ Goal contract
 - Truthful Git history extraction.
 - Deterministic commit graph layout.
 - Responsive accessible report interface.
+- Safe standalone report CLI.
 
 ### Current in-scope result
 
-Safe standalone report CLI.
+Hardened release candidate.
 
 ### Next in-scope action
 
-Deliver the implemented and reviewed CLI slice through its PR lifecycle, merge
-it into `codex/first-local-release`, then start hardening and validation.
+Deliver the validated hardening slice through its PR lifecycle, then advance to
+the installed agent reporting workflow.
 
 ### Evidence and blockers
 
@@ -55,6 +56,11 @@ it into `codex/first-local-release`, then start hardening and validation.
 - PR #3 was closed without merge. Its third-party Claude tooling payload is
   not part of the product or integration branch; the required project-scoped
   copy remains local and ignored for UI delegation only.
+- PR #4 merged the standalone report CLI into the integration branch at
+  `f470cc39039aa6ce949df40110a0a31338fe87f3`. Its final head passed Go, web,
+  GitGuardian, gitleaks history and directory scans, supplemental secret scans,
+  independent review, and the complete feedback workflow with no unresolved
+  threads.
 - Foundation validation: `gofmt`, `go test ./...`, and `go vet ./...` pass;
   shared-contract review findings were resolved before advancing the roadmap.
 - Git extraction validation: repeated real-Git tests, the race detector, the
@@ -70,8 +76,7 @@ it into `codex/first-local-release`, then start hardening and validation.
   All material UI and integration review findings were resolved, including PR
   feedback for breakpoint selection, lossless explanation text, parent-edge
   boundary meaning, and stable touch targets.
-- CLI implementation and independent review are complete on
-  `codex/report-generation-cli`; PR delivery is pending. Full Go, race, vet,
+- CLI implementation and PR `#4` delivery are complete. Full Go, race, vet,
   build, cross-build, workflow, frontend, deterministic-asset, component, and
   desktop/mobile browser validation pass. Real generated artifacts prove
   default all-ref selection against an unmerged ref, current ancestry,
@@ -79,3 +84,17 @@ it into `codex/first-local-release`, then start hardening and validation.
   and complete hostile-content behavior. All material review findings are
   resolved, and production UI source, compiled assets, and screenshots remain
   unchanged by the final artifact-test work.
+- Hardening review identified three material Go risks: output could replace
+  Git administrative files, wide graphs could amplify bounded history into
+  excessive allocations, and the stdout limit did not stop its producer. The
+  fixes now protect ordinary and linked-worktree storage, enforce a cumulative
+  graph budget without replacing output, and cancel Git promptly at overflow.
+  Full normal/race/vet/lint validation and independent follow-up security
+  review pass. Chromium and WebKit offline/CSP/bidi hardening pass independent
+  validation, including neutralized assistive strings and browser titles.
+  The owning Claude session resumed after its quota reset and completed the
+  merge-parent role labels, computed-accessibility probes, all-control bidi
+  fixture, rebuilt assets, browser checks, and manual non-SVG review. The full
+  matrix passes from detached clean commit `b0f7487`; generated assets and
+  screenshots stay byte-current, and formal independent review has no material
+  findings. PR delivery remains in progress.

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import BidiText from './BidiText.svelte'
   import type { Report } from '../lib/schema'
 
   const { report }: { report: Report } = $props()
@@ -13,7 +14,7 @@
       <p class="empty__lead">This branch has no commits yet.</p>
     {:else}
       <p class="empty__lead">
-        Branch <span class="empty__branch">{head.branch}</span> has no commits yet.
+        Branch <span class="empty__branch"><BidiText text={head.branch} /></span> has no commits yet.
       </p>
     {/if}
     <p class="empty__note">

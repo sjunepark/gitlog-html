@@ -72,7 +72,11 @@ does not replace it.
   atomic on Unix-like systems; on other platforms it follows the host rename
   semantics only after the same complete-write checks.
 - Remove only the temporary file created by the failed invocation.
-- Never modify the inspected repository.
+- Refuse output within the resolved Git directory, common directory, or
+  worktree control path even when --force is explicit.
+- Never modify Git administrative storage for the inspected repository,
+  including linked-worktree metadata. The report itself may be written into
+  the repository working tree.
 
 ## Truthfulness
 
@@ -96,11 +100,12 @@ and authorizes that action.
 
 ## Resource limits
 
-The configurable commit limit bounds normal graph work. Avoid arbitrary small
-product caps, but parse incrementally where practical and reject integer
-overflow or impossible allocation sizes. Large-message and large-report
-behavior should fail with a contextual error rather than exhausting the
-machine.
+The configurable commit limit bounds ordinary work, Git stdout and stderr have
+byte ceilings, and crossing the stdout ceiling terminates the producer rather
+than merely truncating storage. Graph materialization has a cumulative
+lane-and-transition complexity budget so unusually wide histories cannot turn
+bounded Git output into quadratic report allocations. Limit failures retain a
+bounded prefix only for diagnostics and never install partial output.
 
 Diff inclusion is deferred partly because it materially changes privacy and
 size risks.

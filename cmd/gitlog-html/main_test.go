@@ -59,6 +59,7 @@ func TestExecuteExitCategories(t *testing.T) {
 	}{
 		{"invalid scope", []string{"--scope", "nearby"}, generatorFunc(nil), 2, "unsupported history scope"},
 		{"nonpositive limit", []string{"--max-count", "0"}, generatorFunc(nil), 2, "positive integer"},
+		{"limit above safety ceiling", []string{"--max-count", "40001"}, generatorFunc(nil), 2, "must not exceed 40000"},
 		{"positional", []string{"generate"}, generatorFunc(nil), 2, "unexpected positional"},
 		{"single dash", []string{"-repo", "."}, generatorFunc(nil), 2, "--name form"},
 		{"duplicate", []string{"--scope", "all", "--scope", "current"}, generatorFunc(nil), 2, "provided only once"},
@@ -190,6 +191,56 @@ func TestExecuteGeneratesRealStandaloneReport(t *testing.T) {
 	}
 	if exit := execute(context.Background(), []string{"--repo", repository, "--output", outputPath, "--force"}, &stdout, &stderr, service); exit != 0 {
 		t.Fatalf("force execute() = %d, stderr = %q", exit, stderr.String())
+	}
+}
+
+func TestExecuteRefusesRepositoryAdministrativeOutputsEvenWithForce(t *testing.T) {
+	repository := t.TempDir()
+	runGit(t, repository, "init", "-b", "main")
+	runGit(t, repository, "config", "user.name", "Test User")
+	runGit(t, repository, "config", "user.email", "test@example.test")
+	runGit(t, repository, "commit", "--allow-empty", "-m", "root")
+	linked := filepath.Join(t.TempDir(), "linked")
+	runGit(t, repository, "worktree", "add", "-b", "linked", linked, "main")
+	linkedGitDir := strings.TrimSpace(runGit(t, linked, "rev-parse", "--absolute-git-dir"))
+
+	service := generate.Service{
+		Loader:    gitexec.Loader{Runner: gitexec.Runner{}},
+		Generator: report.Generator{Name: "gitlog-html", Version: "test"},
+	}
+	targets := []struct {
+		name       string
+		root       string
+		outputPath string
+	}{
+		{name: "ordinary HEAD", root: repository, outputPath: filepath.Join(repository, ".git", "HEAD")},
+		{name: "linked control file", root: linked, outputPath: filepath.Join(linked, ".git")},
+		{name: "linked private HEAD", root: linked, outputPath: filepath.Join(linkedGitDir, "HEAD")},
+		{name: "linked common HEAD", root: linked, outputPath: filepath.Join(repository, ".git", "HEAD")},
+	}
+	for _, target := range targets {
+		t.Run(target.name, func(t *testing.T) {
+			before, err := os.ReadFile(target.outputPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			var stdout, stderr bytes.Buffer
+			exit := execute(context.Background(), []string{
+				"--repo", target.root,
+				"--output", target.outputPath,
+				"--force",
+			}, &stdout, &stderr, service)
+			if exit != 1 || !strings.Contains(stderr.String(), "Git administrative storage") {
+				t.Fatalf("execute() = %d, stderr = %q", exit, stderr.String())
+			}
+			after, err := os.ReadFile(target.outputPath)
+			if err != nil || !bytes.Equal(after, before) {
+				t.Fatalf("administrative target changed: equal=%t, read=%v", bytes.Equal(after, before), err)
+			}
+			if got := strings.TrimSpace(runGit(t, target.root, "rev-parse", "HEAD")); got == "" {
+				t.Fatal("repository HEAD no longer resolves")
+			}
+		})
 	}
 }
 
