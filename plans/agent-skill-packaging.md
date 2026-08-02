@@ -22,14 +22,15 @@ Independent review found no remaining implementation defect after the shared
 Git wrapper, unborn-history handling, guarded installation, and terminal
 cleanup fixes. The reviewed first-release boundary intentionally validates the
 installed explanation workflow on POSIX; a native non-POSIX hardened Git path
-is deferred rather than claimed without evidence. Clean validation and PR
-delivery remain in progress.
+is deferred rather than claimed without evidence. The complete Go, race, vet,
+lint, local/Linux/Windows build, skill, workflow, frontend, deterministic-asset,
+and Chromium/WebKit matrix passes from detached clean commit `ef71029`. PR
+delivery remains in progress.
 
 ## Next action
 
-Resolve any material independent-review findings, run the complete clean
-validation matrix, and deliver the installed-workflow slice through its PR
-lifecycle.
+Deliver the reviewed and clean-validated installed-workflow slice through its
+PR lifecycle.
 
 ## Scope
 

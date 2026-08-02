@@ -115,4 +115,6 @@ audit.
   unborn-history handling, guarded installation, and terminal cleanup. The
   installed explanation workflow is intentionally validated on the local
   POSIX host; native non-POSIX orchestration is not claimed in this release.
-  Clean-checkout validation and final PR delivery remain in progress.
+  The complete Go, race, vet, lint, local/Linux/Windows build, skill, workflow,
+  frontend, deterministic-asset, and Chromium/WebKit matrix passes from
+  detached clean commit `ef71029`. Final PR delivery remains in progress.
